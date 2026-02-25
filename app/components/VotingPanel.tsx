@@ -10,9 +10,9 @@ interface VotingPanelProps {
 
 const barColors = [
   'rgba(212, 160, 60, 0.8)',
-  'rgba(168, 130, 60, 0.7)',
-  'rgba(140, 110, 70, 0.65)',
-  'rgba(120, 100, 80, 0.6)',
+  'rgba(100, 160, 230, 0.75)',
+  'rgba(120, 190, 120, 0.7)',
+  'rgba(200, 120, 180, 0.7)',
 ];
 
 export default function VotingPanel({

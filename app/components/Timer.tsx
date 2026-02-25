@@ -42,16 +42,18 @@ export default function Timer({
   }, []);
 
   useEffect(() => {
-    if (!running) return;
+    if (!running || seconds <= 0) return;
     const interval = setInterval(() => {
-      onTick(seconds - 1);
-      if (seconds - 1 <= 30 && seconds - 1 > 0 && !hasPlayedWarning.current) {
+      const next = seconds - 1;
+      onTick(next);
+      if (next <= 30 && next > 0 && !hasPlayedWarning.current) {
         hasPlayedWarning.current = true;
         playBeep();
       }
-      if (seconds - 1 <= 0) {
-        onComplete();
+      if (next <= 0) {
+        clearInterval(interval);
         playBeep();
+        onComplete();
       }
     }, 1000);
     return () => clearInterval(interval);
@@ -69,6 +71,9 @@ export default function Timer({
   return (
     <div className="flex items-center gap-3">
       <div
+        role="timer"
+        aria-live={isWarning || isExpired ? 'assertive' : 'off'}
+        aria-label={`${mins} minutes ${secs} seconds remaining`}
         className={`font-mono text-4xl font-bold tabular-nums tracking-wider transition-colors ${
           isExpired
             ? 'text-red-400'

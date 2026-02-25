@@ -11,6 +11,14 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // OpenAI TTS has a 4096 character limit
+    if (text.length > 4096) {
+      return new Response(JSON.stringify({ error: 'Text too long (max 4096 characters)' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const res = await fetch('https://api.openai.com/v1/audio/speech', {
       method: 'POST',
       headers: {

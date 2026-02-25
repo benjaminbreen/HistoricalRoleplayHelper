@@ -59,7 +59,12 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* Scrollbar */
+/* Scrollbar — Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 110, 0.2) transparent;
+}
+/* Scrollbar — WebKit */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {

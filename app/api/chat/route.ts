@@ -12,6 +12,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Reject excessively large prompts to avoid API timeouts
+    const totalLength = systemPrompt.length + userPrompt.length;
+    if (totalLength > 100_000) {
+      return NextResponse.json(
+        { error: 'Prompt too long (max 100k characters combined)' },
+        { status: 400 }
+      );
+    }
+
     if (stream) {
       const readableStream = await streamNpcResponse(systemPrompt, userPrompt);
       return new Response(readableStream, {

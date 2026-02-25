@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { NpcCharacter, NpcResponse, Scenario, TranscriptEntry } from '../lib/types';
+import { NpcCharacter, NpcResponse, Scenario, StudentRole, TranscriptEntry, VotingOption } from '../lib/types';
 import { buildNpcSystemPrompt, buildNpcResponsePrompt, buildVerdictPrompt } from '../lib/prompts';
 import NpcCard from './NpcCard';
+import TaCard from './TaCard';
 
 interface NpcPanelProps {
   scenario: Scenario;
@@ -13,6 +14,9 @@ interface NpcPanelProps {
   onNpcResponse: (response: NpcResponse) => void;
   currentStageId: string;
   isVerdictStage: boolean;
+  liveVotingOptions?: VotingOption[];
+  muted?: boolean;
+  taRoles?: StudentRole[];
 }
 
 export default function NpcPanel({
@@ -23,19 +27,24 @@ export default function NpcPanel({
   onNpcResponse,
   currentStageId,
   isVerdictStage,
+  liveVotingOptions,
+  muted,
+  taRoles = [],
 }: NpcPanelProps) {
-  const [loadingNpc, setLoadingNpc] = useState<string | null>(null);
+  const [loadingNpcs, setLoadingNpcs] = useState<Set<string>>(new Set());
+  const [error, setError] = useState<string | null>(null);
 
   const triggerNpc = useCallback(
     async (npcId: string) => {
       const npc = npcs.find((n) => n.id === npcId);
       if (!npc) return;
 
-      setLoadingNpc(npcId);
+      setLoadingNpcs((prev) => new Set(prev).add(npcId));
+      setError(null);
       try {
         const systemPrompt = buildNpcSystemPrompt(npc, scenario);
         const userPrompt = isVerdictStage
-          ? buildVerdictPrompt(transcript, scenario, scenario.votingOptions)
+          ? buildVerdictPrompt(transcript, scenario, liveVotingOptions || scenario.votingOptions)
           : buildNpcResponsePrompt(transcript, scenario);
 
         const res = await fetch('/api/chat', {
@@ -44,6 +53,9 @@ export default function NpcPanel({
           body: JSON.stringify({ systemPrompt, userPrompt }),
         });
 
+        if (!res.ok) {
+          throw new Error(`API returned ${res.status}`);
+        }
         const data = await res.json();
         if (data.text) {
           onNpcResponse({
@@ -53,30 +65,47 @@ export default function NpcPanel({
             stageId: currentStageId,
           });
         }
-      } catch (error) {
-        console.error('Failed to get NPC response:', error);
+      } catch (err) {
+        console.error('Failed to get NPC response:', err);
+        setError(`Failed to generate response for ${npc.name}. Check your API key and try again.`);
       } finally {
-        setLoadingNpc(null);
+        setLoadingNpcs((prev) => {
+          const next = new Set(prev);
+          next.delete(npcId);
+          return next;
+        });
       }
     },
-    [npcs, scenario, transcript, isVerdictStage, currentStageId, onNpcResponse]
+    [npcs, scenario, transcript, isVerdictStage, liveVotingOptions, currentStageId, onNpcResponse]
   );
 
   const triggerAll = useCallback(async () => {
-    for (const npc of npcs) {
-      await triggerNpc(npc.id);
-    }
+    await Promise.all(npcs.map((npc) => triggerNpc(npc.id)));
   }, [npcs, triggerNpc]);
+
+  const anyLoading = loadingNpcs.size > 0;
 
   return (
     <div className="space-y-4">
+      {error && (
+        <div
+          className="animate-in rounded-xl px-5 py-3 text-base"
+          style={{
+            background: 'rgba(239,68,68,0.1)',
+            border: '1px solid rgba(239,68,68,0.2)',
+            color: '#f87171',
+          }}
+        >
+          {error}
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <h2 className="heading-display text-2xl font-semibold" style={{ color: 'var(--accent)' }}>
           {isVerdictStage ? 'Final Verdicts' : 'Court Characters'}
         </h2>
         <button
           onClick={triggerAll}
-          disabled={loadingNpc !== null}
+          disabled={anyLoading}
           className="rounded-xl px-5 py-2 text-base font-semibold transition-all hover:scale-[1.02] disabled:opacity-40"
           style={{
             background: 'rgba(212,160,60,0.15)',
@@ -84,17 +113,34 @@ export default function NpcPanel({
             border: '1px solid rgba(212,160,60,0.2)',
           }}
         >
-          {loadingNpc ? 'Generating...' : 'All NPCs Speak'}
+          {anyLoading
+            ? `Generating... (${loadingNpcs.size} of ${npcs.length} remaining)`
+            : 'All NPCs Speak'}
         </button>
       </div>
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div
+        className="grid gap-5"
+        style={{
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+        }}
+      >
         {npcs.map((npc) => (
           <NpcCard
             key={npc.id}
             npc={npc}
             responses={npcResponses.filter((r) => r.npcId === npc.id)}
             onTrigger={triggerNpc}
-            isLoading={loadingNpc === npc.id}
+            isLoading={loadingNpcs.has(npc.id)}
+            muted={muted}
+          />
+        ))}
+        {taRoles.map((role) => (
+          <TaCard
+            key={role.id}
+            role={role}
+            responses={npcResponses.filter((r) => r.npcId === role.id)}
+            onSubmit={onNpcResponse}
+            currentStageId={currentStageId}
           />
         ))}
       </div>
