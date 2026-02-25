@@ -1,12 +1,18 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { TranscriptEntry } from '../lib/types';
+import { useState, useRef, useCallback, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
+import { TranscriptEntry, CharacterSheet } from '../lib/types';
+import CharacterQuickBar from './CharacterQuickBar';
 
 interface SpeechCaptureProps {
   stageId: string;
   onCapture: (entry: TranscriptEntry) => void;
   previousSpeakers?: string[];
+  cast?: CharacterSheet[];
+  selectedCharacterId?: string;
+  onCharacterSelect?: (id: string | undefined) => void;
+  recentCharacterIds?: string[];
+  onOpenCastPanel?: () => void;
 }
 
 export interface SpeechCaptureHandle {
@@ -17,7 +23,7 @@ export interface SpeechCaptureHandle {
 const CHUNK_INTERVAL = 15_000; // 15 seconds per chunk
 
 const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(function SpeechCapture(
-  { stageId, onCapture, previousSpeakers = [] },
+  { stageId, onCapture, previousSpeakers = [], cast = [], selectedCharacterId, onCharacterSelect, recentCharacterIds = [], onOpenCastPanel },
   ref
 ) {
   const [isRecording, setIsRecording] = useState(false);
@@ -30,6 +36,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
   const [showManual, setShowManual] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -46,6 +53,40 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
   genderRef.current = gender;
   const stageIdRef = useRef(stageId);
   stageIdRef.current = stageId;
+  const selectedCharacterIdRef = useRef(selectedCharacterId);
+  selectedCharacterIdRef.current = selectedCharacterId;
+
+  // Auto-fill from selected character
+  useEffect(() => {
+    if (!selectedCharacterId) return;
+    const char = cast.find((c) => c.id === selectedCharacterId);
+    if (char) {
+      setSpeakerName(char.characterName);
+      if (char.profession) setProfession(char.profession);
+      if (char.age) setAge(char.age);
+      if (char.gender) setGender(char.gender);
+    }
+  }, [selectedCharacterId, cast]);
+
+  const autocompleteSuggestions = useMemo(() => {
+    if (!speakerName.trim()) return [];
+    const q = speakerName.toLowerCase();
+    const suggestions: { name: string; characterId?: string; portrait?: string }[] = [];
+
+    // Cast matches first
+    for (const c of cast) {
+      if (c.characterName.toLowerCase().includes(q)) {
+        suggestions.push({ name: c.characterName, characterId: c.id, portrait: c.portraitDataUrl });
+      }
+    }
+    // Previous speakers
+    for (const name of previousSpeakers) {
+      if (name.toLowerCase().includes(q) && !suggestions.some((s) => s.name === name)) {
+        suggestions.push({ name });
+      }
+    }
+    return suggestions.slice(0, 8);
+  }, [speakerName, cast, previousSpeakers]);
 
   const sendChunk = useCallback(
     async (blob: Blob) => {
@@ -74,6 +115,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
             profession: professionRef.current || undefined,
             age: ageRef.current || undefined,
             gender: genderRef.current || undefined,
+            characterId: selectedCharacterIdRef.current || undefined,
           });
         }
       } catch (err) {
@@ -205,9 +247,10 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
       profession: profession || undefined,
       age: age || undefined,
       gender: gender || undefined,
+      characterId: selectedCharacterId || undefined,
     });
     setManualText('');
-  }, [manualText, speakerName, profession, age, gender, stageId, onCapture]);
+  }, [manualText, speakerName, profession, age, gender, stageId, onCapture, selectedCharacterId]);
 
   const inputStyle = {
     background: 'rgba(255,255,255,0.06)',
@@ -223,25 +266,79 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
 
   return (
     <div className="glass-strong rounded-2xl p-4 space-y-3">
+      {/* Character QuickBar */}
+      {cast.length > 0 && (
+        <CharacterQuickBar
+          cast={cast}
+          recentCharacterIds={recentCharacterIds}
+          selectedCharacterId={selectedCharacterId}
+          onSelect={(id) => onCharacterSelect?.(id)}
+          onOpenPanel={() => onOpenCastPanel?.()}
+        />
+      )}
       {/* Speaker info row — wraps on small screens */}
       <div className="flex flex-wrap items-center gap-2">
-        <input
-          type="text"
-          list="speaker-names"
-          value={speakerName}
-          onChange={(e) => setSpeakerName(e.target.value)}
-          placeholder="Speaker name..."
-          className="min-w-[140px] flex-1 rounded-xl px-4 py-2.5 text-base placeholder-white/20 focus:outline-none"
-          style={inputStyle}
-          aria-label="Speaker name"
-        />
-        {previousSpeakers.length > 0 && (
-          <datalist id="speaker-names">
-            {previousSpeakers.map((name) => (
-              <option key={name} value={name} />
-            ))}
-          </datalist>
-        )}
+        <div className="relative min-w-[140px] flex-1">
+          <input
+            type="text"
+            value={speakerName}
+            onChange={(e) => {
+              setSpeakerName(e.target.value);
+              setShowAutocomplete(true);
+              // Clear character selection when manually typing
+              if (selectedCharacterId) {
+                const char = cast.find((c) => c.id === selectedCharacterId);
+                if (char && e.target.value !== char.characterName) {
+                  onCharacterSelect?.(undefined);
+                }
+              }
+            }}
+            onFocus={() => setShowAutocomplete(true)}
+            onBlur={() => setTimeout(() => setShowAutocomplete(false), 200)}
+            placeholder="Speaker name..."
+            className="w-full rounded-xl px-4 py-2.5 text-base placeholder-white/20 focus:outline-none"
+            style={inputStyle}
+            aria-label="Speaker name"
+          />
+          {showAutocomplete && autocompleteSuggestions.length > 0 && (
+            <div
+              className="absolute left-0 right-0 top-full z-30 mt-1 rounded-xl overflow-hidden"
+              style={{ background: 'rgba(30,30,40,0.95)', border: '1px solid var(--panel-border)', boxShadow: '0 4px 16px rgba(0,0,0,0.4)' }}
+            >
+              {autocompleteSuggestions.map((s) => (
+                <button
+                  key={s.name + (s.characterId || '')}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-all hover:bg-white/5"
+                  style={{ color: 'var(--text-primary)' }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setSpeakerName(s.name);
+                    setShowAutocomplete(false);
+                    if (s.characterId) {
+                      onCharacterSelect?.(s.characterId);
+                      const char = cast.find((c) => c.id === s.characterId);
+                      if (char) {
+                        if (char.profession) setProfession(char.profession);
+                        if (char.age) setAge(char.age);
+                        if (char.gender) setGender(char.gender);
+                      }
+                    }
+                  }}
+                >
+                  {s.portrait ? (
+                    <img src={s.portrait} alt="" className="h-6 w-6 rounded-full object-cover flex-shrink-0" />
+                  ) : s.characterId ? (
+                    <div className="h-6 w-6 rounded-full flex items-center justify-center text-xs flex-shrink-0"
+                      style={{ background: 'rgba(212,160,60,0.1)', color: 'var(--accent)' }}>
+                      {s.name.charAt(0)}
+                    </div>
+                  ) : null}
+                  <span>{s.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         <input
           type="text"
           value={profession}

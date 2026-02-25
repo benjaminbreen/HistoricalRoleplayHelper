@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Scenario } from '../lib/types';
+import { Scenario, isLeaderRole } from '../lib/types';
 
 interface PresetMeta {
   preset: Scenario;
@@ -23,7 +23,7 @@ export default function ScenarioBrowser({ presets, onSelect, onClose }: Scenario
     selected.preset.stages.reduce((s, st) => s + st.durationSeconds, 0) / 60
   );
   const npcCount = selected.preset.npcs.length;
-  const roleCount = selected.preset.studentRoles.length;
+  const roleCount = selected.preset.roles.length;
 
   return (
     <div
@@ -82,7 +82,7 @@ export default function ScenarioBrowser({ presets, onSelect, onClose }: Scenario
                       className="truncate text-[11px]"
                       style={{ color: 'var(--text-muted)' }}
                     >
-                      {p.preset.timePeriod}
+                      {p.preset.setting}
                     </p>
                   </div>
                 </button>
@@ -107,7 +107,7 @@ export default function ScenarioBrowser({ presets, onSelect, onClose }: Scenario
                 className="text-xs font-medium uppercase tracking-widest"
                 style={{ color: 'var(--text-muted)' }}
               >
-                {selected.preset.timePeriod}
+                {selected.preset.setting}
               </p>
               <h3
                 className="heading-display mt-1 text-2xl font-bold leading-tight"
@@ -205,16 +205,16 @@ export default function ScenarioBrowser({ presets, onSelect, onClose }: Scenario
                   </span>
                 </div>
               ))}
-              {selected.preset.studentRoles.map((role) => (
+              {selected.preset.roles.map((role) => (
                 <div key={role.id} className="flex items-center gap-2.5">
                   <span
                     className="flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold"
                     style={{
-                      background: role.suggestedFor === 'ta' ? 'rgba(99,182,255,0.1)' : 'rgba(255,255,255,0.05)',
-                      color: role.suggestedFor === 'ta' ? '#63b6ff' : 'var(--text-muted)',
+                      background: isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.1)' : 'rgba(255,255,255,0.05)',
+                      color: isLeaderRole(role.suggestedFor) ? '#63b6ff' : 'var(--text-muted)',
                     }}
                   >
-                    {role.suggestedFor === 'ta' ? 'TA' : 'S'}
+                    {isLeaderRole(role.suggestedFor) ? role.suggestedFor.charAt(0).toUpperCase() : 'S'}
                   </span>
                   <div className="min-w-0 flex-1">
                     <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -227,11 +227,11 @@ export default function ScenarioBrowser({ presets, onSelect, onClose }: Scenario
                   <span
                     className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase"
                     style={{
-                      background: role.suggestedFor === 'ta' ? 'rgba(99,182,255,0.08)' : 'rgba(255,255,255,0.04)',
-                      color: role.suggestedFor === 'ta' ? '#63b6ff' : 'var(--text-muted)',
+                      background: isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.08)' : 'rgba(255,255,255,0.04)',
+                      color: isLeaderRole(role.suggestedFor) ? '#63b6ff' : 'var(--text-muted)',
                     }}
                   >
-                    {role.suggestedFor === 'ta' ? 'TA' : 'Student'}
+                    {role.suggestedFor === 'ta' ? 'TA' : role.suggestedFor.charAt(0).toUpperCase() + role.suggestedFor.slice(1)}
                   </span>
                 </div>
               ))}

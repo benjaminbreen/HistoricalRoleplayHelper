@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Scenario, SavedSession } from './lib/types';
+import { Scenario, SavedSession, CharacterSheet } from './lib/types';
 import SetupForm from './components/SetupForm';
 import SessionView, { SessionInitialState } from './components/SessionView';
 import RejoinView, { RejoinSessionData } from './components/RejoinView';
+import CastLobbyScreen from './components/CastLobbyScreen';
 
 const STORAGE_KEY = 'hrh-active-session';
 
@@ -13,6 +14,8 @@ export default function Home() {
   const [rejoinData, setRejoinData] = useState<RejoinSessionData | null>(null);
   const [recoveredSession, setRecoveredSession] = useState<SavedSession | null>(null);
   const [initialState, setInitialState] = useState<SessionInitialState | undefined>();
+  const [cast, setCast] = useState<CharacterSheet[]>([]);
+  const [showLobby, setShowLobby] = useState(false);
 
   // Check for saved session on mount
   useEffect(() => {
@@ -39,6 +42,7 @@ export default function Home() {
       votingOptions: recoveredSession.votingOptions,
       triggeredEventIds: recoveredSession.triggeredEventIds,
     });
+    setCast(recoveredSession.cast ?? []);
     setScenario(recoveredSession.scenario);
     setRecoveredSession(null);
   };
@@ -51,6 +55,16 @@ export default function Home() {
   const handleEndSession = () => {
     setScenario(null);
     setInitialState(undefined);
+    setCast([]);
+    setShowLobby(false);
+  };
+
+  const handleStart = (s: Scenario, newCast: CharacterSheet[]) => {
+    setCast(newCast);
+    setScenario(s);
+    if (newCast.length > 0) {
+      setShowLobby(true);
+    }
   };
 
   if (rejoinData) {
@@ -62,12 +76,24 @@ export default function Home() {
     );
   }
 
+  if (scenario && showLobby) {
+    return (
+      <CastLobbyScreen
+        scenario={scenario}
+        cast={cast}
+        onStart={() => setShowLobby(false)}
+        onBack={() => { setScenario(null); setShowLobby(false); }}
+      />
+    );
+  }
+
   if (scenario) {
     return (
       <SessionView
         scenario={scenario}
         onEnd={handleEndSession}
         initialState={initialState}
+        initialCast={cast}
       />
     );
   }
@@ -110,7 +136,7 @@ export default function Home() {
           </div>
         </div>
       )}
-      <SetupForm onStart={setScenario} onRejoin={setRejoinData} />
+      <SetupForm onStart={handleStart} onRejoin={setRejoinData} />
     </div>
   );
 }

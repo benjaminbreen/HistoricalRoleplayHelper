@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { Scenario, TranscriptEntry, NpcResponse, VotingOption, SavedSession, ArgumentStance, RhetoricMode, StageEvent } from '../lib/types';
+import { Scenario, TranscriptEntry, NpcResponse, VotingOption, SavedSession, ArgumentStance, RhetoricMode, StageEvent, CharacterSheet, isVerdictStage, isLeaderRole } from '../lib/types';
 import Timer from './Timer';
 import StageManager from './StageManager';
 import SpeechCapture, { SpeechCaptureHandle } from './SpeechCapture';
@@ -13,6 +13,9 @@ import ParticipationStats from './ParticipationStats';
 import CountdownOverlay from './CountdownOverlay';
 import EventBanner from './EventBanner';
 import EventControlPanel from './EventControlPanel';
+import CastPanel from './CastPanel';
+import ScenarioIntroModal from './ScenarioIntroModal';
+import ThemeToggle from './ThemeToggle';
 
 const STORAGE_KEY = 'hrh-active-session';
 const SAVE_DEBOUNCE_MS = 2000;
@@ -35,9 +38,10 @@ interface SessionViewProps {
   scenario: Scenario;
   onEnd: () => void;
   initialState?: SessionInitialState;
+  initialCast?: CharacterSheet[];
 }
 
-export default function SessionView({ scenario, onEnd, initialState }: SessionViewProps) {
+export default function SessionView({ scenario, onEnd, initialState, initialCast }: SessionViewProps) {
   const [currentStageIndex, setCurrentStageIndex] = useState(
     initialState?.currentStageIndex ?? 0
   );
@@ -61,6 +65,12 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [muted, setMuted] = useState(false);
   const [showEventPanel, setShowEventPanel] = useState(false);
+  const [cast] = useState<CharacterSheet[]>(initialCast ?? []);
+  const [showCast, setShowCast] = useState(false);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | undefined>();
+  const [showIntro, setShowIntro] = useState(
+    () => !!scenario.introNarrative && !initialState
+  );
 
   // Event system state
   const [scheduledEvents, setScheduledEvents] = useState<ScheduledEventItem[]>([]);
@@ -89,6 +99,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
           votingOptions,
           savedAt: new Date().toISOString(),
           triggeredEventIds: [...triggeredEventIds],
+          cast: cast.length > 0 ? cast : undefined,
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
       } catch {
@@ -98,7 +109,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     };
-  }, [scenario, currentStageIndex, timerSeconds, transcript, npcResponses, votingOptions, triggeredEventIds]);
+  }, [scenario, currentStageIndex, timerSeconds, transcript, npcResponses, votingOptions, triggeredEventIds, cast]);
 
   // ── Event scheduling (on stage change) ──
   useEffect(() => {
@@ -249,7 +260,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
   const exportTranscript = useCallback(() => {
     const lines: string[] = [
       scenario.title,
-      scenario.timePeriod,
+      scenario.setting,
       `Central Question: ${scenario.centralQuestion}`,
       '',
       '--- TRANSCRIPT ---',
@@ -297,6 +308,9 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
   // ── Keyboard shortcuts ──
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Intro modal handles its own keyboard events
+      if (showIntro) return;
+
       const tag = (e.target as HTMLElement).tagName?.toLowerCase();
       const inInput = tag === 'input' || tag === 'textarea' || tag === 'select';
 
@@ -336,19 +350,36 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
       } else if (e.key === 'e') {
         e.preventDefault();
         setShowEventPanel((s) => !s);
+      } else if (e.key === 'c') {
+        e.preventDefault();
+        setShowCast((s) => !s);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nextStage, prevStage, showShortcuts, showEndConfirm]);
+  }, [nextStage, prevStage, showShortcuts, showEndConfirm, showIntro]);
 
   const previousSpeakers = useMemo(() => {
     return [...new Set(transcript.map((e) => e.speaker))];
   }, [transcript]);
 
+  const recentCharacterIds = useMemo(() => {
+    const seen = new Set<string>();
+    const ids: string[] = [];
+    // Walk transcript in reverse to get most recent first
+    for (let i = transcript.length - 1; i >= 0; i--) {
+      const cid = transcript[i].characterId;
+      if (cid && !seen.has(cid)) {
+        seen.add(cid);
+        ids.push(cid);
+      }
+    }
+    return ids;
+  }, [transcript]);
+
   const taRoles = useMemo(() => {
-    return scenario.studentRoles.filter((r) => r.suggestedFor === 'ta');
-  }, [scenario.studentRoles]);
+    return scenario.roles.filter((r) => isLeaderRole(r.suggestedFor));
+  }, [scenario.roles]);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -362,8 +393,8 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
 
   return (
     <div className="noise flex min-h-screen flex-col">
-      {/* Background image — only on verdict stage */}
-      {scenario.backgroundImage && currentStage?.type === 'verdict' && (
+      {/* Background image — only on verdict/debrief stage */}
+      {scenario.backgroundImage && currentStage && isVerdictStage(currentStage.type) && (
         <div
           className="scenario-bg"
           style={{ backgroundImage: `url(${scenario.backgroundImage})` }}
@@ -389,7 +420,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
                 {scenario.title}
               </h1>
               <p className="mt-0.5 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                {scenario.timePeriod}
+                {scenario.setting}
               </p>
             </div>
           </div>
@@ -439,7 +470,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
         </div>
 
         {/* Student Roles Panel */}
-        {showRoles && scenario.studentRoles.length > 0 && (
+        {showRoles && scenario.roles.length > 0 && (
           <div className="glass animate-in mx-8 mt-2 rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
@@ -450,16 +481,16 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
               </button>
             </div>
             <div className="flex flex-wrap gap-3">
-              {scenario.studentRoles.map((role) => (
+              {scenario.roles.map((role) => (
                 <div key={role.id} className="flex items-center gap-2 rounded-xl px-3 py-2"
                   style={{
-                    background: role.suggestedFor === 'ta' ? 'rgba(99,182,255,0.08)' : 'rgba(212,160,60,0.08)',
-                    border: `1px solid ${role.suggestedFor === 'ta' ? 'rgba(99,182,255,0.15)' : 'rgba(212,160,60,0.12)'}`,
+                    background: isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.08)' : 'rgba(212,160,60,0.08)',
+                    border: `1px solid ${isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.15)' : 'rgba(212,160,60,0.12)'}`,
                   }}>
                   <span className="rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase"
                     style={{
-                      background: role.suggestedFor === 'ta' ? 'rgba(99,182,255,0.2)' : 'rgba(212,160,60,0.15)',
-                      color: role.suggestedFor === 'ta' ? '#63b6ff' : 'var(--accent)',
+                      background: isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.2)' : 'rgba(212,160,60,0.15)',
+                      color: isLeaderRole(role.suggestedFor) ? '#63b6ff' : 'var(--accent)',
                     }}>
                     {role.suggestedFor}
                   </span>
@@ -479,7 +510,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
 
         {/* Participation Stats Panel */}
         {showStats && (
-          <ParticipationStats transcript={transcript} studentRoles={scenario.studentRoles} />
+          <ParticipationStats transcript={transcript} studentRoles={scenario.roles} />
         )}
 
         {/* Main Content */}
@@ -500,6 +531,11 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
                   stageId={currentStage.id}
                   onCapture={handleCapture}
                   previousSpeakers={previousSpeakers}
+                  cast={cast}
+                  selectedCharacterId={selectedCharacterId}
+                  onCharacterSelect={setSelectedCharacterId}
+                  recentCharacterIds={recentCharacterIds}
+                  onOpenCastPanel={() => setShowCast(true)}
                 />
               </div>
             )}
@@ -530,7 +566,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
             />
           )}
 
-          {currentStage && currentStage.type === 'verdict' && (
+          {currentStage && isVerdictStage(currentStage.type) && (
             <div className="space-y-6">
               <Verdict
                 scenario={scenario}
@@ -571,7 +607,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
               onClick={prevStage}
               disabled={currentStageIndex === 0}
               className="rounded-xl px-5 py-2.5 text-base font-medium transition-all disabled:opacity-20"
-              style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-primary)' }}
+              style={{ background: 'var(--subtle-bg)', color: 'var(--text-primary)' }}
             >
               Previous
             </button>
@@ -592,6 +628,19 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
           </div>
 
           <div className="flex gap-2">
+            {cast.length > 0 && (
+              <button
+                onClick={() => setShowCast((s) => !s)}
+                className="rounded-xl px-4 py-2.5 text-base transition-all"
+                style={{
+                  background: showCast ? 'rgba(212,160,60,0.15)' : 'rgba(255,255,255,0.06)',
+                  color: showCast ? 'var(--accent)' : 'var(--text-secondary)',
+                }}
+                title="Toggle cast panel (c)"
+              >
+                Cast
+              </button>
+            )}
             {currentStage?.events && currentStage.events.length > 0 && (
               <button
                 onClick={() => setShowEventPanel((s) => !s)}
@@ -614,7 +663,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
             >
               Stats
             </button>
-            {scenario.studentRoles.length > 0 && (
+            {scenario.roles.length > 0 && (
               <button
                 onClick={() => setShowRoles((s) => !s)}
                 className="rounded-xl px-4 py-2.5 text-base transition-all"
@@ -630,15 +679,16 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
               onClick={exportTranscript}
               disabled={transcript.length === 0}
               className="rounded-xl px-4 py-2.5 text-base transition-all disabled:opacity-20"
-              style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)' }}
+              style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
               title="Export transcript"
             >
               Export
             </button>
+            <ThemeToggle />
             <button
               onClick={toggleFullscreen}
               className="rounded-xl px-4 py-2.5 text-base transition-all"
-              style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)' }}
+              style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
               title="Toggle fullscreen"
             >
               {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
@@ -646,7 +696,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
             <button
               onClick={() => setShowShortcuts((s) => !s)}
               className="rounded-xl px-3 py-2.5 text-base transition-all"
-              style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)' }}
+              style={{ background: 'var(--subtle-bg)', color: 'var(--text-muted)' }}
               title="Keyboard shortcuts (?)"
             >
               ?
@@ -654,7 +704,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
             <button
               onClick={() => setShowEndConfirm(true)}
               className="rounded-xl px-4 py-2.5 text-base text-red-400/60 transition-all hover:text-red-400"
-              style={{ background: 'rgba(255,255,255,0.04)' }}
+              style={{ background: 'var(--subtle-bg)' }}
             >
               End
             </button>
@@ -662,8 +712,27 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
         </footer>
       </div>
 
+      {/* Cast Panel */}
+      {cast.length > 0 && (
+        <CastPanel
+          cast={cast}
+          transcript={transcript}
+          isOpen={showCast}
+          onClose={() => setShowCast(false)}
+          onSelectCharacter={(id) => {
+            setSelectedCharacterId(id);
+            setShowCast(false);
+          }}
+        />
+      )}
+
       {/* Event Banner */}
       <EventBanner event={activeEvent} onDismiss={dismissEvent} />
+
+      {/* Scenario Intro Modal */}
+      {showIntro && (
+        <ScenarioIntroModal scenario={scenario} onDismiss={() => setShowIntro(false)} />
+      )}
 
       {/* Countdown Overlay */}
       <CountdownOverlay seconds={timerSeconds} running={timerRunning} />
@@ -693,6 +762,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
                 ['r', 'Toggle recording'],
                 ['t', 'Toggle text entry'],
                 ['m', 'Mute/unmute NPC voices'],
+                ['c', 'Toggle cast panel'],
                 ['e', 'Toggle events panel'],
                 ['?', 'Toggle this help'],
                 ['Esc', 'Close overlay'],
@@ -700,7 +770,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
                 <div key={key} className="flex items-center justify-between gap-4">
                   <kbd
                     className="rounded-lg px-2.5 py-1 text-xs font-mono font-semibold"
-                    style={{ background: 'rgba(255,255,255,0.08)', color: 'var(--text-primary)', border: '1px solid rgba(255,255,255,0.1)' }}
+                    style={{ background: 'var(--subtle-border)', color: 'var(--text-primary)', border: '1px solid var(--subtle-hover)' }}
                   >
                     {key}
                   </kbd>
@@ -729,7 +799,7 @@ export default function SessionView({ scenario, onEnd, initialState }: SessionVi
               <button
                 onClick={() => setShowEndConfirm(false)}
                 className="rounded-xl px-6 py-2.5 text-base font-medium transition-all"
-                style={{ background: 'rgba(255,255,255,0.08)', color: 'var(--text-primary)' }}
+                style={{ background: 'var(--subtle-border)', color: 'var(--text-primary)' }}
               >
                 Cancel
               </button>

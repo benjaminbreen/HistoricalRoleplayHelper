@@ -3,11 +3,11 @@ import { NpcCharacter, Scenario, TranscriptEntry } from './types';
 export function buildNpcSystemPrompt(npc: NpcCharacter, scenario: Scenario): string {
   return `You are ${npc.name}, ${npc.title}.
 
-HISTORICAL SETTING: ${scenario.timePeriod} — ${scenario.historicalContext}
+SETTING: ${scenario.setting} — ${scenario.context}
 
 YOUR CHARACTER:
 - Personality: ${npc.personality}
-- Historical Context: ${npc.historicalContext}
+- Background: ${npc.context}
 - Your Stance on "${scenario.centralQuestion}": ${npc.stance}
 
 INSTRUCTIONS:
@@ -100,15 +100,15 @@ export function buildNpcGenerationPrompt(scenario: Scenario): string {
   return `Generate 3 historically accurate NPC characters for a classroom roleplaying activity.
 
 SCENARIO: ${scenario.title}
-TIME PERIOD: ${scenario.timePeriod}
-CONTEXT: ${scenario.historicalContext}
+SETTING: ${scenario.setting}
+CONTEXT: ${scenario.context}
 CENTRAL QUESTION: ${scenario.centralQuestion}
 
 For each character, provide a JSON array with objects containing:
 - name: historical or historically plausible name
 - title: their role/position
 - personality: 2-3 sentence personality description
-- historicalContext: their historical background
+- context: their historical background
 - stance: their position on the central question
 - avatarEmoji: a single emoji representing them
 

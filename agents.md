@@ -102,9 +102,17 @@ Students fill out a physical character sheet template (printed PDF). Teacher pho
 - Student privacy: no data persists beyond the session unless teacher explicitly exports. Critical for institutional adoption and grant compliance.
 - Must handle imperfect photos: slight angles, varied lighting, phone cameras of varying quality.
 
+### Cost Estimates (as of early 2026)
+
+Best option: **Gemini 2.5 Flash-Lite** ($0.10/$0.40 per 1M tokens). Each character sheet photo is ~258 image tokens + ~250 prompt tokens. A batch of 100 sheets costs roughly **$0.03-0.05** — effectively free. A single API call per sheet can handle both structured text extraction (into JSON) and portrait bounding-box detection for cropping.
+
+Alternative: **Mistral OCR** (~1,000 pages per dollar) is purpose-built for document extraction and even cheaper, but optimized for printed/typeset content rather than handwriting. Best kept as a fallback if Gemini's handwriting accuracy disappoints in testing.
+
+Free self-hosted options (EasyOCR, Qwen2.5-VL) exist but are not worth the integration overhead given how cheap the API path is.
+
 ### Open Questions
 
-- Cost per batch at scale (100 sheets via Gemini vision)
-- Whether cheaper alternatives to full LLM vision exist for the text extraction portion
 - Character sheet template design (what fields maximize both pedagogical value and extraction reliability)
 - How extracted personality data should feed into NPC/session behavior (does the LLM reference a student's character background when responding to their arguments?)
+- Whether students should photograph and upload their own sheets (faster, distributed) vs. teacher batching them (more controlled, better review flow)
+- Portrait format guidance: head shot vs. full body vs. freeform — affects both the drawing experience and the avatar display in the app

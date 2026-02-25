@@ -4,7 +4,18 @@ export type StageType =
   | 'speech'
   | 'npc_response'
   | 'vote'
-  | 'verdict';
+  | 'verdict'
+  | 'debrief';
+
+/** Returns true for stage types that use verdict/debrief mechanics. */
+export function isVerdictStage(type: StageType): boolean {
+  return type === 'verdict' || type === 'debrief';
+}
+
+/** Returns true for leadership/guidance roles (TA, facilitator). */
+export function isLeaderRole(suggestedFor: string): boolean {
+  return suggestedFor === 'ta' || suggestedFor === 'facilitator';
+}
 
 export interface StageEvent {
   id: string;
@@ -31,7 +42,7 @@ export interface NpcCharacter {
   name: string;
   title: string;
   personality: string;
-  historicalContext: string;
+  context: string;
   stance: string;
   avatarEmoji: string;
   avatarImage?: string;
@@ -43,7 +54,7 @@ export interface StudentRole {
   name: string;
   title: string;
   description: string;
-  suggestedFor: 'student' | 'ta';
+  suggestedFor: 'student' | 'ta' | 'facilitator' | 'participant' | 'observer';
   assignedTo: string;
 }
 
@@ -56,6 +67,22 @@ export interface NpcResponse {
 
 export type ArgumentStance = 'for' | 'against' | 'mixed';
 export type RhetoricMode = 'evidence' | 'values' | 'consequences' | 'authority';
+
+export interface CharacterSheet {
+  id: string;
+  studentRealName: string;
+  classroomId?: string;
+  characterName: string;
+  profession?: string;
+  age?: string;
+  gender?: string;
+  family?: string;
+  socialClass?: string;
+  personality?: string;
+  customFields?: Record<string, string>;
+  portraitDataUrl: string;       // base64 cropped portrait (~15KB each)
+  needsReview: boolean;
+}
 
 export interface TranscriptEntry {
   id: string;
@@ -70,6 +97,7 @@ export interface TranscriptEntry {
   stance?: ArgumentStance;
   rhetoric?: RhetoricMode;
   isSystemEvent?: boolean;
+  characterId?: string;  // links to CharacterSheet.id
 }
 
 export interface VotingOption {
@@ -81,15 +109,21 @@ export interface VotingOption {
 export interface Scenario {
   title: string;
   description: string;
-  historicalContext: string;
-  timePeriod: string;
+  context: string;
+  setting: string;
   centralQuestion: string;
   votingOptions: VotingOption[];
   stages: Stage[];
   npcs: NpcCharacter[];
-  studentRoles: StudentRole[];
-  historicalOutcome: string;
+  roles: StudentRole[];
+  introNarrative?: string;
+  introBannerImage?: string;
+  outcome?: string;
   backgroundImage?: string;
+  mode?: 'education' | 'civic';
+  category?: string;
+  difficulty?: 'introductory' | 'intermediate' | 'advanced';
+  participantRange?: { min: number; max: number };
 }
 
 export interface SessionState {
@@ -111,4 +145,5 @@ export interface SavedSession {
   votingOptions: VotingOption[];
   savedAt: string;
   triggeredEventIds?: string[];
+  cast?: CharacterSheet[];
 }

@@ -241,7 +241,7 @@ export default function RejoinView({ sessionData, onBack }: RejoinViewProps) {
             className="mb-2 text-sm font-medium uppercase tracking-widest"
             style={{ color: 'var(--text-muted)' }}
           >
-            Async Session Rejoin &middot; {scenario.timePeriod}
+            Async Session Rejoin &middot; {scenario.setting}
           </p>
           <h1
             className="heading-display mb-3 text-4xl font-bold"
@@ -740,51 +740,55 @@ export default function RejoinView({ sessionData, onBack }: RejoinViewProps) {
           )}
         </section>
 
-        {/* ─── SECTION 5: HISTORICAL OUTCOME ─── */}
+        {/* ─── SECTION 5: OUTCOME ─── */}
         <section className="space-y-4">
-          <div className="text-center">
-            <button
-              onClick={() => setShowHistorical(!showHistorical)}
-              className="heading-display rounded-2xl px-10 py-5 text-2xl font-bold transition-all hover:scale-[1.02]"
-              style={{
-                background: showHistorical
-                  ? 'rgba(255,255,255,0.06)'
-                  : 'linear-gradient(135deg, rgba(212,160,60,0.3), rgba(180,120,40,0.2))',
-                color: 'var(--accent)',
-                border: '1px solid rgba(212,160,60,0.25)',
-                boxShadow: showHistorical
-                  ? 'none'
-                  : '0 0 40px rgba(212,160,60,0.1)',
-              }}
-            >
-              {showHistorical
-                ? 'Hide Historical Outcome'
-                : 'Reveal: What Actually Happened'}
-            </button>
-          </div>
+          {scenario.outcome && (
+            <>
+              <div className="text-center">
+                <button
+                  onClick={() => setShowHistorical(!showHistorical)}
+                  className="heading-display rounded-2xl px-10 py-5 text-2xl font-bold transition-all hover:scale-[1.02]"
+                  style={{
+                    background: showHistorical
+                      ? 'rgba(255,255,255,0.06)'
+                      : 'linear-gradient(135deg, rgba(212,160,60,0.3), rgba(180,120,40,0.2))',
+                    color: 'var(--accent)',
+                    border: '1px solid rgba(212,160,60,0.25)',
+                    boxShadow: showHistorical
+                      ? 'none'
+                      : '0 0 40px rgba(212,160,60,0.1)',
+                  }}
+                >
+                  {showHistorical
+                    ? 'Hide Outcome'
+                    : 'Reveal: What Actually Happened'}
+                </button>
+              </div>
 
-          {showHistorical && (
-            <div
-              className="animate-in-scale rounded-2xl p-8"
-              style={{
-                background:
-                  'linear-gradient(135deg, rgba(212,160,60,0.08), rgba(15,17,23,0.9))',
-                border: '2px solid rgba(212,160,60,0.2)',
-              }}
-            >
-              <h3
-                className="heading-display mb-4 text-center text-2xl font-bold"
-                style={{ color: 'var(--accent)' }}
-              >
-                The Historical Outcome
-              </h3>
-              <p
-                className="text-lg leading-relaxed"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                {scenario.historicalOutcome}
-              </p>
-            </div>
+              {showHistorical && (
+                <div
+                  className="animate-in-scale rounded-2xl p-8"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, rgba(212,160,60,0.08), rgba(15,17,23,0.9))',
+                    border: '2px solid rgba(212,160,60,0.2)',
+                  }}
+                >
+                  <h3
+                    className="heading-display mb-4 text-center text-2xl font-bold"
+                    style={{ color: 'var(--accent)' }}
+                  >
+                    The Outcome
+                  </h3>
+                  <p
+                    className="text-lg leading-relaxed"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {scenario.outcome}
+                  </p>
+                </div>
+              )}
+            </>
           )}
 
           {/* Save updated session */}
