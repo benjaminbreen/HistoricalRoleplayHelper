@@ -97,7 +97,7 @@ export default function Timer({
         <button
           onClick={() => onReset(defaultDuration)}
           className="rounded-lg px-3 py-2 text-lg transition-all hover:scale-105"
-          style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)' }}
+          style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
           title="Reset timer"
         >
           ↺
@@ -105,7 +105,7 @@ export default function Timer({
         <button
           onClick={() => onTick(seconds + 60)}
           className="rounded-lg px-3 py-2 text-sm transition-all hover:scale-105"
-          style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)' }}
+          style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
           title="Add 1 minute"
         >
           +1m

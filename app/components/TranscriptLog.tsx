@@ -78,7 +78,7 @@ export default function TranscriptLog({ entries, stages, onRemove, onVote, onTag
                   <button
                     onClick={() => onVote(entry.id, 1)}
                     className="flex h-6 w-6 items-center justify-center rounded-md text-xs transition-all hover:scale-110"
-                    style={{ background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)' }}
+                    style={{ background: 'var(--subtle-bg)', color: 'var(--text-muted)' }}
                     title="Upvote"
                   >
                     ▲
@@ -98,7 +98,7 @@ export default function TranscriptLog({ entries, stages, onRemove, onVote, onTag
                   <button
                     onClick={() => onVote(entry.id, -1)}
                     className="flex h-6 w-6 items-center justify-center rounded-md text-xs transition-all hover:scale-110"
-                    style={{ background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)' }}
+                    style={{ background: 'var(--subtle-bg)', color: 'var(--text-muted)' }}
                     title="Downvote"
                   >
                     ▼
@@ -192,7 +192,7 @@ export default function TranscriptLog({ entries, stages, onRemove, onVote, onTag
                         onClick={() => onTag(entry.id, t.value, undefined)}
                         className="rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase transition-all hover:scale-105"
                         style={{
-                          background: entry.stance === t.value ? t.bg : 'rgba(255,255,255,0.04)',
+                          background: entry.stance === t.value ? t.bg : 'var(--subtle-bg)',
                           color: entry.stance === t.value ? t.color : 'var(--text-muted)',
                           border: `1px solid ${entry.stance === t.value ? t.color + '40' : 'transparent'}`,
                         }}
@@ -207,7 +207,7 @@ export default function TranscriptLog({ entries, stages, onRemove, onVote, onTag
                         onClick={() => onTag(entry.id, undefined, t.value)}
                         className="rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase transition-all hover:scale-105"
                         style={{
-                          background: entry.rhetoric === t.value ? t.bg : 'rgba(255,255,255,0.04)',
+                          background: entry.rhetoric === t.value ? t.bg : 'var(--subtle-bg)',
                           color: entry.rhetoric === t.value ? t.color : 'var(--text-muted)',
                           border: `1px solid ${entry.rhetoric === t.value ? t.color + '40' : 'transparent'}`,
                         }}

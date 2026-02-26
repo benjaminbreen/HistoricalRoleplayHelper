@@ -108,7 +108,7 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
               placeholder={`Record what ${role.name} is saying...`}
               className="w-full rounded-xl px-4 py-3 text-sm placeholder-white/20 focus:outline-none"
               style={{
-                background: 'rgba(255,255,255,0.06)',
+                background: 'var(--subtle-bg)',
                 border: '1px solid rgba(99,182,255,0.2)',
                 color: 'var(--text-primary)',
                 minHeight: '80px',
@@ -123,7 +123,7 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
                 <button
                   onClick={() => { setShowInput(false); setText(''); }}
                   className="rounded-lg px-3 py-1.5 text-sm transition-all"
-                  style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)' }}
+                  style={{ background: 'var(--subtle-bg)', color: 'var(--text-muted)' }}
                 >
                   Cancel
                 </button>
@@ -161,7 +161,7 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
               onClick={() => setShowModal(true)}
               className="rounded-xl px-3 py-2.5 text-sm transition-all hover:scale-[1.02]"
               style={{
-                background: 'rgba(255,255,255,0.06)',
+                background: 'var(--subtle-bg)',
                 color: 'var(--text-secondary)',
               }}
               title="View response"
@@ -215,7 +215,7 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3">
-                  <h2 className="heading-display text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                  <h2 className="heading-display text-3xl font-bold" style={{ color: '#f0e6d3' }}>
                     {role.name}
                   </h2>
                   <span
@@ -225,7 +225,7 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
                     TA
                   </span>
                 </div>
-                <p className="mt-1 text-base" style={{ color: 'var(--text-muted)' }}>
+                <p className="mt-1 text-base" style={{ color: 'rgba(240, 230, 211, 0.3)' }}>
                   {role.title}
                   {role.assignedTo && ` — played by ${role.assignedTo}`}
                 </p>
@@ -234,7 +234,7 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
                 onClick={() => setShowModal(false)}
                 aria-label="Close dialog"
                 className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full text-lg transition-all hover:scale-110"
-                style={{ background: 'rgba(255,255,255,0.08)', color: 'var(--text-muted)' }}
+                style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(240, 230, 211, 0.3)' }}
               >
                 ×
               </button>
@@ -244,7 +244,7 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
             <div className="overflow-y-auto px-8 py-6" style={{ maxHeight: 'calc(85vh - 200px)' }}>
               <p
                 className="heading-display text-xl leading-relaxed"
-                style={{ color: 'var(--text-primary)', lineHeight: '1.7' }}
+                style={{ color: '#f0e6d3', lineHeight: '1.7' }}
               >
                 {latestResponse.text}
               </p>
@@ -256,7 +256,7 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
               style={{ borderTop: '1px solid rgba(99,182,255,0.08)' }}
             >
               {responses.length > 1 && (
-                <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                <span className="text-sm" style={{ color: 'rgba(240, 230, 211, 0.3)' }}>
                   Showing latest of {responses.length} responses
                 </span>
               )}

@@ -158,7 +158,7 @@ export default function NpcCard({ npc, responses, onTrigger, isLoading, muted }:
             disabled={isLoading}
             className="flex-1 rounded-xl px-4 py-2.5 text-base font-semibold transition-all hover:scale-[1.02] disabled:opacity-40 disabled:hover:scale-100"
             style={{
-              background: isLoading ? 'rgba(255,255,255,0.04)' : 'rgba(212,160,60,0.18)',
+              background: isLoading ? 'var(--subtle-bg)' : 'rgba(212,160,60,0.18)',
               color: isLoading ? 'var(--text-muted)' : 'var(--accent)',
               border: '1px solid ' + (isLoading ? 'transparent' : 'rgba(212,160,60,0.2)'),
             }}
@@ -170,7 +170,7 @@ export default function NpcCard({ npc, responses, onTrigger, isLoading, muted }:
               onClick={() => setShowModal(true)}
               className="rounded-xl px-3 py-2.5 text-sm transition-all hover:scale-[1.02]"
               style={{
-                background: 'rgba(255,255,255,0.06)',
+                background: 'var(--subtle-bg)',
                 color: 'var(--text-secondary)',
               }}
               title="View response"
@@ -235,10 +235,10 @@ export default function NpcCard({ npc, responses, onTrigger, isLoading, muted }:
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <h2 className="heading-display text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                <h2 className="heading-display text-3xl font-bold" style={{ color: '#f0e6d3' }}>
                   {npc.name}
                 </h2>
-                <p className="mt-1 text-base" style={{ color: 'var(--accent-dim)' }}>
+                <p className="mt-1 text-base" style={{ color: 'rgba(212, 160, 60, 0.6)' }}>
                   {npc.title}
                 </p>
               </div>
@@ -246,7 +246,7 @@ export default function NpcCard({ npc, responses, onTrigger, isLoading, muted }:
                 onClick={() => setShowModal(false)}
                 aria-label="Close dialog"
                 className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full text-lg transition-all hover:scale-110"
-                style={{ background: 'rgba(255,255,255,0.08)', color: 'var(--text-muted)' }}
+                style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(240, 230, 211, 0.3)' }}
               >
                 ×
               </button>
@@ -256,7 +256,7 @@ export default function NpcCard({ npc, responses, onTrigger, isLoading, muted }:
             <div className="overflow-y-auto px-8 py-6" style={{ maxHeight: 'calc(85vh - 200px)' }}>
               <p
                 className="heading-display text-xl leading-relaxed"
-                style={{ color: 'var(--text-primary)', lineHeight: '1.7' }}
+                style={{ color: '#f0e6d3', lineHeight: '1.7' }}
               >
                 {latestResponse.text}
               </p>
@@ -275,7 +275,7 @@ export default function NpcCard({ npc, responses, onTrigger, isLoading, muted }:
                   }`}
                   style={{
                     background: isSpeaking ? 'rgba(239,68,68,0.2)' : 'rgba(212,160,60,0.18)',
-                    color: isSpeaking ? '#f87171' : 'var(--accent)',
+                    color: isSpeaking ? '#f87171' : '#d4a03c',
                     border: `1px solid ${isSpeaking ? 'rgba(239,68,68,0.3)' : 'rgba(212,160,60,0.2)'}`,
                   }}
                 >
@@ -283,7 +283,7 @@ export default function NpcCard({ npc, responses, onTrigger, isLoading, muted }:
                 </button>
               </div>
               {responses.length > 1 && (
-                <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                <span className="text-sm" style={{ color: 'rgba(240, 230, 211, 0.3)' }}>
                   Showing latest of {responses.length} responses
                 </span>
               )}

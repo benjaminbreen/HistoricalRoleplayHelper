@@ -253,7 +253,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
   }, [manualText, speakerName, profession, age, gender, stageId, onCapture, selectedCharacterId]);
 
   const inputStyle = {
-    background: 'rgba(255,255,255,0.06)',
+    background: 'var(--subtle-bg)',
     border: '1px solid var(--panel-border)',
     color: 'var(--text-primary)',
   };
@@ -303,7 +303,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
           {showAutocomplete && autocompleteSuggestions.length > 0 && (
             <div
               className="absolute left-0 right-0 top-full z-30 mt-1 rounded-xl overflow-hidden"
-              style={{ background: 'rgba(30,30,40,0.95)', border: '1px solid var(--panel-border)', boxShadow: '0 4px 16px rgba(0,0,0,0.4)' }}
+              style={{ background: 'var(--background)', border: '1px solid var(--panel-border)', boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}
             >
               {autocompleteSuggestions.map((s) => (
                 <button
@@ -388,7 +388,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
         <button
           onClick={() => setShowManual(!showManual)}
           className="rounded-xl px-4 py-2.5 text-base transition-all"
-          style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)' }}
+          style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
           title="Manual text entry"
         >
           ⌨️ Type

@@ -102,6 +102,16 @@ export default function SetupForm({ onStart, onRejoin }: SetupFormProps) {
           setUploadError('Session file is missing full scenario data. Re-export using the latest version.');
           return;
         }
+
+        // Normalize legacy field names from older exports
+        const s = data.scenario;
+        if (!s.setting && s.timePeriod) s.setting = s.timePeriod;
+        if (!s.context && s.historicalContext) s.context = s.historicalContext;
+        if (!s.roles && s.studentRoles) s.roles = s.studentRoles;
+        if (!s.outcome && s.historicalOutcome) s.outcome = s.historicalOutcome;
+        // Ensure roles is always an array
+        if (!s.roles) s.roles = [];
+
         onRejoin?.(data);
       } catch {
         setUploadError('Could not parse JSON file. Make sure it is a valid session export.');

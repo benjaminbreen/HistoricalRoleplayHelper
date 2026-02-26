@@ -51,8 +51,8 @@ export default function StageManager({
                 background: isCurrent
                   ? 'rgba(212, 160, 60, 0.2)'
                   : isPast
-                    ? 'rgba(255,255,255,0.06)'
-                    : 'rgba(255,255,255,0.03)',
+                    ? 'var(--subtle-bg)'
+                    : 'var(--subtle-bg)',
                 color: isCurrent
                   ? 'var(--accent)'
                   : isPast
@@ -71,7 +71,7 @@ export default function StageManager({
                 style={{
                   background: i < currentIndex
                     ? 'rgba(212,160,60,0.3)'
-                    : 'rgba(255,255,255,0.08)',
+                    : 'var(--subtle-border)',
                 }}
               />
             )}

@@ -59,7 +59,7 @@ export default function CastPanel({ cast, transcript, isOpen, onClose, onSelectC
           placeholder="Search characters..."
           className="w-full rounded-lg px-3 py-2 text-sm placeholder-white/20 focus:outline-none"
           style={{
-            background: 'rgba(255,255,255,0.05)',
+            background: 'var(--subtle-bg)',
             border: '1px solid var(--panel-border)',
             color: 'var(--text-primary)',
           }}

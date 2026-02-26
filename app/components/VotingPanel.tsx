@@ -45,7 +45,7 @@ export default function VotingPanel({
                   <button
                     onClick={() => onUpdateVotes(option.id, Math.max(0, option.votes - 1))}
                     className="flex h-10 w-10 items-center justify-center rounded-lg text-lg font-bold transition-all hover:scale-105"
-                    style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)' }}
+                    style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
                   >
                     −
                   </button>
@@ -58,7 +58,7 @@ export default function VotingPanel({
                   <button
                     onClick={() => onUpdateVotes(option.id, option.votes + 1)}
                     className="flex h-10 w-10 items-center justify-center rounded-lg text-lg font-bold transition-all hover:scale-105"
-                    style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)' }}
+                    style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
                   >
                     +
                   </button>
@@ -66,7 +66,7 @@ export default function VotingPanel({
               </div>
               <div
                 className="h-8 w-full overflow-hidden rounded-full"
-                style={{ background: 'rgba(255,255,255,0.04)' }}
+                style={{ background: 'var(--subtle-bg)' }}
               >
                 <div
                   className="flex h-full items-center rounded-full px-3 transition-all duration-700 ease-out"
