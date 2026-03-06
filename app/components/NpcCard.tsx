@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { NpcCharacter, NpcResponse } from '../lib/types';
+import { Volume2, Square, X } from 'lucide-react';
 
 interface NpcCardProps {
   npc: NpcCharacter;
@@ -245,10 +246,10 @@ export default function NpcCard({ npc, responses, onTrigger, isLoading, muted }:
               <button
                 onClick={() => setShowModal(false)}
                 aria-label="Close dialog"
-                className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full text-lg transition-all hover:scale-110"
+                className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-110"
                 style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(240, 230, 211, 0.3)' }}
               >
-                ×
+                <X size={16} />
               </button>
             </div>
 
@@ -279,7 +280,7 @@ export default function NpcCard({ npc, responses, onTrigger, isLoading, muted }:
                     border: `1px solid ${isSpeaking ? 'rgba(239,68,68,0.3)' : 'rgba(212,160,60,0.2)'}`,
                   }}
                 >
-                  {isSpeaking ? '⏹ Stop' : '🔊 Listen'}
+                  {isSpeaking ? <><Square size={14} className="shrink-0" /> Stop</> : <><Volume2 size={14} className="shrink-0" /> Listen</>}
                 </button>
               </div>
               {responses.length > 1 && (

@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { CharacterSheet, TranscriptEntry } from '../lib/types';
 import CharacterReviewGrid from './CharacterReviewGrid';
+import { X } from 'lucide-react';
 
 interface CastPanelProps {
   cast: CharacterSheet[];
@@ -43,10 +44,10 @@ export default function CastPanel({ cast, transcript, isOpen, onClose, onSelectC
         </h3>
         <button
           onClick={onClose}
-          className="rounded-lg px-2 py-1 text-sm transition-all"
+          className="rounded-lg px-2 py-1 transition-all hover:scale-110"
           style={{ color: 'var(--text-muted)' }}
         >
-          ✕
+          <X size={14} />
         </button>
       </div>
 

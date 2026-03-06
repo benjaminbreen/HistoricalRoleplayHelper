@@ -33,6 +33,7 @@ export default function NpcPanel({
 }: NpcPanelProps) {
   const [loadingNpcs, setLoadingNpcs] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
+  const [failedNpcId, setFailedNpcId] = useState<string | null>(null);
 
   const triggerNpc = useCallback(
     async (npcId: string) => {
@@ -41,6 +42,7 @@ export default function NpcPanel({
 
       setLoadingNpcs((prev) => new Set(prev).add(npcId));
       setError(null);
+      setFailedNpcId(null);
       try {
         const systemPrompt = buildNpcSystemPrompt(npc, scenario);
         const userPrompt = isVerdictStage
@@ -67,7 +69,8 @@ export default function NpcPanel({
         }
       } catch (err) {
         console.error('Failed to get NPC response:', err);
-        setError(`Failed to generate response for ${npc.name}. Check your API key and try again.`);
+        setError(`Failed to generate response for ${npc.name}.`);
+        setFailedNpcId(npcId);
       } finally {
         setLoadingNpcs((prev) => {
           const next = new Set(prev);
@@ -89,14 +92,31 @@ export default function NpcPanel({
     <div className="space-y-4">
       {error && (
         <div
-          className="animate-in rounded-xl px-5 py-3 text-base"
+          className="animate-in flex items-center justify-between rounded-xl px-5 py-3 text-base"
           style={{
             background: 'rgba(239,68,68,0.1)',
             border: '1px solid rgba(239,68,68,0.2)',
             color: '#f87171',
           }}
         >
-          {error}
+          <span>{error}</span>
+          <div className="flex items-center gap-2 ml-4">
+            {failedNpcId && (
+              <button
+                onClick={() => triggerNpc(failedNpcId)}
+                className="rounded-lg px-3 py-1 text-sm font-semibold transition-all hover:scale-105"
+                style={{ background: 'rgba(239,68,68,0.15)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)' }}
+              >
+                Retry
+              </button>
+            )}
+            <button
+              onClick={() => { setError(null); setFailedNpcId(null); }}
+              className="text-sm opacity-60 hover:opacity-100 transition-opacity"
+            >
+              Dismiss
+            </button>
+          </div>
         </div>
       )}
       <div className="flex items-center justify-between">

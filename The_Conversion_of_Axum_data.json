@@ -1,0 +1,582 @@
+{
+  "scenario": {
+    "backgroundImage": "/images/axum.png",
+    "title": "The Conversion of Axum",
+    "description": "It is 340 CE in the Kingdom of Axum, one of the great powers of the ancient world. King Ezana must decide whether to adopt Christianity as the state religion — a decision that will reshape the Horn of Africa for millennia.",
+    "historicalContext": "The Kingdom of Axum (modern Ethiopia/Eritrea) controls vital Red Sea trade routes connecting Rome, India, and Arabia. Christianity has been spreading through merchant networks. The Roman Empire under Constantine recently embraced it, and his successor Constantius II is now pressuring neighboring kingdoms to follow suit — though Constantius favors the Arian interpretation of Christianity, which conflicts with the Nicene Christianity taught by Frumentius. Axum's traditional religion centers on a pantheon including Mahrem (god of war and the royal dynasty), Beher (god of the sea), Meder (god of the earth), and Astar (a deity akin to Venus). The king claims divine descent from Mahrem, and a powerful priestly class maintains temples and rituals. Jewish communities are also present in the region, adding another dimension to the religious landscape.",
+    "timePeriod": "340 CE, Kingdom of Axum",
+    "centralQuestion": "Should King Ezana convert the Kingdom of Axum to Christianity?",
+    "votingOptions": [
+      {
+        "id": "convert",
+        "label": "Convert to Christianity",
+        "votes": 0
+      },
+      {
+        "id": "traditional",
+        "label": "Maintain traditional religion",
+        "votes": 0
+      },
+      {
+        "id": "pluralism",
+        "label": "Adopt religious pluralism",
+        "votes": 0
+      }
+    ],
+    "stages": [
+      {
+        "id": "opening",
+        "type": "freeform",
+        "title": "Opening Discussion",
+        "description": "Students introduce their characters and share initial positions on the question of conversion.",
+        "durationSeconds": 300
+      },
+      {
+        "id": "debate",
+        "type": "debate",
+        "title": "The Great Debate",
+        "description": "Structured arguments for and against conversion. Each side presents their strongest case.",
+        "durationSeconds": 600
+      },
+      {
+        "id": "npc-react",
+        "type": "npc_response",
+        "title": "The Court Responds",
+        "description": "The Roman envoy and the Queen Mother react to the arguments they have heard.",
+        "durationSeconds": 180
+      },
+      {
+        "id": "final-speeches",
+        "type": "speech",
+        "title": "Final Appeals",
+        "description": "Last chance for students to make their case before the vote.",
+        "durationSeconds": 300
+      },
+      {
+        "id": "vote",
+        "type": "vote",
+        "title": "The King Decides",
+        "description": "The class votes on what King Ezana should do.",
+        "durationSeconds": 120
+      },
+      {
+        "id": "verdict",
+        "type": "verdict",
+        "title": "The Verdict",
+        "description": "NPCs react to the decision, and the historical outcome is revealed.",
+        "durationSeconds": 300
+      }
+    ],
+    "studentRoles": [
+      {
+        "id": "ezana",
+        "name": "King Ezana",
+        "title": "Negus of Axum, King of Kings",
+        "description": "The decision-maker. Moderates the debate, asks probing questions of both sides, and ultimately casts the deciding voice. Ezana is a young, shrewd ruler who inherited the throne as a child. He was tutored by the Christian Frumentius but also raised in the traditional religion. He must weigh spiritual conviction against political pragmatism — conversion could strengthen ties with Rome, but alienate the powerful traditionalist nobility.",
+        "suggestedFor": "ta",
+        "assignedTo": ""
+      },
+      {
+        "id": "frumentius",
+        "name": "Frumentius",
+        "title": "Bishop of Axum, Apostle of Ethiopia",
+        "description": "The chief advocate for conversion. Originally from Tyre (modern Lebanon), Frumentius was shipwrecked on the Axumite coast as a young man and rose to become tutor to the royal children. He traveled to Alexandria, where Patriarch Athanasius consecrated him as Bishop of Axum. He has spent decades building a Christian community. He argues that Christianity is the true faith, will bring moral clarity, and will strengthen Axum's alliance with Rome and Egypt.",
+        "suggestedFor": "student",
+        "assignedTo": "Charlotte"
+      },
+      {
+        "id": "highpriest",
+        "name": "High Priest of Mahrem",
+        "title": "Chief Priest of the Royal War God",
+        "description": "The chief advocate against conversion. Represents the traditional Axumite priesthood and the cult of Mahrem, god of war, from whom the royal dynasty claims descent. Argues that abandoning the traditional gods — Mahrem, Beher, Meder, Astar — means abandoning Axumite identity, severing the king's divine legitimacy, and destroying the temples and rituals that have sustained the kingdom for centuries. Fears that conversion means submitting to foreign religious authority from Alexandria.",
+        "suggestedFor": "student",
+        "assignedTo": "Noah"
+      },
+      {
+        "id": "62eb509a-981b-40df-8eb8-ddb573a36fd4",
+        "name": "Saizana",
+        "title": "Brother of the King ",
+        "description": "Converted to Christianity by Frumentius, just like his brother. ",
+        "suggestedFor": "student",
+        "assignedTo": ""
+      }
+    ],
+    "npcs": [
+      {
+        "id": "roman-envoy",
+        "name": "Flavius Theophilus",
+        "title": "Envoy of Emperor Constantius II",
+        "personality": "Smooth, diplomatic, and calculating. Theophilus presents himself as a friend of Axum but always advances Roman imperial interests. He is an Arian Christian — he believes the Son is subordinate to the Father, putting him at odds with the Nicene Christianity of Frumentius and Athanasius. He subtly undermines Frumentius while still pushing for Christian conversion, revealing that even among Christians there is deep disagreement.",
+        "historicalContext": "Emperor Constantius II, Constantine's son and an Arian Christian, historically wrote a letter to Ezana demanding that Frumentius be sent to Alexandria to be \"re-examined\" by the Arian bishop George of Cappadocia. Ezana refused. This envoy represents that real diplomatic pressure — Rome wants Axum to convert, but on Rome's theological terms, not Alexandria's.",
+        "stance": "Favors conversion, but wants Axum to adopt Arian Christianity aligned with the Emperor, not the Nicene Christianity of Frumentius and Athanasius. Applies political pressure: alliance with Rome brings trade and military benefits, but Rome expects theological compliance.",
+        "avatarEmoji": "🦅",
+        "avatarImage": "/images/flavius.png",
+        "voice": "onyx"
+      },
+      {
+        "id": "queen-mother",
+        "name": "Queen Mother Sofya",
+        "title": "Queen Mother and Royal Advisor",
+        "personality": "Shrewd, protective, and deeply concerned with the stability of the kingdom. Sofya has navigated court politics for decades and survived the regency period after her husband's death. Pragmatic and politically astute, she speaks with the authority of someone who has held real power. Not easily swayed by theological arguments — she wants to know the practical consequences. Protective of Ezana but willing to challenge him.",
+        "historicalContext": "While the specific identity of Ezana's mother is not well documented, queen mothers held significant political influence in Axumite court politics, particularly during regencies. The role represents the domestic political dimension of the conversion decision — the internal power dynamics that a foreign religion would disrupt.",
+        "stance": "Cautious and pragmatic. Not opposed to Christianity in principle, but deeply worried about the pace and consequences of conversion. What happens to the noble families tied to the old temples? Will the common people accept this? Could a compromise — tolerating Christianity without making it official — preserve stability?",
+        "avatarEmoji": "👸",
+        "avatarImage": "/images/queenmother.png",
+        "voice": "nova"
+      }
+    ],
+    "historicalOutcome": "King Ezana did convert to Christianity around 330-340 CE, making Axum one of the first states in the world to adopt Christianity as its official religion. His coins changed from displaying the disc and crescent of the traditional gods to the cross. When Emperor Constantius II sent a letter demanding that Frumentius be sent to Alexandria for \"re-examination\" by an Arian bishop, Ezana refused — asserting Axum's religious independence from Rome. The Ethiopian Orthodox Church, tied to the Alexandrian (Coptic) tradition, became one of the oldest Christian institutions in the world, profoundly shaping Ethiopian culture, art, and politics for over 1,600 years. However, traditional practices were not immediately eliminated — they blended with Christianity in complex ways that scholars still study today. The old gods faded slowly, and elements of pre-Christian belief persisted in folk practice for centuries."
+  },
+  "transcript": [
+    {
+      "id": "2298d456-1557-424d-a8a2-00b760449145",
+      "speaker": "Frumentius",
+      "text": "My survival is a sign from God, it was god's will that brought me here.",
+      "timestamp": 1771965344833,
+      "stageId": "opening"
+    },
+    {
+      "id": "5226f850-9299-4a86-b724-b2fc8f20a84d",
+      "speaker": "High Priest",
+      "text": "If that was God's will then the king is god, and the king believes in Mahrem.",
+      "timestamp": 1771965367972,
+      "stageId": "opening"
+    },
+    {
+      "id": "c0a6f68e-a9ff-4a93-8d54-36e24fe34955",
+      "speaker": "King Ezana",
+      "text": "I am the King of Kings, Son of the Unconquered God Ares. I have summoned you here today to discuss the matter of Christianity. From the time of my fathers, we have honored the",
+      "timestamp": 1771965407637,
+      "stageId": "opening"
+    },
+    {
+      "id": "2e5d89ed-5cb0-4612-a8e0-49df8a08eda3",
+      "speaker": "King Ezana",
+      "text": "the gods who raised his kingdom high. By their blessing, we have conquered our enemies. By their will, our ships cross the sea. And by their blessing, we have successful harvests. However, a king does not rule by his fear alone.",
+      "timestamp": 1771965421250,
+      "stageId": "opening"
+    },
+    {
+      "id": "246abc95-da9b-4b44-895e-9c5a5789da8a",
+      "speaker": "King Ezana",
+      "text": "He rules by the favor of other, greater powers. Now, there are ones among us who speak of another god, one who is not many, but is one. A god is not bound to a river or a mountain. A god who claims dominion is not a god.",
+      "timestamp": 1771965437464,
+      "stageId": "opening"
+    },
+    {
+      "id": "e1a91447-1a0d-4749-834f-e6f07f2fc0c8",
+      "speaker": "King Ezana",
+      "text": "over all nations. They say this God rules heaven and earth alike, and they say that this God favors justice and truth. I ask you, if there is indeed one supreme God,",
+      "timestamp": 1771965450889,
+      "stageId": "opening"
+    },
+    {
+      "id": "3fe369da-7ee2-4241-b476-d13f87b2c050",
+      "speaker": "King Ezana",
+      "text": "above all. Should the king of Aksum not know him? We are not a small tribe hidden in the hills. We are Aksum, the master of trade between the Nile and the sea, the friend and rival of the great powers across the waters. Yet, the Romans favor it with the sea.",
+      "timestamp": 1771965466762,
+      "stageId": "opening"
+    },
+    {
+      "id": "73ef3535-bc07-4b22-85e4-f44974f6c070",
+      "speaker": "King Ezana",
+      "text": "faith of Christianity. Their emperors even vowed to this God. If their strength flows from him, shall we ignore it? I will not cast away our father's ancestry lightly though.",
+      "timestamp": 1771965481243,
+      "stageId": "opening"
+    },
+    {
+      "id": "043e8ce9-185b-41b2-8640-15176f7c3287",
+      "speaker": "King Ezana",
+      "text": "So what would we do? So I want to ask first, can our languages and customs endure under this faith? What happens if we pass away these old gods in favor of the new?",
+      "timestamp": 1771965495925,
+      "stageId": "opening"
+    },
+    {
+      "id": "8d671165-f5c9-4fcf-a94c-1666a8ba2024",
+      "speaker": "Abay",
+      "text": "On the topic of languages, the mighty king qustioned whether our language would survive. I wanted to bring up the fact that as Axum we already have Greek as our official language, so there would necessarily be a clash in that regard. I am not a Christian but being a peasant I am somewhat open to it.",
+      "timestamp": 1771965615757,
+      "stageId": "debate",
+      "votes": 0
+    },
+    {
+      "id": "9c4a4539-b12c-4d0f-9cf8-7725f16c3c98",
+      "speaker": "Frumentius's Assistant",
+      "text": "Under the eye's of god we are all brothers and sisters. If something were to happen to you or your loved ones your neighbors would take your place and carry your family with them. With so much of conseuqnece happening in the fields and the workshops  it is worth keeping that in mind",
+      "timestamp": 1771965735936,
+      "stageId": "debate"
+    },
+    {
+      "id": "3bff9109-d6ff-4c16-8a9a-67f2e31de3ad",
+      "speaker": "Amida",
+      "text": "Thank you, Kinker, for listening to me. Or, thank you, the chamber, for listening to me. Um, I'm Amita, I'm 29, and I am a former thief. And so, me personally...",
+      "timestamp": 1771966159986,
+      "stageId": "debate"
+    },
+    {
+      "id": "31a16dbd-8908-4119-9f6e-54c1889aa9ec",
+      "speaker": "Amida",
+      "text": "Personally, I feel kind of untethered. I don't feel which way or the other, and I feel like I need to be convinced, because I'm more interested in the tangible, and like, how does this affect my bottom line?",
+      "timestamp": 1771966173191,
+      "stageId": "debate"
+    },
+    {
+      "id": "91f975c5-c6c0-43d0-87a4-0776cb66e4e8",
+      "speaker": "Amida",
+      "text": "If we convert, what if we anger the old gods and make my life worse, you know? I'm interested in a better life, but I have not been convinced. Thank you.",
+      "timestamp": 1771966188888,
+      "stageId": "debate"
+    },
+    {
+      "id": "6564929a-8be2-40b4-8bb9-d12375fde222",
+      "speaker": "Mahrem (named after the God)",
+      "text": "I am a field work. I work under a minor lord on the outskirs and I am quite poor. I'm having a rough run of it, I'm gonna be honest with you king it's kidna rough out there. I'd like for my daughters to not eat millet everyday. So if something new could come around I'm open to it. I'd like to hear more from the bishop.",
+      "timestamp": 1771966249758,
+      "stageId": "debate"
+    },
+    {
+      "id": "b83feb40-3e32-4768-9828-8e3a82a7f733",
+      "speaker": "Angobo",
+      "text": "I had them in hopes that maybe we could farm more stuff because we need more help, but they're also my kids and I want them to have a good life. And we're really struggling right now. I pray a lot, and there's not a lot of rain, and my soil is dry.",
+      "timestamp": 1771966290142,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32"
+    },
+    {
+      "id": "f183dd0e-8ffd-4dbf-ae43-11ce3031d4d2",
+      "speaker": "Angobo",
+      "text": "kind of sucks um and the gods that we have been worshiping all this time are releasing me to help us out the only thing that concerns me is that shipwreck story just cuz who else is on that ship cuz like I'm",
+      "timestamp": 1771966302913,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32"
+    },
+    {
+      "id": "a5ac7760-2810-4635-9483-2608412d9344",
+      "speaker": "Angobo",
+      "text": "I'm very happy God let you guys live, or your God let you guys live, it's just like, why didn't your God let everyone live? So I'm just, I'm kind of desperate right now, and I would really like any God, or just any God, to let me live.",
+      "timestamp": 1771966317063,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32"
+    },
+    {
+      "id": "1ebde8af-1e71-4c8d-afb9-20b184621ba8",
+      "speaker": "Angobo",
+      "text": "if you can, if you could talk to the gods and help the rain come so that I don't have to work as much. Thank you.",
+      "timestamp": 1771966328278,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32"
+    },
+    {
+      "id": "522a6e93-4d3c-485b-b250-416d62a285cf",
+      "speaker": "Gabra",
+      "text": "you know that was due to our animal sacrifice that we did these new people they prevent animal sacrifices how can we guarantee rain and fertility if we can't sacrifice animals this is a very good question because whenever we",
+      "timestamp": 1771966360526,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32",
+      "gender": "M"
+    },
+    {
+      "id": "46df04af-7b3c-4d74-91ee-180654b87f6c",
+      "speaker": "Gabra",
+      "text": "sacrifice animals, it rains. If they prevent that, then we're not going to be able to have good fertility. Oh, farmers in the back. They love rain.",
+      "timestamp": 1771966376697,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32",
+      "gender": "M"
+    },
+    {
+      "id": "bf641b51-a7ca-40f4-a35e-b58277cd57f9",
+      "speaker": "Gabra",
+      "text": "I remember the last time we had a drought, my wife had a stillborn, and that's one less farmer in all my land. Like, that's not right. You know, these people, that's what they want, okay? They claim equality, but the truth is, it's like, we're not equal.",
+      "timestamp": 1771966391352,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32",
+      "gender": "M",
+      "votes": 7
+    },
+    {
+      "id": "eb489a23-58c5-465a-bbba-5e86b75eeb4f",
+      "speaker": "Gabra",
+      "text": "We're God's chosen people. He's our King, okay? He is the one. So I wish you all the best. Thank you. Absolutely. Any upvotes for that? I saw some upvotes.",
+      "timestamp": 1771966405301,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32",
+      "gender": "M",
+      "votes": 9
+    },
+    {
+      "id": "d474e9d8-a00d-4ced-917d-a68e7fae2fda",
+      "speaker": "Gabra",
+      "text": "Oh my god. Wait, can you keep your hands up? Oh my god, Gabra. Gabra literally broke the user interface with too many upvotes. All right. Fermentius.",
+      "timestamp": 1771966420826,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32",
+      "gender": "M"
+    },
+    {
+      "id": "7619d24d-3712-4d00-a589-0c9ac9925816",
+      "speaker": "Seba",
+      "text": "Three gods have been giving us favorable harvests for generations, and praying to them has given us the ability to grow such a large population through our bountiful harvests and rain. So I think abandoning those gods now is ridiculous.",
+      "timestamp": 1771966449700,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32",
+      "gender": "M"
+    },
+    {
+      "id": "99a84dda-2414-4a16-8dfe-9d3873b9447d",
+      "speaker": "Seba",
+      "text": "Yes, when I started praying more to Behe, my heart became significantly more healthy. And my life has really taken a turn for the better.",
+      "timestamp": 1771966463764,
+      "stageId": "debate",
+      "profession": "Farmer",
+      "age": "32",
+      "gender": "M",
+      "votes": 5
+    },
+    {
+      "id": "a091a54c-d895-4d7c-8804-d2d150259fe3",
+      "speaker": "Lemlem",
+      "text": "So quickly, in my tavern, people speak Arabic, they're from Rome, and they speak Greek somehow, and all of them support one God. How are we not going to join in this one God thing? Because I'm going to be honest, they have only one, and it's good for my business.",
+      "timestamp": 1771966585981,
+      "stageId": "debate",
+      "profession": "Dockside tavern owner",
+      "age": "42",
+      "gender": "M"
+    },
+    {
+      "id": "0f92bb8d-f14b-4eeb-9784-3e35704f7e70",
+      "speaker": "Lemlem",
+      "text": "Who else has a business I could benefit from this? Up you are! Rum and wine? If we abandon this new god, we're gonna go poor. Think about it. It's good for the farmers, because they keep sacrificing animals. We're not gonna eat. What are we gonna eat?",
+      "timestamp": 1771966601757,
+      "stageId": "debate",
+      "profession": "Dockside tavern owner",
+      "age": "42",
+      "gender": "M",
+      "votes": -2
+    },
+    {
+      "id": "8c038506-d8b5-4030-b3f9-99c2b129e840",
+      "speaker": "Lemlem",
+      "text": "I can give Roman one, and we can all be happy.",
+      "timestamp": 1771966609265,
+      "stageId": "debate",
+      "profession": "Dockside tavern owner",
+      "age": "42",
+      "gender": "M"
+    },
+    {
+      "id": "3da38395-7d8e-45e3-8bbc-32ba0ec8aa2e",
+      "speaker": "Sheba",
+      "text": "It'll increase trade, not from just the Eastern Roman Empire, but the West as well. If you've seen in a nearby kingdom of like Egypt, as they've converted into Christianity",
+      "timestamp": 1771966653962,
+      "stageId": "debate",
+      "profession": "Wife of a wealthy merchant",
+      "gender": "F",
+      "votes": 2
+    },
+    {
+      "id": "c2b3fa51-2dbc-4774-894a-0de3bcc7e992",
+      "speaker": "Sheba",
+      "text": "they gain a lot of wealth. Although it might like increase like a bunch of like missionaries and a bunch of foreigners coming into our country, it's good to accept change because that in itself will increase our nation's wealth.",
+      "timestamp": 1771966669449,
+      "stageId": "debate",
+      "profession": "Wife of a wealthy merchant",
+      "gender": "F",
+      "votes": 3
+    },
+    {
+      "id": "318e3850-dc07-4ca6-adb9-bc199c636291",
+      "speaker": "Gorshat",
+      "text": "speak to him because that is your job as divine king but i can tell you that if the three gods become one you're going to find yourself with a lot less coins in your pocket my whole life i've had very little family i've lived alone",
+      "timestamp": 1771966716465,
+      "stageId": "debate",
+      "profession": "coinmaker",
+      "age": "65",
+      "gender": "M"
+    },
+    {
+      "id": "3ea9e982-0e57-45f1-a86b-4d108efcc7d4",
+      "speaker": "Gorshat",
+      "text": "for the past four years, and the three gods are about all I've had. I'm one of the oldest people left in this town. If we get rid of them, or you get rid of them...",
+      "timestamp": 1771966730414,
+      "stageId": "debate",
+      "profession": "coinmaker",
+      "age": "65",
+      "gender": "M",
+      "votes": 4
+    },
+    {
+      "id": "4de00d3d-58ef-449f-86d6-aaa415c0834f",
+      "speaker": "Gorshat",
+      "text": "Nothing's gonna change for me. Life without the three gods is no life at all. I will keep worshipping them. You can execute me if you want.",
+      "timestamp": 1771966745267,
+      "stageId": "debate",
+      "profession": "coinmaker",
+      "age": "65",
+      "gender": "M",
+      "votes": 5
+    },
+    {
+      "id": "0c08ce34-cc5a-4741-a18a-5f59b3973602",
+      "speaker": "Tekle",
+      "text": "We must discard the old gods",
+      "timestamp": 1771967203446,
+      "stageId": "final-speeches",
+      "votes": 3
+    },
+    {
+      "id": "7c445fe5-125c-4e1a-8659-22ec63221387",
+      "speaker": "Aslan",
+      "text": "prosperity. In my journeys, I have seen Rome prosper and flourish under Christendom. Christ come not to free the people from Rome, but to deliver them from the sin and fleshly desires that harden our heart, burn our soul, and slay us from peace. King Isana, should you lead your people to the truth,",
+      "timestamp": 1771967241520,
+      "stageId": "final-speeches",
+      "profession": "Trader",
+      "votes": 1
+    },
+    {
+      "id": "5bddfb18-9240-4509-82ee-05d8cf978082",
+      "speaker": "Aslan",
+      "text": "you may inherit the divinic riches and fortune, for the Lord shall certainly bless you. Thank you. Very good.",
+      "timestamp": 1771967253438,
+      "stageId": "final-speeches",
+      "profession": "Trader"
+    },
+    {
+      "id": "c69a9553-dbcf-420f-80dd-16ecf618cf5d",
+      "speaker": "High Priest ",
+      "text": "Take Prometheus. We're not Roman. Prometheus is a zone thing. He's not with Gonsenthius, who is the Roman Emperor. We have two soldiers, and we are going to go against the whole of the Roman Emperor. You will win!",
+      "timestamp": 1771967307124,
+      "stageId": "final-speeches",
+      "profession": "Priest of Mehran"
+    },
+    {
+      "id": "304fa24e-1d48-4418-a72f-86318e1487d5",
+      "speaker": "High Priest ",
+      "text": "two soldiers. We will not win. Prometheus has been corrupting the wealthy. He is trying to create a bourgeoisie. A bourgeoisie. What is this guy talking about? He's trying to create an upper ring of corrupt, wealthy people.",
+      "timestamp": 1771967323096,
+      "stageId": "final-speeches",
+      "profession": "Priest of Mehran"
+    },
+    {
+      "id": "7036ec31-1eef-4559-bbcd-b43ca4644ca7",
+      "speaker": "High Priest ",
+      "text": "people to spread their beliefs down to the poor farmers who will suffer at the hands of Mah-Rem after we abandon our gods. We're this new god who poses us no benefits except gold. Gold is not faith. Gold is not faith. I speak to you.",
+      "timestamp": 1771967337150,
+      "stageId": "final-speeches",
+      "profession": "Priest of Mehran"
+    },
+    {
+      "id": "86ffc09b-57b6-463e-8a9b-1ee39c6931e4",
+      "speaker": "High Priest ",
+      "text": "We will not win a war against Confucius, and we will lose our great harvest, which is Kyrgyzstan.",
+      "timestamp": 1771967351877,
+      "stageId": "final-speeches",
+      "profession": "Priest of Mehran"
+    },
+    {
+      "id": "d4f52529-a55d-449e-8e8c-5ae427b06425",
+      "speaker": "High Priest ",
+      "text": "for hundreds of years before Prometheus came. Prometheus wishes to kill us all. Wishes us all to die by lack of food and war between Constantius and our new religion. That is all.",
+      "timestamp": 1771967367060,
+      "stageId": "final-speeches",
+      "profession": "Priest of Mehran",
+      "votes": 5
+    },
+    {
+      "id": "c5218e32-db66-4322-a257-e3fa280432d5",
+      "speaker": "High Priest ",
+      "text": "Thank you. Thank you.",
+      "timestamp": 1771967368927,
+      "stageId": "final-speeches",
+      "profession": "Priest of Mehran"
+    },
+    {
+      "id": "62317f44-ea74-41ab-b5e2-32e9a9ca27c5",
+      "speaker": "Bishop Frumentius",
+      "text": "First of all, have you ever heard anyone say like, all of Rogues need to axe them? And then one person says Rogues need to axe them? Or one person says Jain, like... And... they're the best. So, I don't know. They have one true God.",
+      "timestamp": 1771967408771,
+      "stageId": "final-speeches",
+      "profession": "Bishop"
+    },
+    {
+      "id": "b4db221a-ba7b-4416-beaf-1d9d27a5f720",
+      "speaker": "Bishop Frumentius",
+      "text": "Also, I just want to, like, The Thief, um, I hope you know that you're going to hell, but like, If you turn to this being, you can, like, save your soul, so I don't know, maybe sit with that.",
+      "timestamp": 1771967422828,
+      "stageId": "final-speeches",
+      "profession": "Bishop"
+    },
+    {
+      "id": "247ec401-905e-46ba-827f-2485b499dddb",
+      "speaker": "Bishop Frumentius",
+      "text": "Also, the queen is a liar. She was the one who put me in the first place. She told me I was a good tutor. So, she's like toothpaste. And you shouldn't trust her either. Um...",
+      "timestamp": 1771967437342,
+      "stageId": "final-speeches",
+      "profession": "Bishop"
+    },
+    {
+      "id": "e3cee11e-9f6b-4133-86b3-19c0c17ffebd",
+      "speaker": "Bishop Frumentius",
+      "text": "Guards, can we talk about something? Guards! Let's talk about two guards. Think about all the money we will get. And also... Oh, also...",
+      "timestamp": 1771967452393,
+      "stageId": "final-speeches",
+      "profession": "Bishop"
+    },
+    {
+      "id": "088ec27e-f0b5-4a5c-9624-01908e37366c",
+      "speaker": "Bishop Frumentius",
+      "text": "Um, the coins, um, you can put the Father, the Son, and the Holy Spirit on the coins. It's not that bad. Come on guys, just trust me.",
+      "timestamp": 1771967466464,
+      "stageId": "final-speeches",
+      "profession": "Bishop"
+    }
+  ],
+  "npcResponses": [
+    {
+      "npcId": "roman-envoy",
+      "text": "King Ezana, you ask whether this new faith aligns with Axum's customs and prosperity. Frumentius speaks of a single God, yet the High Priest rightly points out your divine connection to Mahrem, a tradition not to be discarded lightly. While some, like Angobo, see hardship and a desperate need for divine favor, and Lemlem sees business benefits from Roman traders, we must also consider the concerns about disrupting established practices, as Gabra and Seba have voiced regarding sacrifices for rain. Rome, a great power that has also embraced this faith, offers alliance and trade benefits. However, the Emperor Constantius insists this God must be understood through his own lens, not Frumentius'.",
+      "timestamp": 1771966808042,
+      "stageId": "npc-react"
+    },
+    {
+      "npcId": "queen-mother",
+      "text": "This is a difficult matter, Ezana, and the people have spoken clearly.  The farmers like Mahrem and Gabra worry greatly about losing the animal sacrifices they believe bring rain and fertility, and I understand their fear for their livelihoods.  Yet, Lemlem and Sheba point to the growing influence of this new faith among traders, and the wealth it brings to other kingdoms, which is hard to ignore for a kingdom that thrives on trade.  We must consider what happens to the old ways, and the priests and nobles who uphold them, before we rush to embrace a single God.",
+      "timestamp": 1771966872559,
+      "stageId": "npc-react"
+    },
+    {
+      "npcId": "ezana",
+      "text": "There are many great opinions that have been shared. And I'm not sure I can yet come to a verdict. I must be convinced otherwise. I am balancing between tradition, unification, economic considerations, and also security and war. I am very curious about this last one. Do we risk the angering the neighbors who do not follow this faith by converting to christianity -- OR do we risk angering the ROmans which can be detrimental to trade. I am also curous if the christian god can grant victory in battle or if only our war god can. I like money.",
+      "timestamp": 1771967073793,
+      "stageId": "npc-react"
+    }
+  ],
+  "votingOptions": [
+    {
+      "id": "convert",
+      "label": "Convert to Christianity",
+      "votes": 30
+    },
+    {
+      "id": "traditional",
+      "label": "Maintain traditional religion",
+      "votes": 26
+    },
+    {
+      "id": "pluralism",
+      "label": "Adopt religious pluralism",
+      "votes": 1
+    }
+  ],
+  "exportedAt": "2026-02-24T21:48:15.769Z"
+}

@@ -3,10 +3,13 @@
 import { useState, useRef, useCallback, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { TranscriptEntry, CharacterSheet } from '../lib/types';
 import CharacterQuickBar from './CharacterQuickBar';
+import { Mic, Square, Keyboard } from 'lucide-react';
 
 interface SpeechCaptureProps {
   stageId: string;
   onCapture: (entry: TranscriptEntry) => void;
+  onUpdateEntry?: (id: string, newText: string) => void;
+  scenarioPrompt?: string;
   previousSpeakers?: string[];
   cast?: CharacterSheet[];
   selectedCharacterId?: string;
@@ -20,10 +23,10 @@ export interface SpeechCaptureHandle {
   toggleManual: () => void;
 }
 
-const CHUNK_INTERVAL = 15_000; // 15 seconds per chunk
+const CHUNK_INTERVAL = 30_000; // 30 seconds per chunk
 
 const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(function SpeechCapture(
-  { stageId, onCapture, previousSpeakers = [], cast = [], selectedCharacterId, onCharacterSelect, recentCharacterIds = [], onOpenCastPanel },
+  { stageId, onCapture, onUpdateEntry, scenarioPrompt, previousSpeakers = [], cast = [], selectedCharacterId, onCharacterSelect, recentCharacterIds = [], onOpenCastPanel },
   ref
 ) {
   const [isRecording, setIsRecording] = useState(false);
@@ -37,6 +40,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
   const [error, setError] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -55,6 +59,14 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
   stageIdRef.current = stageId;
   const selectedCharacterIdRef = useRef(selectedCharacterId);
   selectedCharacterIdRef.current = selectedCharacterId;
+
+  // Chunk-merging refs
+  const currentEntryIdRef = useRef<string | null>(null);
+  const accumulatedTextRef = useRef('');
+  const onUpdateEntryRef = useRef(onUpdateEntry);
+  onUpdateEntryRef.current = onUpdateEntry;
+  const scenarioPromptRef = useRef(scenarioPrompt);
+  scenarioPromptRef.current = scenarioPrompt;
 
   // Auto-fill from selected character
   useEffect(() => {
@@ -88,6 +100,26 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
     return suggestions.slice(0, 8);
   }, [speakerName, cast, previousSpeakers]);
 
+  // Reset highlight when suggestions change
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [autocompleteSuggestions.length]);
+
+  const selectSuggestion = useCallback((s: { name: string; characterId?: string }) => {
+    setSpeakerName(s.name);
+    setShowAutocomplete(false);
+    setHighlightedIndex(-1);
+    if (s.characterId) {
+      onCharacterSelect?.(s.characterId);
+      const char = cast.find((c) => c.id === s.characterId);
+      if (char) {
+        if (char.profession) setProfession(char.profession);
+        if (char.age) setAge(char.age);
+        if (char.gender) setGender(char.gender);
+      }
+    }
+  }, [cast, onCharacterSelect]);
+
   const sendChunk = useCallback(
     async (blob: Blob) => {
       if (blob.size < 1000) return; // skip tiny/silent chunks
@@ -95,6 +127,9 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
       try {
         const formData = new FormData();
         formData.append('audio', blob, 'audio.webm');
+        if (scenarioPromptRef.current) {
+          formData.append('prompt', scenarioPromptRef.current);
+        }
 
         const res = await fetch('/api/transcribe', {
           method: 'POST',
@@ -106,17 +141,29 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
         const data = await res.json();
 
         if (data.text && data.text.trim()) {
-          onCapture({
-            id: crypto.randomUUID(),
-            speaker: speakerNameRef.current || 'Student',
-            text: data.text.trim(),
-            timestamp: Date.now(),
-            stageId: stageIdRef.current,
-            profession: professionRef.current || undefined,
-            age: ageRef.current || undefined,
-            gender: genderRef.current || undefined,
-            characterId: selectedCharacterIdRef.current || undefined,
-          });
+          const chunkText = data.text.trim();
+
+          if (!currentEntryIdRef.current) {
+            // First chunk — create a new entry
+            const entryId = crypto.randomUUID();
+            currentEntryIdRef.current = entryId;
+            accumulatedTextRef.current = chunkText;
+            onCapture({
+              id: entryId,
+              speaker: speakerNameRef.current || 'Student',
+              text: chunkText,
+              timestamp: Date.now(),
+              stageId: stageIdRef.current,
+              profession: professionRef.current || undefined,
+              age: ageRef.current || undefined,
+              gender: genderRef.current || undefined,
+              characterId: selectedCharacterIdRef.current || undefined,
+            });
+          } else {
+            // Subsequent chunk — merge into existing entry
+            accumulatedTextRef.current += ' ' + chunkText;
+            onUpdateEntryRef.current?.(currentEntryIdRef.current, accumulatedTextRef.current);
+          }
         }
       } catch (err) {
         console.error('Transcription failed:', err);
@@ -141,6 +188,9 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
     timerRef.current = null;
     setIsRecording(false);
     setElapsed(0);
+    // Reset merging refs so next recording starts a fresh entry
+    currentEntryIdRef.current = null;
+    accumulatedTextRef.current = '';
   }, []);
 
   const startRecording = useCallback(async () => {
@@ -278,7 +328,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
       )}
       {/* Speaker info row — wraps on small screens */}
       <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-[140px] flex-1">
+        <div className="relative w-40">
           <input
             type="text"
             value={speakerName}
@@ -294,36 +344,53 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
               }
             }}
             onFocus={() => setShowAutocomplete(true)}
-            onBlur={() => setTimeout(() => setShowAutocomplete(false), 200)}
-            placeholder="Speaker name..."
+            onBlur={() => setTimeout(() => { setShowAutocomplete(false); setHighlightedIndex(-1); }, 200)}
+            onKeyDown={(e) => {
+              if (!showAutocomplete || autocompleteSuggestions.length === 0) return;
+              if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setHighlightedIndex((i) => (i + 1) % autocompleteSuggestions.length);
+              } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setHighlightedIndex((i) => (i <= 0 ? autocompleteSuggestions.length - 1 : i - 1));
+              } else if (e.key === 'Enter' && highlightedIndex >= 0 && highlightedIndex < autocompleteSuggestions.length) {
+                e.preventDefault();
+                selectSuggestion(autocompleteSuggestions[highlightedIndex]);
+              } else if (e.key === 'Escape') {
+                setShowAutocomplete(false);
+                setHighlightedIndex(-1);
+              }
+            }}
+            placeholder="Name..."
             className="w-full rounded-xl px-4 py-2.5 text-base placeholder-white/20 focus:outline-none"
             style={inputStyle}
             aria-label="Speaker name"
+            role="combobox"
+            aria-expanded={showAutocomplete && autocompleteSuggestions.length > 0}
+            aria-activedescendant={highlightedIndex >= 0 ? `speaker-option-${highlightedIndex}` : undefined}
           />
           {showAutocomplete && autocompleteSuggestions.length > 0 && (
             <div
               className="absolute left-0 right-0 top-full z-30 mt-1 rounded-xl overflow-hidden"
               style={{ background: 'var(--background)', border: '1px solid var(--panel-border)', boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}
+              role="listbox"
             >
-              {autocompleteSuggestions.map((s) => (
+              {autocompleteSuggestions.map((s, idx) => (
                 <button
                   key={s.name + (s.characterId || '')}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-all hover:bg-white/5"
-                  style={{ color: 'var(--text-primary)' }}
+                  id={`speaker-option-${idx}`}
+                  role="option"
+                  aria-selected={idx === highlightedIndex}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-all"
+                  style={{
+                    color: 'var(--text-primary)',
+                    background: idx === highlightedIndex ? 'rgba(212,160,60,0.12)' : undefined,
+                  }}
                   onMouseDown={(e) => {
                     e.preventDefault();
-                    setSpeakerName(s.name);
-                    setShowAutocomplete(false);
-                    if (s.characterId) {
-                      onCharacterSelect?.(s.characterId);
-                      const char = cast.find((c) => c.id === s.characterId);
-                      if (char) {
-                        if (char.profession) setProfession(char.profession);
-                        if (char.age) setAge(char.age);
-                        if (char.gender) setGender(char.gender);
-                      }
-                    }
+                    selectSuggestion(s);
                   }}
+                  onMouseEnter={() => setHighlightedIndex(idx)}
                 >
                   {s.portrait ? (
                     <img src={s.portrait} alt="" className="h-6 w-6 rounded-full object-cover flex-shrink-0" />
@@ -344,7 +411,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
           value={profession}
           onChange={(e) => setProfession(e.target.value)}
           placeholder="Profession..."
-          className="w-28 rounded-xl px-3 py-2.5 text-sm placeholder-white/20 focus:outline-none"
+          className="w-44 rounded-xl px-3 py-2.5 text-sm placeholder-white/20 focus:outline-none"
           style={inputStyle}
           aria-label="Profession"
         />
@@ -374,8 +441,8 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
       <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={isRecording ? stopRecording : startRecording}
-          className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-lg font-semibold transition-all ${
-            isRecording ? 'animate-pulse' : 'hover:scale-[1.02]'
+          className={`btn-bar flex items-center gap-2 rounded-xl px-5 py-2.5 text-lg font-semibold ${
+            isRecording ? 'animate-pulse' : ''
           }`}
           style={{
             background: isRecording ? 'rgba(239,68,68,0.7)' : 'rgba(212,160,60,0.25)',
@@ -383,15 +450,15 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
             border: isRecording ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(212,160,60,0.3)',
           }}
         >
-          {isRecording ? `⏹ Stop (${formatElapsed(elapsed)})` : '🎤 Capture Speech'}
+          {isRecording ? <><Square size={16} className="shrink-0" /> Stop ({formatElapsed(elapsed)})</> : <><Mic size={16} className="shrink-0" /> Capture Speech</>}
         </button>
         <button
           onClick={() => setShowManual(!showManual)}
-          className="rounded-xl px-4 py-2.5 text-base transition-all"
-          style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
+          className="btn-bar rounded-xl px-4 py-2.5 text-base"
+          style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)', border: '1px solid transparent' }}
           title="Manual text entry"
         >
-          ⌨️ Type
+          <Keyboard size={16} className="shrink-0" /> Type
         </button>
       </div>
 
@@ -427,8 +494,8 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
           />
           <button
             onClick={submitManual}
-            className="rounded-xl px-5 py-3 text-base font-semibold transition-all hover:scale-[1.02]"
-            style={{ background: 'rgba(212,160,60,0.2)', color: 'var(--accent)' }}
+            className="btn-bar rounded-xl px-5 py-3 text-base font-semibold"
+            style={{ background: 'rgba(212,160,60,0.2)', color: 'var(--accent)', border: '1px solid rgba(212,160,60,0.15)' }}
           >
             Add
           </button>

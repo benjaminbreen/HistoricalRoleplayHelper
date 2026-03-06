@@ -1,6 +1,7 @@
 'use client';
 
 import { Stage } from '../lib/types';
+import { MessageCircle, Swords, Mic, Landmark, Vote, Scroll, RotateCcw, Check, type LucideIcon } from 'lucide-react';
 
 interface StageManagerProps {
   stages: Stage[];
@@ -15,15 +16,17 @@ const stageTypeLabels: Record<string, string> = {
   npc_response: 'NPC Response',
   vote: 'Vote',
   verdict: 'Verdict',
+  debrief: 'Debrief',
 };
 
-const stageTypeIcons: Record<string, string> = {
-  freeform: '💬',
-  debate: '⚔️',
-  speech: '🎙️',
-  npc_response: '🏛️',
-  vote: '🗳️',
-  verdict: '📜',
+const stageTypeIcons: Record<string, LucideIcon> = {
+  freeform: MessageCircle,
+  debate: Swords,
+  speech: Mic,
+  npc_response: Landmark,
+  vote: Vote,
+  verdict: Scroll,
+  debrief: RotateCcw,
 };
 
 export default function StageManager({
@@ -40,7 +43,7 @@ export default function StageManager({
           <div key={stage.id} className="flex items-center">
             <button
               onClick={() => onNavigate(i)}
-              className={`flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+              className={`group flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
                 isCurrent
                   ? 'animate-glow shadow-lg'
                   : isPast
@@ -61,9 +64,9 @@ export default function StageManager({
                 border: isCurrent ? '1px solid rgba(212,160,60,0.35)' : '1px solid transparent',
               }}
             >
-              <span className="text-base">{stageTypeIcons[stage.type] || '📌'}</span>
+              {(() => { const Icon = stageTypeIcons[stage.type]; return Icon ? <Icon size={16} className="shrink-0 transition-transform duration-150 group-hover:scale-110" /> : null; })()}
               <span>{stage.title || stageTypeLabels[stage.type]}</span>
-              {isPast && <span className="text-emerald-400/70">✓</span>}
+              {isPast && <Check size={14} className="text-emerald-400/70 shrink-0" />}
             </button>
             {i < stages.length - 1 && (
               <div

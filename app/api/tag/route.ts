@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const model = genAI.getGenerativeModel({
       model: 'gemini-2.5-flash-lite',
       systemInstruction:
-        'You classify debate arguments. Return ONLY valid JSON with two fields: "stance" (one of "for", "against", or "mixed") and "rhetoric" (one of "evidence", "values", "consequences", or "authority"). No other text.',
+        'You classify debate arguments. Return ONLY valid JSON with two fields: "stance" (one of "for", "against", "mixed", or "none") and "rhetoric" (one of "evidence", "values", "consequences", "authority", or "none"). Use "none" when the statement does not take a clear position on the debate question — for example, narration, character introductions, emotional reactions, scene-setting, or statements unrelated to the central question. Only classify as "for", "against", or "mixed" when the speaker is clearly arguing a position. No other text.',
     });
 
     const prompt = centralQuestion

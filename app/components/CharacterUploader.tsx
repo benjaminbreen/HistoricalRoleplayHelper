@@ -56,7 +56,8 @@ export default function CharacterUploader({ onExtracted, existingCount }: Charac
         needsReview: (ext.confidence ?? 0) < 0.7,
       };
     } catch (err) {
-      console.error(`Failed to process ${file.name}:`, err);
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`Failed to process ${file.name}:`, msg, err);
       return null;
     }
   }, []);

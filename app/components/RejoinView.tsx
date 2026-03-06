@@ -7,10 +7,12 @@ import {
   NpcResponse,
   VotingOption,
   NpcCharacter,
+  CharacterSheet,
 } from '../lib/types';
 import { buildNpcSystemPrompt, buildRejoinPrompt } from '../lib/prompts';
 import TranscriptLog from './TranscriptLog';
 import NpcCard from './NpcCard';
+import { ArrowLeft, Users, X } from 'lucide-react';
 
 export interface RejoinSessionData {
   scenario: Scenario;
@@ -18,6 +20,7 @@ export interface RejoinSessionData {
   npcResponses: NpcResponse[];
   votingOptions: VotingOption[];
   exportedAt: string;
+  cast?: CharacterSheet[];
 }
 
 interface RejoinViewProps {
@@ -69,6 +72,10 @@ export default function RejoinView({ sessionData, onBack }: RejoinViewProps) {
 
   // Collapsible sections
   const [showOriginalNpc, setShowOriginalNpc] = useState(false);
+
+  // Cast modal
+  const [showCast, setShowCast] = useState(false);
+  const cast = sessionData.cast;
 
   // Derived: updated voting with student's vote
   const updatedVotingOptions: VotingOption[] = originalVotingOptions.map((o) => ({
@@ -165,6 +172,7 @@ export default function RejoinView({ sessionData, onBack }: RejoinViewProps) {
           transcript: [...originalTranscript, ...newArguments],
           npcResponses: [...originalNpcResponses, ...newNpcResponses],
           votingOptions: updatedVotingOptions,
+          cast: sessionData.cast,
           exportedAt: new Date().toISOString(),
           rejoinSession: {
             studentName,
@@ -232,7 +240,7 @@ export default function RejoinView({ sessionData, onBack }: RejoinViewProps) {
             border: '1px solid var(--panel-border)',
           }}
         >
-          &larr; Back to Setup
+          <ArrowLeft size={14} /> Back to Setup
         </button>
 
         {/* Header */}
@@ -252,7 +260,118 @@ export default function RejoinView({ sessionData, onBack }: RejoinViewProps) {
           <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
             {scenario.centralQuestion}
           </p>
+
+          {/* View Participants button */}
+          {cast && cast.length > 0 && (
+            <button
+              onClick={() => setShowCast(true)}
+              className="mx-auto mt-4 flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all hover:scale-[1.02]"
+              style={{
+                background: 'rgba(212,160,60,0.1)',
+                color: 'var(--accent)',
+                border: '1px solid rgba(212,160,60,0.2)',
+              }}
+            >
+              <Users size={16} />
+              View Participants ({cast.length})
+            </button>
+          )}
         </div>
+
+        {/* ─── CAST MODAL ─── */}
+        {showCast && cast && cast.length > 0 && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+            onClick={() => setShowCast(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Session Participants"
+          >
+            <div
+              className="glass-strong animate-in-scale mx-4 w-full max-w-4xl rounded-2xl p-6"
+              style={{ maxHeight: '85vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mb-5 flex items-center justify-between">
+                <h2 className="heading-display text-2xl font-bold" style={{ color: 'var(--accent)' }}>
+                  Participants
+                </h2>
+                <button
+                  onClick={() => setShowCast(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg transition-all hover:scale-110"
+                  style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)' }}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="overflow-y-auto" style={{ flex: 1 }}>
+                <div
+                  className="grid gap-3"
+                  style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}
+                >
+                  {cast.map((c) => (
+                    <div
+                      key={c.id}
+                      className="flex items-start gap-3 rounded-xl p-3"
+                      style={{
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid var(--panel-border)',
+                      }}
+                    >
+                      {c.portraitDataUrl ? (
+                        <img
+                          src={c.portraitDataUrl}
+                          alt=""
+                          className="h-12 w-12 flex-shrink-0 rounded-full object-cover"
+                          style={{ border: '2px solid var(--accent-dim)' }}
+                        />
+                      ) : (
+                        <div
+                          className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full text-lg"
+                          style={{ background: 'rgba(212,160,60,0.15)', color: 'var(--accent)' }}
+                        >
+                          {c.characterName.charAt(0)}
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold truncate" style={{ color: 'var(--accent)' }}>
+                          {c.characterName}
+                        </p>
+                        {c.studentRealName && (
+                          <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
+                            {c.studentRealName}
+                          </p>
+                        )}
+                        <div className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
+                          {c.profession && (
+                            <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                              {c.profession}
+                            </span>
+                          )}
+                          {c.age && (
+                            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                              age {c.age}
+                            </span>
+                          )}
+                        </div>
+                        {c.socialClass && (
+                          <span
+                            className="mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider"
+                            style={{ background: 'rgba(212,160,60,0.1)', color: 'var(--accent-dim)' }}
+                          >
+                            {c.socialClass}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ─── SECTION 1: SESSION RECAP ─── */}
         <section className="glass rounded-2xl p-6 space-y-5">
@@ -271,7 +390,7 @@ export default function RejoinView({ sessionData, onBack }: RejoinViewProps) {
             >
               Original Discussion ({originalTranscript.length} arguments)
             </h3>
-            <TranscriptLog entries={originalTranscript} stages={scenario.stages} />
+            <TranscriptLog entries={originalTranscript} stages={scenario.stages} cast={cast} />
           </div>
 
           {/* Original NPC responses (collapsible) */}

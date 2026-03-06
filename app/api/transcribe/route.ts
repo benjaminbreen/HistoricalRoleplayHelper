@@ -20,10 +20,15 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    const prompt = formData.get('prompt') as string | null;
+
     const openaiForm = new FormData();
     openaiForm.append('file', audio, 'audio.webm');
     openaiForm.append('model', 'whisper-1');
     openaiForm.append('response_format', 'json');
+    if (prompt) {
+      openaiForm.append('prompt', prompt);
+    }
 
     const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',

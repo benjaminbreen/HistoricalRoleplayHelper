@@ -2,21 +2,26 @@
 
 import { useEffect, useCallback } from 'react';
 import { Scenario } from '../lib/types';
+import { ArrowLeft } from 'lucide-react';
 
 interface ScenarioIntroModalProps {
   scenario: Scenario;
   onDismiss: () => void;
+  onBack?: () => void;
 }
 
-export default function ScenarioIntroModal({ scenario, onDismiss }: ScenarioIntroModalProps) {
+export default function ScenarioIntroModal({ scenario, onDismiss, onBack }: ScenarioIntroModalProps) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onBack ? onBack() : onDismiss();
+      } else if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         onDismiss();
       }
     },
-    [onDismiss]
+    [onDismiss, onBack]
   );
 
   useEffect(() => {
@@ -55,6 +60,22 @@ export default function ScenarioIntroModal({ scenario, onDismiss }: ScenarioIntr
               'radial-gradient(ellipse at 50% 30%, rgba(212,160,60,0.08) 0%, rgba(15,17,23,1) 70%)',
           }}
         />
+      )}
+
+      {/* Back button */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="animate-cinematic absolute top-6 left-8 z-20 rounded-xl px-5 py-2.5 text-sm font-medium transition-all hover:scale-[1.02]"
+          style={{
+            background: 'rgba(255,255,255,0.06)',
+            color: 'rgba(240,230,211,0.6)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            animationDelay: '0.1s',
+          }}
+        >
+          <ArrowLeft size={14} /> Back to scenarios
+        </button>
       )}
 
       {/* Content */}

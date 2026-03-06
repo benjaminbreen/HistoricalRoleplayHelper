@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { CharacterSheet, TranscriptEntry } from '../lib/types';
+import { CastGroup } from '../lib/groupCast';
+import { X } from 'lucide-react';
 
 interface CharacterReviewGridProps {
   cast: CharacterSheet[];
@@ -10,6 +12,7 @@ interface CharacterReviewGridProps {
   mode: 'review' | 'lobby' | 'panel';
   transcript?: TranscriptEntry[];
   onSelectCharacter?: (id: string) => void;
+  groups?: CastGroup[];
 }
 
 export default function CharacterReviewGrid({
@@ -19,6 +22,7 @@ export default function CharacterReviewGrid({
   mode,
   transcript = [],
   onSelectCharacter,
+  groups = [],
 }: CharacterReviewGridProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -129,45 +133,80 @@ export default function CharacterReviewGrid({
     );
   }
 
+  // Build a set of indices where group headers appear (lobby mode)
+  const groupHeaderIndices = useMemo(() => {
+    const map = new Map<number, string>();
+    for (const g of groups) {
+      map.set(g.startIndex, g.category);
+    }
+    return map;
+  }, [groups]);
+
   // ── LOBBY MODE ──
   if (mode === 'lobby') {
+    const hasGroups = groups.length > 1;
+
+    const renderCard = (sheet: CharacterSheet) => (
+      <div key={sheet.id} className="flex flex-col items-center gap-2 rounded-xl p-3"
+        style={{ background: 'rgba(255,255,255,0.03)' }}>
+        {sheet.portraitDataUrl ? (
+          <img
+            src={sheet.portraitDataUrl}
+            alt={sheet.characterName}
+            className="rounded-xl object-cover"
+            style={{ width: portraitSize, height: portraitSize, border: '2px solid rgba(212,160,60,0.2)' }}
+          />
+        ) : (
+          <div
+            className="flex items-center justify-center rounded-xl text-3xl"
+            style={{
+              width: portraitSize,
+              height: portraitSize,
+              background: 'rgba(212,160,60,0.1)',
+              color: 'var(--accent)',
+              border: '2px solid rgba(212,160,60,0.2)',
+            }}
+          >
+            {sheet.characterName.charAt(0) || '?'}
+          </div>
+        )}
+        <span className="text-sm font-semibold text-center" style={{ color: 'var(--text-primary)' }}>
+          {sheet.characterName}
+        </span>
+        {sheet.profession && (
+          <span className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
+            {sheet.profession}
+          </span>
+        )}
+      </div>
+    );
+
     return (
       <div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-          {cast.map((sheet) => (
-            <div key={sheet.id} className="flex flex-col items-center gap-2 rounded-xl p-3"
-              style={{ background: 'rgba(255,255,255,0.03)' }}>
-              {sheet.portraitDataUrl ? (
-                <img
-                  src={sheet.portraitDataUrl}
-                  alt={sheet.characterName}
-                  className="rounded-xl object-cover"
-                  style={{ width: portraitSize, height: portraitSize, border: '2px solid rgba(212,160,60,0.2)' }}
-                />
-              ) : (
+          {cast.flatMap((sheet, idx) => {
+            const header = hasGroups ? groupHeaderIndices.get(idx) : undefined;
+            const elements: React.ReactNode[] = [];
+            if (header !== undefined) {
+              elements.push(
                 <div
-                  className="flex items-center justify-center rounded-xl text-3xl"
-                  style={{
-                    width: portraitSize,
-                    height: portraitSize,
-                    background: 'rgba(212,160,60,0.1)',
-                    color: 'var(--accent)',
-                    border: '2px solid rgba(212,160,60,0.2)',
-                  }}
+                  key={`header-${idx}`}
+                  className="col-span-full flex items-center gap-3 pt-4 pb-1"
                 >
-                  {sheet.characterName.charAt(0) || '?'}
+                  <div className="h-px flex-1" style={{ background: 'rgba(212,160,60,0.15)' }} />
+                  <span
+                    className="heading-display text-xs font-semibold uppercase tracking-widest"
+                    style={{ color: 'var(--accent)', opacity: 0.7 }}
+                  >
+                    {header}
+                  </span>
+                  <div className="h-px flex-1" style={{ background: 'rgba(212,160,60,0.15)' }} />
                 </div>
-              )}
-              <span className="text-sm font-semibold text-center" style={{ color: 'var(--text-primary)' }}>
-                {sheet.characterName}
-              </span>
-              {sheet.profession && (
-                <span className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
-                  {sheet.profession}
-                </span>
-              )}
-            </div>
-          ))}
+              );
+            }
+            elements.push(renderCard(sheet));
+            return elements;
+          })}
         </div>
         <p className="mt-4 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
           {cast.length} character{cast.length !== 1 ? 's' : ''} ready
@@ -240,9 +279,9 @@ export default function CharacterReviewGrid({
                 </div>
                 <button
                   onClick={(e) => { e.stopPropagation(); onRemove(sheet.id); }}
-                  className="text-xs text-red-400/40 transition-colors hover:text-red-400 flex-shrink-0"
+                  className="text-red-400/40 transition-colors hover:text-red-400 hover:scale-110 flex-shrink-0"
                 >
-                  ✕
+                  <X size={12} />
                 </button>
               </div>
 

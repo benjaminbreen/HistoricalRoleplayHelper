@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { Scenario, TranscriptEntry, NpcResponse, VotingOption } from '../lib/types';
 import SessionAnalysis from './SessionAnalysis';
+import { FileText, ScrollText, Users, Braces, Check, type LucideIcon } from 'lucide-react';
 
 interface VerdictProps {
   scenario: Scenario;
@@ -179,11 +180,11 @@ export default function Verdict({
     setTimeout(() => setLastExported(null), 2000);
   }, [slug, scenario, transcript, npcResponses, votingOptions, buildReport, buildTranscript, buildParticipation]);
 
-  const exportOptions: { id: ExportFormat; label: string; desc: string; icon: string }[] = [
-    { id: 'report', label: 'Session Report', desc: 'Formatted overview with votes, arguments, NPC responses, and historical outcome', icon: '📄' },
-    { id: 'transcript', label: 'Raw Transcript', desc: 'Timestamped log of everything said, by students and NPCs', icon: '📝' },
-    { id: 'participation', label: 'Participation Log', desc: 'Per-speaker breakdown with contribution counts and summaries', icon: '👥' },
-    { id: 'json', label: 'Raw Data (JSON)', desc: 'Machine-readable export of all session data', icon: '{ }' },
+  const exportOptions: { id: ExportFormat; label: string; desc: string; Icon: LucideIcon }[] = [
+    { id: 'report', label: 'Session Report', desc: 'Formatted overview with votes, arguments, NPC responses, and historical outcome', Icon: FileText },
+    { id: 'transcript', label: 'Raw Transcript', desc: 'Timestamped log of everything said, by students and NPCs', Icon: ScrollText },
+    { id: 'participation', label: 'Participation Log', desc: 'Per-speaker breakdown with contribution counts and summaries', Icon: Users },
+    { id: 'json', label: 'Raw Data (JSON)', desc: 'Machine-readable export of all session data', Icon: Braces },
   ];
 
   return (
@@ -356,7 +357,7 @@ export default function Verdict({
                     onClick={() => handleExport(opt.id)}
                     className="glass group flex items-start gap-4 rounded-xl p-4 text-left transition-all hover:scale-[1.01] hover:border-[rgba(212,160,60,0.25)]"
                   >
-                    <span className="mt-0.5 text-2xl">{justExported ? '✓' : opt.icon}</span>
+                    <span className="mt-0.5">{justExported ? <Check size={24} className="text-emerald-400" /> : <opt.Icon size={24} className="transition-transform duration-150 group-hover:scale-110" />}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-base font-semibold" style={{ color: justExported ? '#6ee7b7' : 'var(--text-primary)' }}>
                         {justExported ? 'Downloaded!' : opt.label}

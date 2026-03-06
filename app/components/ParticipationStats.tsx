@@ -47,14 +47,8 @@ export default function ParticipationStats({ transcript, studentRoles }: Partici
   const maxCount = speakers[0]?.count || 1;
 
   return (
-    <div className="glass animate-in mx-8 mt-2 rounded-2xl p-4">
+    <div>
       <div className="flex items-center justify-between mb-3">
-        <h3
-          className="text-sm font-semibold uppercase tracking-wider"
-          style={{ color: 'var(--text-muted)' }}
-        >
-          Participation
-        </h3>
         <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
           {transcript.length} argument{transcript.length !== 1 ? 's' : ''} &middot;{' '}
           {uniqueCount} speaker{uniqueCount !== 1 ? 's' : ''}

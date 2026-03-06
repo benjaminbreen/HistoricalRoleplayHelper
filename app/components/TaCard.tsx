@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { StudentRole, NpcResponse } from '../lib/types';
+import { X } from 'lucide-react';
 
 interface TaCardProps {
   role: StudentRole;
@@ -233,10 +234,10 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
               <button
                 onClick={() => setShowModal(false)}
                 aria-label="Close dialog"
-                className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full text-lg transition-all hover:scale-110"
+                className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-110"
                 style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(240, 230, 211, 0.3)' }}
               >
-                ×
+                <X size={16} />
               </button>
             </div>
 

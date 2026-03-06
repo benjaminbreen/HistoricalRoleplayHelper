@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Scenario, TranscriptEntry, NpcResponse, VotingOption, SavedSession, ArgumentStance, RhetoricMode, StageEvent, CharacterSheet, isVerdictStage, isLeaderRole } from '../lib/types';
+import { Volume2, VolumeX } from 'lucide-react';
 import Timer from './Timer';
 import StageManager from './StageManager';
 import SpeechCapture, { SpeechCaptureHandle } from './SpeechCapture';
@@ -17,7 +18,8 @@ import CastPanel from './CastPanel';
 import ScenarioIntroModal from './ScenarioIntroModal';
 import ThemeToggle from './ThemeToggle';
 
-const STORAGE_KEY = 'hrh-active-session';
+import { saveSession, deleteSession } from '../lib/sessionStore';
+
 const SAVE_DEBOUNCE_MS = 2000;
 
 interface ScheduledEventItem {
@@ -36,12 +38,13 @@ export interface SessionInitialState {
 
 interface SessionViewProps {
   scenario: Scenario;
+  sessionId: string;
   onEnd: () => void;
   initialState?: SessionInitialState;
   initialCast?: CharacterSheet[];
 }
 
-export default function SessionView({ scenario, onEnd, initialState, initialCast }: SessionViewProps) {
+export default function SessionView({ scenario, sessionId, onEnd, initialState, initialCast }: SessionViewProps) {
   const [currentStageIndex, setCurrentStageIndex] = useState(
     initialState?.currentStageIndex ?? 0
   );
@@ -89,27 +92,23 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
   useEffect(() => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
-      try {
-        const payload: SavedSession = {
-          scenario,
-          currentStageIndex,
-          timerSeconds,
-          transcript,
-          npcResponses,
-          votingOptions,
-          savedAt: new Date().toISOString(),
-          triggeredEventIds: [...triggeredEventIds],
-          cast: cast.length > 0 ? cast : undefined,
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-      } catch {
-        // localStorage full or unavailable — silently ignore
-      }
+      const payload: SavedSession = {
+        scenario,
+        currentStageIndex,
+        timerSeconds,
+        transcript,
+        npcResponses,
+        votingOptions,
+        savedAt: new Date().toISOString(),
+        triggeredEventIds: [...triggeredEventIds],
+        cast: cast.length > 0 ? cast : undefined,
+      };
+      saveSession(sessionId, payload);
     }, SAVE_DEBOUNCE_MS);
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     };
-  }, [scenario, currentStageIndex, timerSeconds, transcript, npcResponses, votingOptions, triggeredEventIds, cast]);
+  }, [scenario, sessionId, currentStageIndex, timerSeconds, transcript, npcResponses, votingOptions, triggeredEventIds, cast]);
 
   // ── Event scheduling (on stage change) ──
   useEffect(() => {
@@ -251,11 +250,11 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
     );
   }, []);
 
-  // Clear localStorage on normal session end
+  // Clear session from store on normal session end
   const handleEnd = useCallback(() => {
-    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+    deleteSession(sessionId);
     onEnd();
-  }, [onEnd]);
+  }, [sessionId, onEnd]);
 
   const exportTranscript = useCallback(() => {
     const lines: string[] = [
@@ -294,6 +293,24 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
     URL.revokeObjectURL(url);
   }, [scenario, transcript, npcResponses, votingOptions]);
 
+  const exportSessionJSON = useCallback(() => {
+    const payload = {
+      scenario,
+      transcript,
+      npcResponses,
+      votingOptions,
+      cast: cast.length > 0 ? cast : undefined,
+      exportedAt: new Date().toISOString(),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${scenario.title.replace(/\s+/g, '_')}_session.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [scenario, transcript, npcResponses, votingOptions, cast]);
+
   // Warn before leaving with unsaved data
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -323,6 +340,8 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
       if (e.key === 'Escape') {
         if (showShortcuts) { setShowShortcuts(false); return; }
         if (showEndConfirm) { setShowEndConfirm(false); return; }
+        if (showRoles) { setShowRoles(false); return; }
+        if (showStats) { setShowStats(false); return; }
         return;
       }
 
@@ -358,6 +377,29 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [nextStage, prevStage, showShortcuts, showEndConfirm, showIntro]);
+
+  const handleUpdateEntry = useCallback((id: string, newText: string) => {
+    setTranscript((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, text: newText } : e))
+    );
+  }, []);
+
+  const scenarioPrompt = useMemo(() => {
+    const parts: string[] = [];
+    // NPC names and titles
+    if (scenario.npcs.length > 0) {
+      parts.push(scenario.npcs.map((n) => `${n.name}, ${n.title}`).join(', '));
+    }
+    // Role names and titles
+    if (scenario.roles.length > 0) {
+      parts.push(scenario.roles.map((r) => r.name + (r.title ? `, ${r.title}` : '')).join(', '));
+    }
+    // Central question and setting
+    parts.push(scenario.centralQuestion);
+    parts.push(scenario.setting);
+    // Join and truncate to ~800 chars (stays within Whisper's 224-token limit)
+    return parts.join('. ').slice(0, 800);
+  }, [scenario.npcs, scenario.roles, scenario.centralQuestion, scenario.setting]);
 
   const previousSpeakers = useMemo(() => {
     return [...new Set(transcript.map((e) => e.speaker))];
@@ -436,18 +478,21 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
             }}
             defaultDuration={currentStage?.durationSeconds || 300}
           />
-          <button
-            onClick={() => setMuted((m) => !m)}
-            className="ml-4 rounded-xl px-4 py-2 text-sm font-medium transition-all"
-            style={{
-              background: muted ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.06)',
-              color: muted ? '#f87171' : 'var(--text-secondary)',
-              border: muted ? '1px solid rgba(239,68,68,0.25)' : '1px solid transparent',
-            }}
-            title={muted ? 'Unmute NPC voices' : 'Mute NPC voices'}
-          >
-            {muted ? '🔇 Muted' : '🔊'}
-          </button>
+          <div className="ml-4 flex items-center gap-2">
+            <button
+              onClick={() => setMuted((m) => !m)}
+              className="btn-bar rounded-xl px-4 py-2 text-sm font-medium"
+              style={{
+                background: muted ? 'rgba(239,68,68,0.15)' : 'var(--subtle-bg)',
+                color: muted ? '#f87171' : 'var(--text-secondary)',
+                border: muted ? '1px solid rgba(239,68,68,0.25)' : '1px solid var(--subtle-border)',
+              }}
+              title={muted ? 'Unmute NPC voices' : 'Mute NPC voices'}
+            >
+              {muted ? <><VolumeX size={16} className="shrink-0" /> Muted</> : <Volume2 size={16} />}
+            </button>
+            <ThemeToggle />
+          </div>
         </header>
 
         {/* Stage Progress */}
@@ -469,74 +514,36 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
           </p>
         </div>
 
-        {/* Student Roles Panel */}
-        {showRoles && scenario.roles.length > 0 && (
-          <div className="glass animate-in mx-8 mt-2 rounded-2xl p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
-                Assigned Roles
-              </h3>
-              <button onClick={() => setShowRoles(false)} className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                Hide
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {scenario.roles.map((role) => (
-                <div key={role.id} className="flex items-center gap-2 rounded-xl px-3 py-2"
-                  style={{
-                    background: isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.08)' : 'rgba(212,160,60,0.08)',
-                    border: `1px solid ${isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.15)' : 'rgba(212,160,60,0.12)'}`,
-                  }}>
-                  <span className="rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase"
-                    style={{
-                      background: isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.2)' : 'rgba(212,160,60,0.15)',
-                      color: isLeaderRole(role.suggestedFor) ? '#63b6ff' : 'var(--accent)',
-                    }}>
-                    {role.suggestedFor}
-                  </span>
-                  <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                    {role.name}
-                  </span>
-                  {role.assignedTo && (
-                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                      — {role.assignedTo}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Participation Stats Panel */}
-        {showStats && (
-          <ParticipationStats transcript={transcript} studentRoles={scenario.roles} />
-        )}
-
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto px-8 pb-6">
+        <main className="flex-1 flex flex-col overflow-hidden px-8 pb-6">
           {currentStage &&
             ['freeform', 'debate', 'speech'].includes(currentStage.type) && (
-              <div className="space-y-5">
+              <div className="flex flex-1 flex-col min-h-0">
                 {currentStage.type === 'debate' && (
-                  <div className="glass animate-in-scale rounded-2xl p-6 text-center">
+                  <div className="glass animate-in-scale rounded-2xl p-6 text-center mb-5 flex-shrink-0">
                     <p className="heading-display text-2xl font-semibold" style={{ color: 'var(--accent)' }}>
                       {scenario.centralQuestion}
                     </p>
                   </div>
                 )}
-                <TranscriptLog entries={transcript} stages={scenario.stages} onRemove={handleRemoveEntry} onVote={handleVoteEntry} onTag={handleTagEntry} />
-                <SpeechCapture
-                  ref={speechCaptureRef}
-                  stageId={currentStage.id}
-                  onCapture={handleCapture}
-                  previousSpeakers={previousSpeakers}
-                  cast={cast}
-                  selectedCharacterId={selectedCharacterId}
-                  onCharacterSelect={setSelectedCharacterId}
-                  recentCharacterIds={recentCharacterIds}
-                  onOpenCastPanel={() => setShowCast(true)}
-                />
+                <div className="flex-1 min-h-0 overflow-y-auto mb-5">
+                  <TranscriptLog entries={transcript} stages={scenario.stages} cast={cast} onRemove={handleRemoveEntry} onVote={handleVoteEntry} onTag={handleTagEntry} />
+                </div>
+                <div className="flex-shrink-0">
+                  <SpeechCapture
+                    ref={speechCaptureRef}
+                    stageId={currentStage.id}
+                    onCapture={handleCapture}
+                    onUpdateEntry={handleUpdateEntry}
+                    scenarioPrompt={scenarioPrompt}
+                    previousSpeakers={previousSpeakers}
+                    cast={cast}
+                    selectedCharacterId={selectedCharacterId}
+                    onCharacterSelect={setSelectedCharacterId}
+                    recentCharacterIds={recentCharacterIds}
+                    onOpenCastPanel={() => setShowCast(true)}
+                  />
+                </div>
               </div>
             )}
 
@@ -554,7 +561,7 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
                 muted={muted}
                 taRoles={taRoles}
               />
-              <TranscriptLog entries={transcript} stages={scenario.stages} onVote={handleVoteEntry} onTag={handleTagEntry} />
+              <TranscriptLog entries={transcript} stages={scenario.stages} cast={cast} onVote={handleVoteEntry} onTag={handleTagEntry} />
             </div>
           )}
 
@@ -606,16 +613,16 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
             <button
               onClick={prevStage}
               disabled={currentStageIndex === 0}
-              className="rounded-xl px-5 py-2.5 text-base font-medium transition-all disabled:opacity-20"
-              style={{ background: 'var(--subtle-bg)', color: 'var(--text-primary)' }}
+              className="btn-bar rounded-xl px-5 py-2.5 text-base font-medium disabled:opacity-20"
+              style={{ background: 'var(--subtle-bg)', color: 'var(--text-primary)', border: '1px solid transparent' }}
             >
               Previous
             </button>
             <button
               onClick={nextStage}
               disabled={currentStageIndex >= scenario.stages.length - 1}
-              className="rounded-xl px-5 py-2.5 text-base font-semibold transition-all disabled:opacity-20"
-              style={{ background: 'rgba(212, 160, 60, 0.2)', color: 'var(--accent)' }}
+              className="btn-bar rounded-xl px-5 py-2.5 text-base font-semibold disabled:opacity-20"
+              style={{ background: 'rgba(212, 160, 60, 0.2)', color: 'var(--accent)', border: '1px solid rgba(212,160,60,0.15)' }}
             >
               Next Stage
             </button>
@@ -631,10 +638,11 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
             {cast.length > 0 && (
               <button
                 onClick={() => setShowCast((s) => !s)}
-                className="rounded-xl px-4 py-2.5 text-base transition-all"
+                className="btn-bar rounded-xl px-4 py-2.5 text-base"
                 style={{
-                  background: showCast ? 'rgba(212,160,60,0.15)' : 'rgba(255,255,255,0.06)',
+                  background: showCast ? 'rgba(212,160,60,0.15)' : 'var(--subtle-bg)',
                   color: showCast ? 'var(--accent)' : 'var(--text-secondary)',
+                  border: showCast ? '1px solid rgba(212,160,60,0.2)' : '1px solid transparent',
                 }}
                 title="Toggle cast panel (c)"
               >
@@ -644,10 +652,11 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
             {currentStage?.events && currentStage.events.length > 0 && (
               <button
                 onClick={() => setShowEventPanel((s) => !s)}
-                className="rounded-xl px-4 py-2.5 text-base transition-all"
+                className="btn-bar rounded-xl px-4 py-2.5 text-base"
                 style={{
-                  background: showEventPanel ? 'rgba(200,120,30,0.15)' : 'rgba(255,255,255,0.06)',
+                  background: showEventPanel ? 'rgba(200,120,30,0.15)' : 'var(--subtle-bg)',
                   color: showEventPanel ? '#f59e0b' : 'var(--text-secondary)',
+                  border: showEventPanel ? '1px solid rgba(200,120,30,0.2)' : '1px solid transparent',
                 }}
               >
                 Events
@@ -655,10 +664,11 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
             )}
             <button
               onClick={() => setShowStats((s) => !s)}
-              className="rounded-xl px-4 py-2.5 text-base transition-all"
+              className="btn-bar rounded-xl px-4 py-2.5 text-base"
               style={{
-                background: showStats ? 'rgba(212,160,60,0.15)' : 'rgba(255,255,255,0.06)',
+                background: showStats ? 'rgba(212,160,60,0.15)' : 'var(--subtle-bg)',
                 color: showStats ? 'var(--accent)' : 'var(--text-secondary)',
+                border: showStats ? '1px solid rgba(212,160,60,0.2)' : '1px solid transparent',
               }}
             >
               Stats
@@ -666,10 +676,11 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
             {scenario.roles.length > 0 && (
               <button
                 onClick={() => setShowRoles((s) => !s)}
-                className="rounded-xl px-4 py-2.5 text-base transition-all"
+                className="btn-bar rounded-xl px-4 py-2.5 text-base"
                 style={{
-                  background: showRoles ? 'rgba(212,160,60,0.15)' : 'rgba(255,255,255,0.06)',
+                  background: showRoles ? 'rgba(212,160,60,0.15)' : 'var(--subtle-bg)',
                   color: showRoles ? 'var(--accent)' : 'var(--text-secondary)',
+                  border: showRoles ? '1px solid rgba(212,160,60,0.2)' : '1px solid transparent',
                 }}
               >
                 Roles
@@ -678,33 +689,41 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
             <button
               onClick={exportTranscript}
               disabled={transcript.length === 0}
-              className="rounded-xl px-4 py-2.5 text-base transition-all disabled:opacity-20"
-              style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
-              title="Export transcript"
+              className="btn-bar rounded-xl px-4 py-2.5 text-base disabled:opacity-20"
+              style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)', border: '1px solid transparent' }}
+              title="Export transcript as text"
             >
               Export
             </button>
-            <ThemeToggle />
+            <button
+              onClick={exportSessionJSON}
+              disabled={transcript.length === 0}
+              className="btn-bar rounded-xl px-4 py-2.5 text-base disabled:opacity-20"
+              style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)', border: '1px solid transparent' }}
+              title="Export full session as JSON (includes cast)"
+            >
+              JSON
+            </button>
             <button
               onClick={toggleFullscreen}
-              className="rounded-xl px-4 py-2.5 text-base transition-all"
-              style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
+              className="btn-bar rounded-xl px-4 py-2.5 text-base"
+              style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)', border: '1px solid transparent' }}
               title="Toggle fullscreen"
             >
               {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
             </button>
             <button
               onClick={() => setShowShortcuts((s) => !s)}
-              className="rounded-xl px-3 py-2.5 text-base transition-all"
-              style={{ background: 'var(--subtle-bg)', color: 'var(--text-muted)' }}
+              className="btn-bar rounded-xl px-3 py-2.5 text-base"
+              style={{ background: 'var(--subtle-bg)', color: 'var(--text-muted)', border: '1px solid transparent' }}
               title="Keyboard shortcuts (?)"
             >
               ?
             </button>
             <button
               onClick={() => setShowEndConfirm(true)}
-              className="rounded-xl px-4 py-2.5 text-base text-red-400/60 transition-all hover:text-red-400"
-              style={{ background: 'var(--subtle-bg)' }}
+              className="btn-bar rounded-xl px-4 py-2.5 text-base"
+              style={{ background: 'var(--subtle-bg)', color: 'rgba(239,68,68,0.5)', border: '1px solid transparent' }}
             >
               End
             </button>
@@ -731,11 +750,89 @@ export default function SessionView({ scenario, onEnd, initialState, initialCast
 
       {/* Scenario Intro Modal */}
       {showIntro && (
-        <ScenarioIntroModal scenario={scenario} onDismiss={() => setShowIntro(false)} />
+        <ScenarioIntroModal scenario={scenario} onDismiss={() => setShowIntro(false)} onBack={handleEnd} />
       )}
 
       {/* Countdown Overlay */}
       <CountdownOverlay seconds={timerSeconds} running={timerRunning} />
+
+      {/* Roles Modal */}
+      {showRoles && scenario.roles.length > 0 && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.5)' }}
+          onClick={() => setShowRoles(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Assigned roles"
+        >
+          <div
+            className="glass-strong animate-in-scale mx-4 max-w-lg rounded-2xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="heading-display text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+                Assigned Roles
+              </h3>
+              <button onClick={() => setShowRoles(false)} className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                Close
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {scenario.roles.map((role) => (
+                <div key={role.id} className="flex items-center gap-2 rounded-xl px-3 py-2"
+                  style={{
+                    background: isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.08)' : 'rgba(212,160,60,0.08)',
+                    border: `1px solid ${isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.15)' : 'rgba(212,160,60,0.12)'}`,
+                  }}>
+                  <span className="rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase"
+                    style={{
+                      background: isLeaderRole(role.suggestedFor) ? 'rgba(99,182,255,0.2)' : 'rgba(212,160,60,0.15)',
+                      color: isLeaderRole(role.suggestedFor) ? '#63b6ff' : 'var(--accent)',
+                    }}>
+                    {role.suggestedFor}
+                  </span>
+                  <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    {role.name}
+                  </span>
+                  {role.assignedTo && (
+                    <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                      — {role.assignedTo}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stats Modal */}
+      {showStats && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.5)' }}
+          onClick={() => setShowStats(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Participation stats"
+        >
+          <div
+            className="glass-strong animate-in-scale mx-4 max-w-lg w-full rounded-2xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="heading-display text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+                Participation
+              </h3>
+              <button onClick={() => setShowStats(false)} className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                Close
+              </button>
+            </div>
+            <ParticipationStats transcript={transcript} studentRoles={scenario.roles} />
+          </div>
+        </div>
+      )}
 
       {/* Keyboard Shortcuts Help Overlay */}
       {showShortcuts && (

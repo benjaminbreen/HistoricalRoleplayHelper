@@ -23,16 +23,48 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="rounded-xl px-3 py-2 text-sm font-medium transition-all hover:scale-[1.05]"
+      className="group relative flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 hover:scale-110"
       style={{
         background: 'var(--subtle-bg)',
-        color: 'var(--text-secondary)',
         border: '1px solid var(--subtle-border)',
       }}
       title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      {theme === 'dark' ? '☀️' : '🌙'}
+      {/* Sun icon */}
+      <svg
+        className="absolute transition-all duration-500 ease-in-out"
+        style={{
+          opacity: theme === 'dark' ? 1 : 0,
+          transform: theme === 'dark' ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.5)',
+          color: 'var(--accent)',
+        }}
+        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+      >
+        <circle cx="12" cy="12" r="5" />
+        <line x1="12" y1="1" x2="12" y2="3" />
+        <line x1="12" y1="21" x2="12" y2="23" />
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+        <line x1="1" y1="12" x2="3" y2="12" />
+        <line x1="21" y1="12" x2="23" y2="12" />
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      </svg>
+      {/* Moon icon */}
+      <svg
+        className="absolute transition-all duration-500 ease-in-out"
+        style={{
+          opacity: theme === 'light' ? 1 : 0,
+          transform: theme === 'light' ? 'rotate(0deg) scale(1)' : 'rotate(-90deg) scale(0.5)',
+          color: 'var(--accent)',
+        }}
+        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+      >
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      </svg>
     </button>
   );
 }

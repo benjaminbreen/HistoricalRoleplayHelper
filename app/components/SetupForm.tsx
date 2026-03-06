@@ -1,43 +1,74 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { Scenario, Stage, NpcCharacter, StudentRole, VotingOption, StageType, TtsVoice, CharacterSheet, isLeaderRole } from '../lib/types';
-import { axumPreset, teotihuacanPreset, pompeiiPreset, trolleyPreset, oppenheimerPreset, facialRecognitionPreset } from '../lib/presets';
+import { axumPreset, teotihuacanPreset, pompeiiPreset, trolleyPreset, oppenheimerPreset, facialRecognitionPreset, socratesPreset } from '../lib/presets';
 import type { RejoinSessionData } from './RejoinView';
 import CharacterUploader from './CharacterUploader';
 import CharacterReviewGrid from './CharacterReviewGrid';
-import ThemeToggle from './ThemeToggle';
+import JoinSessionModal from './JoinSessionModal';
+import { MessageCircle, Swords, Mic, Landmark, Vote, Scroll, RotateCcw, Scale, Atom, ScrollText, ArrowLeft, X, GraduationCap, Smartphone, type LucideIcon } from 'lucide-react';
+import type { SetupView } from '../lib/routing';
+
+export interface NavRequest {
+  view: SetupView;
+  mode: 'education' | 'civic' | null;
+  category: string | null;
+  _ts: number; // timestamp to force re-trigger on identical routes
+}
 
 interface SetupFormProps {
   onStart: (scenario: Scenario, cast: CharacterSheet[]) => void;
   onRejoin?: (data: RejoinSessionData) => void;
+  initialRoute?: { view: SetupView; mode: 'education' | 'civic' | null; category: string | null };
+  navRequest?: NavRequest | null;
+  onNavigate?: (view: SetupView, mode: 'education' | 'civic' | null, category: string | null) => void;
 }
 
-const stageTypes: { value: StageType; label: string; icon: string }[] = [
-  { value: 'freeform', label: 'Free Discussion', icon: '💬' },
-  { value: 'debate', label: 'Structured Debate', icon: '⚔️' },
-  { value: 'speech', label: 'Individual Speeches', icon: '🎙️' },
-  { value: 'npc_response', label: 'NPC Response', icon: '🏛️' },
-  { value: 'vote', label: 'Vote', icon: '🗳️' },
-  { value: 'verdict', label: 'Verdict & Reveal', icon: '📜' },
-  { value: 'debrief', label: 'Debrief & Reflect', icon: '🔄' },
+const stageTypes: { value: StageType; label: string; Icon: LucideIcon }[] = [
+  { value: 'freeform', label: 'Free Discussion', Icon: MessageCircle },
+  { value: 'debate', label: 'Structured Debate', Icon: Swords },
+  { value: 'speech', label: 'Individual Speeches', Icon: Mic },
+  { value: 'npc_response', label: 'NPC Response', Icon: Landmark },
+  { value: 'vote', label: 'Vote', Icon: Vote },
+  { value: 'verdict', label: 'Verdict & Reveal', Icon: Scroll },
+  { value: 'debrief', label: 'Debrief & Reflect', Icon: RotateCcw },
 ];
 
 type SectionId = 'details' | 'voting' | 'stages' | 'roles' | 'cast' | 'npcs';
 
-const categoryMeta: Record<string, { label: string; description: string; icon: string }> = {
-  'history':          { label: 'History',          description: 'Historical events and turning points',       icon: '📜' },
-  'philosophy':       { label: 'Philosophy',       description: 'Ethics, morality, and thought experiments',  icon: '⚖️' },
-  'science-ethics':   { label: 'Science & Ethics', description: 'Scientific responsibility and technology',   icon: '⚛️' },
-  'criminal-justice': { label: 'Criminal Justice', description: 'Policing, surveillance, and justice reform', icon: '🏛️' },
+const categoryMeta: Record<string, { label: string; description: string; Icon: LucideIcon }> = {
+  'history':          { label: 'History',          description: 'Historical events and turning points',       Icon: ScrollText },
+  'philosophy':       { label: 'Philosophy',       description: 'Ethics, morality, and thought experiments',  Icon: Scale },
+  'science-ethics':   { label: 'Science & Ethics', description: 'Scientific responsibility and technology',   Icon: Atom },
+  'criminal-justice': { label: 'Criminal Justice', description: 'Policing, surveillance, and justice reform', Icon: Landmark },
 };
 
-export default function SetupForm({ onStart, onRejoin }: SetupFormProps) {
-  const [view, setView] = useState<'landing' | 'category' | 'gallery' | 'editor'>('landing');
-  const [selectedMode, setSelectedMode] = useState<'education' | 'civic' | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+export default function SetupForm({ onStart, onRejoin, initialRoute, navRequest, onNavigate }: SetupFormProps) {
+  const [view, setView] = useState<SetupView>(initialRoute?.view ?? 'landing');
+  const [selectedMode, setSelectedMode] = useState<'education' | 'civic' | null>(initialRoute?.mode ?? null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(initialRoute?.category ?? null);
+
+  // Respond to popstate-driven navigation from parent
+  const lastNavTs = useRef(0);
+  useEffect(() => {
+    if (navRequest && navRequest._ts !== lastNavTs.current) {
+      lastNavTs.current = navRequest._ts;
+      setView(navRequest.view);
+      setSelectedMode(navRequest.mode);
+      setSelectedCategory(navRequest.category);
+    }
+  }, [navRequest]);
+
+  const navigateTo = useCallback((nextView: SetupView, nextMode: 'education' | 'civic' | null, nextCategory: string | null) => {
+    setView(nextView);
+    setSelectedMode(nextMode);
+    setSelectedCategory(nextCategory);
+    onNavigate?.(nextView, nextMode, nextCategory);
+  }, [onNavigate]);
   const [collapsed, setCollapsed] = useState<Set<SectionId>>(new Set());
   const [cast, setCast] = useState<CharacterSheet[]>([]);
+  const [showJoinModal, setShowJoinModal] = useState(false);
 
   const toggleSection = useCallback((id: SectionId) => {
     setCollapsed((prev) => {
@@ -78,13 +109,29 @@ export default function SetupForm({ onStart, onRejoin }: SetupFormProps) {
     { preset: trolleyPreset, image: '/images/trolley.png', tagline: 'Is it morally permissible to sacrifice one to save five?' },
     { preset: oppenheimerPreset, image: '/images/oppenheimer.png', tagline: 'Should the father of the atomic bomb keep his security clearance?' },
     { preset: facialRecognitionPreset, image: '/images/facial-recognition.png', tagline: 'Should Santa Cruz ban facial recognition technology?' },
+    { preset: socratesPreset, image: '/images/socrates.png', tagline: 'Should Athens condemn Socrates to death for corrupting the youth?' },
   ];
 
   const [npcPrompt, setNpcPrompt] = useState('');
   const [generatingNpcs, setGeneratingNpcs] = useState(false);
   const [npcGenError, setNpcGenError] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [pendingImport, setPendingImport] = useState<RejoinSessionData | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportRejoin = useCallback(() => {
+    if (!pendingImport) return;
+    onRejoin?.(pendingImport);
+    setPendingImport(null);
+  }, [pendingImport, onRejoin]);
+
+  const handleImportNewSession = useCallback(() => {
+    if (!pendingImport) return;
+    setScenario(pendingImport.scenario);
+    setCast(pendingImport.cast ?? []);
+    setPendingImport(null);
+    navigateTo('editor', selectedMode, selectedCategory);
+  }, [pendingImport, navigateTo, selectedMode, selectedCategory]);
 
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
@@ -94,8 +141,8 @@ export default function SetupForm({ onStart, onRejoin }: SetupFormProps) {
     reader.onload = (ev) => {
       try {
         const data = JSON.parse(ev.target?.result as string);
-        if (!data.scenario || !data.transcript || !data.votingOptions) {
-          setUploadError('Invalid session file. Must contain scenario, transcript, and votingOptions.');
+        if (!data.scenario || !data.transcript) {
+          setUploadError('Invalid session file. Must contain scenario and transcript.');
           return;
         }
         if (!data.scenario.npcs || !data.scenario.centralQuestion) {
@@ -109,10 +156,30 @@ export default function SetupForm({ onStart, onRejoin }: SetupFormProps) {
         if (!s.context && s.historicalContext) s.context = s.historicalContext;
         if (!s.roles && s.studentRoles) s.roles = s.studentRoles;
         if (!s.outcome && s.historicalOutcome) s.outcome = s.historicalOutcome;
-        // Ensure roles is always an array
         if (!s.roles) s.roles = [];
 
-        onRejoin?.(data);
+        // Normalize NPC legacy fields
+        if (Array.isArray(s.npcs)) {
+          for (const npc of s.npcs) {
+            if (!npc.context && npc.historicalContext) npc.context = npc.historicalContext;
+          }
+        }
+
+        // Fill missing top-level fields (older exports store votingOptions only inside scenario)
+        if (!data.votingOptions && s.votingOptions) data.votingOptions = s.votingOptions;
+        if (!data.votingOptions) data.votingOptions = [];
+        if (!data.npcResponses) data.npcResponses = [];
+        if (!data.exportedAt) data.exportedAt = new Date().toISOString();
+
+        // Normalize cast array
+        if (data.cast && !Array.isArray(data.cast)) data.cast = undefined;
+
+        // If the import has a cast, let the teacher choose: rejoin vs load as new session
+        if (Array.isArray(data.cast) && data.cast.length > 0) {
+          setPendingImport(data);
+        } else {
+          onRejoin?.(data);
+        }
       } catch {
         setUploadError('Could not parse JSON file. Make sure it is a valid session export.');
       }
@@ -340,6 +407,73 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
     />
   );
 
+  // Import choice modal (shown when uploaded JSON has cast data)
+  const importChoiceModal = pendingImport && (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
+      onClick={() => setPendingImport(null)}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Import options"
+    >
+      <div
+        className="glass-strong animate-in-scale mx-4 max-w-md rounded-2xl p-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="heading-display text-2xl font-semibold mb-2" style={{ color: 'var(--accent)' }}>
+          Session Import
+        </h3>
+        <p className="text-base mb-2" style={{ color: 'var(--text-secondary)' }}>
+          This file contains <strong style={{ color: 'var(--text-primary)' }}>{pendingImport.scenario.title}</strong> with{' '}
+          <strong style={{ color: 'var(--text-primary)' }}>{pendingImport.cast?.length ?? 0} character sheet{(pendingImport.cast?.length ?? 0) !== 1 ? 's' : ''}</strong>.
+        </p>
+        <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
+          How would you like to use this file?
+        </p>
+        <div className="space-y-3">
+          <button
+            onClick={handleImportNewSession}
+            className="w-full rounded-xl px-6 py-4 text-left transition-all hover:scale-[1.01]"
+            style={{
+              background: 'rgba(212,160,60,0.1)',
+              border: '1px solid rgba(212,160,60,0.25)',
+            }}
+          >
+            <span className="text-base font-semibold block" style={{ color: 'var(--accent)' }}>
+              Load as New Session
+            </span>
+            <span className="text-sm mt-0.5 block" style={{ color: 'var(--text-secondary)' }}>
+              Pre-load scenario &amp; characters into the editor — skip re-uploading sheets
+            </span>
+          </button>
+          <button
+            onClick={handleImportRejoin}
+            className="w-full rounded-xl px-6 py-4 text-left transition-all hover:scale-[1.01]"
+            style={{
+              background: 'rgba(99,182,255,0.08)',
+              border: '1px solid rgba(99,182,255,0.2)',
+            }}
+          >
+            <span className="text-base font-semibold block" style={{ color: '#7db8f0' }}>
+              Rejoin as Student
+            </span>
+            <span className="text-sm mt-0.5 block" style={{ color: 'var(--text-secondary)' }}>
+              Review the transcript and add your own arguments
+            </span>
+          </button>
+          <button
+            onClick={() => setPendingImport(null)}
+            className="w-full rounded-xl px-4 py-2 text-sm font-medium transition-all"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   // Derived data for filtering
   const filteredPresets = allPresets.filter(({ preset }) => {
     if (selectedMode && preset.mode !== selectedMode) return false;
@@ -367,11 +501,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
     return (
       <div className="noise mx-auto max-w-3xl space-y-8 p-8">
         {fileInput}
-
-        {/* Theme Toggle */}
-        <div className="flex justify-end">
-          <ThemeToggle />
-        </div>
+        {importChoiceModal}
 
         {/* Hero */}
         <div className="text-center pt-8 pb-4">
@@ -387,7 +517,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
         <div className="grid gap-6 md:grid-cols-2">
           {/* Education Card */}
           <button
-            onClick={() => { setSelectedMode('education'); setView('category'); }}
+            onClick={() => navigateTo('category', 'education', null)}
             className="glass group cursor-pointer rounded-2xl p-6 text-left transition-all hover:scale-[1.02]"
             style={{ borderColor: 'rgba(212,160,60,0.2)' }}
           >
@@ -410,7 +540,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
 
           {/* Civic Card */}
           <button
-            onClick={() => { setSelectedMode('civic'); setView('category'); }}
+            onClick={() => navigateTo('category', 'civic', null)}
             className="glass group cursor-pointer rounded-2xl p-6 text-left transition-all hover:scale-[1.02]"
             style={{ borderColor: 'rgba(99,182,255,0.2)' }}
           >
@@ -435,7 +565,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
         {/* Bottom Actions */}
         <div className="flex gap-3 pt-2">
           <button
-            onClick={() => setView('editor')}
+            onClick={() => navigateTo('editor', null, null)}
             className="glass flex-1 rounded-2xl px-6 py-4 text-base font-semibold transition-all hover:scale-[1.01] hover:border-[rgba(212,160,60,0.3)]"
             style={{ color: 'var(--accent)' }}
           >
@@ -474,11 +604,11 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
       <div className="noise mx-auto max-w-3xl space-y-8 p-8">
         {/* Back button */}
         <button
-          onClick={() => { setView('landing'); setSelectedMode(null); setSelectedCategory(null); }}
+          onClick={() => navigateTo('landing', null, null)}
           className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all hover:scale-[1.02]"
           style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
         >
-          &larr; Back
+          <ArrowLeft size={14} /> Back
         </button>
 
         {/* Header */}
@@ -494,17 +624,17 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
         {/* Category Cards */}
         <div className="grid gap-4 md:grid-cols-2">
           {availableCategories.map((cat) => {
-            const meta = categoryMeta[cat] || { label: cat, description: '', icon: '📁' };
+            const meta = categoryMeta[cat] || { label: cat, description: '', Icon: ScrollText };
             const count = scenarioCountForCategory(cat);
             return (
               <button
                 key={cat}
-                onClick={() => { setSelectedCategory(cat); setView('gallery'); }}
+                onClick={() => navigateTo('gallery', selectedMode, cat)}
                 className="glass group cursor-pointer rounded-2xl p-5 text-left transition-all hover:scale-[1.02]"
                 style={{ borderColor: accentBorder }}
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-3xl">{meta.icon}</span>
+                  <meta.Icon size={28} className="shrink-0 transition-transform duration-150 group-hover:scale-110" style={{ color: accentColor }} />
                   <h2 className="heading-display text-xl font-semibold" style={{ color: accentColor }}>
                     {meta.label}
                   </h2>
@@ -539,14 +669,15 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
     return (
       <div className="noise mx-auto max-w-3xl space-y-8 p-8">
         {fileInput}
+        {importChoiceModal}
 
         {/* Back button */}
         <button
-          onClick={() => { setView('category'); setSelectedCategory(null); }}
+          onClick={() => navigateTo('category', selectedMode, null)}
           className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all hover:scale-[1.02]"
           style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
         >
-          &larr; Back to Categories
+          <ArrowLeft size={14} /> Back to Categories
         </button>
 
         {/* Header */}
@@ -580,7 +711,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
                 style={{ borderColor: 'var(--panel-border)' }}
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = cardBorderHover)}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--panel-border)')}
-                onClick={() => { setScenario(preset); setView('editor'); }}
+                onClick={() => { setScenario(preset); navigateTo('editor', selectedMode, selectedCategory); }}
               >
                 <div className="flex gap-5">
                   {/* Image or mode icon */}
@@ -599,7 +730,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
                         border: `1px solid ${preset.mode === 'civic' ? 'rgba(99,182,255,0.15)' : 'rgba(212,160,60,0.12)'}`,
                       }}
                     >
-                      {preset.mode === 'civic' ? '🏛️' : preset.category === 'philosophy' ? '⚖️' : preset.category === 'science-ethics' ? '⚛️' : '📜'}
+                      {(() => { const CatIcon = (preset.category && categoryMeta[preset.category]?.Icon) || ScrollText; return <CatIcon size={32} style={{ color: preset.mode === 'civic' ? '#63b6ff' : 'var(--accent)' }} />; })()}
                     </div>
                   )}
 
@@ -662,7 +793,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
                       Start &rarr;
                     </button>
                     <button
-                      onClick={(e) => { e.stopPropagation(); setScenario(preset); setView('editor'); }}
+                      onClick={(e) => { e.stopPropagation(); setScenario(preset); navigateTo('editor', selectedMode, selectedCategory); }}
                       className="rounded-lg px-4 py-1.5 text-sm font-medium transition-all hover:scale-[1.03]"
                       style={{
                         background: 'var(--subtle-bg)',
@@ -695,20 +826,21 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
   return (
     <div className="noise mx-auto max-w-5xl space-y-6 p-8">
       {fileInput}
+      {importChoiceModal}
 
       {/* Back button */}
       <button
         onClick={() => {
           if (selectedCategory) {
-            setView('gallery');
+            navigateTo('gallery', selectedMode, selectedCategory);
           } else {
-            setView('landing');
+            navigateTo('landing', null, null);
           }
         }}
         className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all hover:scale-[1.02]"
         style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
       >
-        &larr; Back to {selectedCategory ? 'Scenarios' : 'Home'}
+        <ArrowLeft size={14} /> Back to {selectedCategory ? 'Scenarios' : 'Home'}
       </button>
 
       {/* Header */}
@@ -826,8 +958,8 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
                   placeholder="Voting option label..." />
                 {scenario.votingOptions.length > 2 && (
                   <button onClick={() => removeVotingOption(option.id)}
-                    className="text-red-400/40 transition-colors hover:text-red-400">
-                    ✕
+                    className="text-red-400/40 transition-colors hover:text-red-400 hover:scale-110">
+                    <X size={12} />
                   </button>
                 )}
               </div>
@@ -887,7 +1019,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
                     <select className={inputClass} style={inputStyle} value={stage.type}
                       onChange={(e) => updateStage(stage.id, { type: e.target.value as StageType })}>
                       {stageTypes.map((t) => (
-                        <option key={t.value} value={t.value}>{t.icon} {t.label}</option>
+                        <option key={t.value} value={t.value}>{t.label}</option>
                       ))}
                     </select>
                   </div>
@@ -1054,6 +1186,28 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
               onExtracted={(sheets) => setCast((prev) => [...prev, ...sheets])}
               existingCount={cast.length}
             />
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() => setShowJoinModal(true)}
+                className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all hover:scale-[1.02]"
+                style={{ background: 'rgba(212,160,60,0.08)', color: 'var(--accent)', border: '1px solid rgba(212,160,60,0.15)' }}
+              >
+                <Smartphone size={16} />
+                Student Upload Link
+              </button>
+            </div>
+            {showJoinModal && (
+              <JoinSessionModal
+                scenarioTitle={scenario.title || 'Untitled Scenario'}
+                onClose={(students) => {
+                  setShowJoinModal(false);
+                  if (students.length > 0) {
+                    setCast((prev) => [...prev, ...students]);
+                  }
+                }}
+              />
+            )}
             {cast.length > 0 && (
               <CharacterReviewGrid
                 cast={cast}

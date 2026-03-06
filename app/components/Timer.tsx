@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
+import { Play, Pause, RotateCcw } from 'lucide-react';
 
 interface TimerProps {
   seconds: number;
@@ -23,6 +24,7 @@ export default function Timer({
 }: TimerProps) {
   const audioRef = useRef<AudioContext | null>(null);
   const hasPlayedWarning = useRef(false);
+  const [flash, setFlash] = useState(false);
 
   const playBeep = useCallback(() => {
     try {
@@ -49,6 +51,8 @@ export default function Timer({
       if (next <= 30 && next > 0 && !hasPlayedWarning.current) {
         hasPlayedWarning.current = true;
         playBeep();
+        setFlash(true);
+        setTimeout(() => setFlash(false), 1500);
       }
       if (next <= 0) {
         clearInterval(interval);
@@ -70,6 +74,16 @@ export default function Timer({
 
   return (
     <div className="flex items-center gap-3">
+      {/* Screen-edge flash on 30-second warning */}
+      {flash && (
+        <div
+          className="pointer-events-none fixed inset-0 z-[100]"
+          style={{
+            boxShadow: 'inset 0 0 80px 20px rgba(232,168,64,0.35)',
+            animation: 'timer-flash 1.5s ease-out forwards',
+          }}
+        />
+      )}
       <div
         role="timer"
         aria-live={isWarning || isExpired ? 'assertive' : 'off'}
@@ -92,7 +106,7 @@ export default function Timer({
           style={{ background: 'rgba(212,160,60,0.12)', color: 'var(--accent)' }}
           title={running ? 'Pause' : 'Start'}
         >
-          {running ? '⏸' : '▶'}
+          {running ? <Pause size={18} /> : <Play size={18} />}
         </button>
         <button
           onClick={() => onReset(defaultDuration)}
@@ -100,7 +114,7 @@ export default function Timer({
           style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
           title="Reset timer"
         >
-          ↺
+          <RotateCcw size={18} />
         </button>
         <button
           onClick={() => onTick(seconds + 60)}

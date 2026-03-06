@@ -16,31 +16,67 @@ function isHeic(file: File): boolean {
 }
 
 /**
+ * Decode any image file into an ImageBitmap.
+ * Strategy:
+ *  1. Try createImageBitmap directly (works for HEIC on Safari/macOS/iOS)
+ *  2. Fall back to heic2any conversion (for Chrome/Firefox/etc.)
+ *  3. Fall back to <img> element loading
+ */
+async function decodeImage(file: File): Promise<ImageBitmap | HTMLImageElement> {
+  // First try native decoding via createImageBitmap — this handles HEIC on Apple platforms
+  if (typeof createImageBitmap === 'function') {
+    try {
+      return await createImageBitmap(file);
+    } catch {
+      // Native decode failed, try heic2any for HEIC files
+    }
+  }
+
+  // For HEIC files that failed native decode, try heic2any
+  if (isHeic(file)) {
+    try {
+      const heic2any = (await import('heic2any')).default;
+      const result = await heic2any({ blob: file, toType: 'image/jpeg', quality: JPEG_QUALITY });
+      const blob = Array.isArray(result) ? result[0] : result;
+      if (typeof createImageBitmap === 'function') {
+        return await createImageBitmap(blob);
+      }
+      // Fall through to img element approach with converted blob
+      file = new File(
+        [blob],
+        file.name.replace(/\.heic$/i, '.jpg').replace(/\.heif$/i, '.jpg'),
+        { type: 'image/jpeg' },
+      );
+    } catch (heicErr) {
+      console.warn('heic2any conversion failed, trying img element:', heicErr instanceof Error ? heicErr.message : String(heicErr));
+    }
+  }
+
+  // Final fallback: load via <img> element
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    return await new Promise<HTMLImageElement>((resolve, reject) => {
+      const i = new Image();
+      i.onload = () => resolve(i);
+      i.onerror = () => reject(new Error(`Failed to decode image: ${file.name}`));
+      i.src = objectUrl;
+    });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
+/**
  * Normalizes any image file for Gemini:
- *  - HEIC/HEIF: sent as raw base64 (Gemini supports HEIC natively)
- *  - Other formats: resized so the longest side is ≤ MAX_DIMENSION, compressed to JPEG
+ *  - HEIC/HEIF: decoded via native createImageBitmap or heic2any fallback
+ *  - All formats: resized so the longest side is ≤ MAX_DIMENSION, compressed to JPEG
  * Returns { dataUrl, base64, mimeType } so callers can pass the correct type to the API.
  */
 export async function normalizeImage(file: File): Promise<{ dataUrl: string; base64: string; mimeType: string }> {
-  // HEIC files: read as-is and let Gemini handle them directly.
-  // This avoids heic2any's fragile Web Worker which breaks in many bundler contexts.
-  if (isHeic(file)) {
-    const dataUrl = await fileToDataUrl(file);
-    const base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
-    return { dataUrl, base64, mimeType: 'image/heic' };
-  }
+  const source = await decodeImage(file);
 
-  // Non-HEIC: load, resize, compress to JPEG
-  const objectUrl = URL.createObjectURL(file);
-  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-    const i = new Image();
-    i.onload = () => resolve(i);
-    i.onerror = () => reject(new Error('Failed to decode image'));
-    i.src = objectUrl;
-  });
-  URL.revokeObjectURL(objectUrl);
-
-  let { width, height } = img;
+  let width = source.width;
+  let height = source.height;
   const longest = Math.max(width, height);
   if (longest > MAX_DIMENSION) {
     const scale = MAX_DIMENSION / longest;
@@ -51,8 +87,15 @@ export async function normalizeImage(file: File): Promise<{ dataUrl: string; bas
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
-  const ctx = canvas.getContext('2d')!;
-  ctx.drawImage(img, 0, 0, width, height);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Failed to get canvas 2d context');
+  ctx.drawImage(source, 0, 0, width, height);
+
+  // Clean up ImageBitmap if applicable
+  if ('close' in source && typeof source.close === 'function') {
+    source.close();
+  }
+
   const dataUrl = canvas.toDataURL('image/jpeg', JPEG_QUALITY);
   const base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
 

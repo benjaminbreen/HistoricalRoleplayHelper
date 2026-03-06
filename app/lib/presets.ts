@@ -23,7 +23,7 @@ export const teotihuacanPreset: Scenario = {
     {
       id: 'opening',
       type: 'freeform',
-      title: 'The Ashes Are Still Warm',
+      title: 'Opening Accounts',
       description:
         'Introduce your character and describe what you witnessed during the fires. Share your account of who was responsible and what it means for the city.',
       durationSeconds: 300,
@@ -31,7 +31,7 @@ export const teotihuacanPreset: Scenario = {
     {
       id: 'debate',
       type: 'debate',
-      title: 'The Council of the Four Quarters',
+      title: 'The Council Debates',
       description:
         'Representatives of the city\'s factions debate the path forward. Should Teotihuacan rebuild its temples and reassert divine authority, restructure its government, or accept that the city\'s age of dominance is ending?',
       durationSeconds: 600,
@@ -39,7 +39,7 @@ export const teotihuacanPreset: Scenario = {
     {
       id: 'npc-react',
       type: 'npc_response',
-      title: 'Voices from Beyond the Valley',
+      title: 'Outside Reactions',
       description:
         'Foreign envoys and spiritual authorities react to the arguments and reveal outside pressures on the city.',
       durationSeconds: 180,
@@ -62,7 +62,7 @@ export const teotihuacanPreset: Scenario = {
     {
       id: 'verdict',
       type: 'verdict',
-      title: 'The Fate of the City',
+      title: 'The Verdict',
       description:
         'NPCs react to the decision, and the historical outcome is revealed.',
       durationSeconds: 300,
@@ -74,7 +74,7 @@ export const teotihuacanPreset: Scenario = {
       name: 'Ixtan',
       title: 'High Priest of the Feathered Serpent Temple',
       description:
-        'The senior surviving priest of the Temple of the Feathered Serpent (Ciudadela). Ixtan must navigate between defending the old religious order that gave him power and acknowledging the legitimate grievances that may have sparked the fires. He can argue that without divine sanction and ritual order, the city will collapse entirely — the gods must be appeased. But he must also explain why the gods allowed the destruction in the first place. Deeply learned in astronomical observation and calendar keeping, he controls knowledge that is essential to agriculture and trade.',
+        'The senior surviving priest of the Temple of the Feathered Serpent (Ciudadela). Ixtan has to defend the old religious order that gave him power while acknowledging the legitimate grievances that may have sparked the fires. He can argue that without divine sanction and ritual order, the city will collapse entirely — the gods must be appeased. But he must also explain why the gods allowed the destruction in the first place. Trained in astronomical observation and calendar keeping, he controls knowledge that is essential to agriculture and trade.',
       suggestedFor: 'ta',
       assignedTo: '',
     },
@@ -103,7 +103,7 @@ export const teotihuacanPreset: Scenario = {
       name: 'K\'inich Bahlam',
       title: 'Envoy from Tikal',
       personality:
-        'Shrewd, observant, and quietly calculating. K\'inich Bahlam presents himself as a concerned ally but is carefully assessing whether Teotihuacan\'s decline creates opportunities for Tikal and other Maya kingdoms. He speaks with elaborate courtesy that barely conceals his political maneuvering. He remembers the "Entrada" of 378 CE, when Teotihuacan-affiliated warriors overthrew Tikal\'s dynasty — an intervention that still shapes Maya politics. He is torn between old resentment and genuine respect for the city.',
+        'K\'inich Bahlam presents himself as a concerned ally but is quietly assessing whether Teotihuacan\'s decline creates opportunities for Tikal. He speaks with elaborate courtesy. He remembers the "Entrada" of 378 CE, when Teotihuacan-affiliated warriors overthrew Tikal\'s dynasty — an intervention that still shapes Maya politics. His attitude toward Teotihuacan mixes old resentment with real respect.',
       context:
         'In 378 CE, a figure called Siyaj K\'ahk\' ("Fire Is Born"), likely a Teotihuacan general, arrived at Tikal and overthrew its king, installing a new dynasty with Teotihuacan connections. This event, called the "Entrada," shows Teotihuacan\'s massive reach into the Maya world. By 550 CE, however, Teotihuacan\'s grip on Maya affairs had weakened considerably. Tikal\'s leaders would be closely watching the crisis, weighing whether to maintain their old alliance or assert independence.',
       stance:
@@ -116,7 +116,7 @@ export const teotihuacanPreset: Scenario = {
       name: 'Citlalmina',
       title: 'Elder Priestess of the Great Goddess',
       personality:
-        'Ancient, oracular, and unsettling. Citlalmina speaks in riddles and metaphors drawn from the natural world — spiders, caves, water, jade. She represents the oldest religious traditions of Teotihuacan, centered on the mysterious "Great Goddess" depicted in the murals of Tepantitla. She is not aligned with the male priestly hierarchy of the Feathered Serpent temple and may see the fire as a necessary purification. She commands deep reverence from the common people and the apartment compound communities.',
+        'Citlalmina speaks in riddles and metaphors drawn from the natural world — spiders, caves, water, jade. She represents the oldest religious traditions of Teotihuacan, centered on the mysterious "Great Goddess" depicted in the murals of Tepantitla. She is not aligned with the male priestly hierarchy of the Feathered Serpent temple and may see the fire as a necessary purification. The common people and the apartment compound communities revere her.',
       context:
         'The "Great Goddess" of Teotihuacan is one of the most debated figures in Mesoamerican studies. Depicted in elaborate murals with spiders, jaguars, and water imagery, she appears to be a powerful female deity — possibly a goddess of fertility, water, the earth, or the underworld. Some scholars argue she represents a political-religious authority separate from the Feathered Serpent cult. Her worship may have been more popular among ordinary residents than the elite-controlled temple cults. The Tepantitla murals show her presiding over a paradise of abundance.',
       stance:
@@ -133,7 +133,7 @@ export const axumPreset: Scenario = {
   backgroundImage: '/images/axum.png',
   introBannerImage: '/images/axum-intro.png',
   introNarrative:
-    'The incense smoke curls upward from the altar of Mahrem, god of war and patron of kings. But today, King Ezana does not kneel before the old stone idol. He stands at the window of the royal palace, looking out over a city caught between worlds \u2014 the obelisks of his ancestors tower over new churches where hymns are sung in Greek.',
+    'The incense smoke curls upward from the altar of Mahrem, god of war and patron of kings. But today, King Ezana does not kneel before the old stone idol. He stands at the window of the royal palace, looking out over the city \u2014 the obelisks of his ancestors tower over new churches where hymns are sung in Greek.',
   mode: 'education',
   category: 'history',
   title: 'The Conversion of Axum',
@@ -160,7 +160,7 @@ export const axumPreset: Scenario = {
     {
       id: 'debate',
       type: 'debate',
-      title: 'The Great Debate',
+      title: 'The Debate',
       description:
         'Structured arguments for and against conversion. Each side presents their strongest case.',
       durationSeconds: 600,
@@ -232,7 +232,7 @@ export const axumPreset: Scenario = {
       name: 'Flavius Theophilus',
       title: 'Envoy of Emperor Constantius II',
       personality:
-        'Smooth, diplomatic, and calculating. Theophilus presents himself as a friend of Axum but always advances Roman imperial interests. He is an Arian Christian — he believes the Son is subordinate to the Father, putting him at odds with the Nicene Christianity of Frumentius and Athanasius. He subtly undermines Frumentius while still pushing for Christian conversion, revealing that even among Christians there is deep disagreement.',
+        'Theophilus presents himself as a friend of Axum but always advances Roman imperial interests. He is an Arian Christian — he believes the Son is subordinate to the Father, putting him at odds with the Nicene Christianity of Frumentius and Athanasius. He undermines Frumentius while still pushing for conversion, showing that even among Christians there is sharp disagreement.',
       context:
         'Emperor Constantius II, Constantine\'s son and an Arian Christian, historically wrote a letter to Ezana demanding that Frumentius be sent to Alexandria to be "re-examined" by the Arian bishop George of Cappadocia. Ezana refused. This envoy represents that real diplomatic pressure — Rome wants Axum to convert, but on Rome\'s theological terms, not Alexandria\'s.',
       stance:
@@ -246,11 +246,11 @@ export const axumPreset: Scenario = {
       name: 'Queen Mother Sofya',
       title: 'Queen Mother and Royal Advisor',
       personality:
-        'Shrewd, protective, and deeply concerned with the stability of the kingdom. Sofya has navigated court politics for decades and survived the regency period after her husband\'s death. Pragmatic and politically astute, she speaks with the authority of someone who has held real power. Not easily swayed by theological arguments — she wants to know the practical consequences. Protective of Ezana but willing to challenge him.',
+        'Sofya has navigated court politics for decades and survived the regency period after her husband\'s death. She speaks with the authority of someone who has held real power. Not easily swayed by theological arguments — she wants to know the practical consequences. Protective of Ezana but willing to challenge him.',
       context:
         'While the specific identity of Ezana\'s mother is not well documented, queen mothers held significant political influence in Axumite court politics, particularly during regencies. The role represents the domestic political dimension of the conversion decision — the internal power dynamics that a foreign religion would disrupt.',
       stance:
-        'Cautious and pragmatic. Not opposed to Christianity in principle, but deeply worried about the pace and consequences of conversion. What happens to the noble families tied to the old temples? Will the common people accept this? Could a compromise — tolerating Christianity without making it official — preserve stability?',
+        'Cautious and pragmatic. Not opposed to Christianity in principle, but worried about the pace and consequences of conversion. What happens to the noble families tied to the old temples? Will the common people accept this? Could a compromise — tolerating Christianity without making it official — preserve stability?',
       avatarEmoji: '👸',
       avatarImage: '/images/queenmother.png',
       voice: 'nova',
@@ -263,7 +263,7 @@ export const axumPreset: Scenario = {
 export const pompeiiPreset: Scenario = {
   backgroundImage: '/images/pompeii.png',
   introNarrative:
-    'It begins as a curiosity. A column of smoke rises from Vesuvius, shaped like an umbrella pine. But within the hour, the sky darkens to the color of bruised iron, and the first hot stones begin to fall. Then the message arrives: a woman trapped at the foot of the volcano. Only the fleet can save her.',
+    'It begins as a curiosity. A column of smoke rises from Vesuvius, shaped like an umbrella pine. But within the hour, the sky goes dark and the first hot stones begin to fall. Then a message arrives from a woman trapped at the foot of the volcano, begging the fleet for rescue.',
   mode: 'education',
   category: 'history',
   title: "Pliny's Decision at Misenum",
@@ -283,7 +283,7 @@ export const pompeiiPreset: Scenario = {
     {
       id: 'opening',
       type: 'freeform',
-      title: 'The Cloud Over Vesuvius',
+      title: 'Opening Reactions',
       description:
         'Introduce your character and describe your reaction to the eruption. What do you see? What do the omens tell you? Urge the admiral toward action or caution.',
       durationSeconds: 300,
@@ -291,7 +291,7 @@ export const pompeiiPreset: Scenario = {
     {
       id: 'debate',
       type: 'debate',
-      title: 'Council Aboard the Flagship',
+      title: 'The Debate',
       description:
         'The admiral convenes his officers and advisors aboard the flagship. Should the fleet sail toward the eruption? The debate intensifies as conditions worsen and desperate pleas arrive from shore.',
       durationSeconds: 600,
@@ -337,7 +337,7 @@ export const pompeiiPreset: Scenario = {
     {
       id: 'npc-react',
       type: 'npc_response',
-      title: 'Voices from Shore and Sea',
+      title: 'Eyewitness Responses',
       description:
         'Rectina and the senior trierarch respond to the arguments, bringing the human cost and practical realities into sharp focus.',
       durationSeconds: 180,
@@ -345,7 +345,7 @@ export const pompeiiPreset: Scenario = {
     {
       id: 'final-speeches',
       type: 'speech',
-      title: 'Final Arguments Before the Admiral',
+      title: 'Final Arguments',
       description:
         'Last chance for each side to make their case. The eruption grows worse as speakers plead their positions.',
       durationSeconds: 300,
@@ -380,7 +380,7 @@ export const pompeiiPreset: Scenario = {
     {
       id: 'verdict',
       type: 'verdict',
-      title: 'The Fate of the Fleet',
+      title: 'The Verdict',
       description:
         'The NPCs react to the decision, and the historical outcome is revealed.',
       durationSeconds: 300,
@@ -392,7 +392,7 @@ export const pompeiiPreset: Scenario = {
       name: 'Pliny the Elder',
       title: 'Admiral of the Misene Fleet, Natural Philosopher',
       description:
-        'Gaius Plinius Secundus commands the most powerful naval force in the Roman Empire. A lifelong scholar and author of the encyclopedic Natural History, he is driven by both scientific curiosity and a deep sense of Roman duty (officium). He initially wants to investigate the eruption as a natural phenomenon but is torn when rescue becomes the priority. He moderates the debate, weighing the arguments of his nephew, his officers, and the desperate pleas from shore. Known for his famous motto: "Fortune favors the brave" (Fortes fortuna iuvat).',
+        'Gaius Plinius Secundus commands the most powerful naval force in the Roman Empire. A lifelong scholar and author of the encyclopedic Natural History, he is driven by scientific curiosity and a strong sense of Roman duty (officium). He initially wants to investigate the eruption as a natural phenomenon but is torn when rescue becomes the priority. He moderates the debate, weighing the arguments of his nephew, his officers, and the desperate pleas from shore. Known for his famous motto: "Fortune favors the brave" (Fortes fortuna iuvat).',
       suggestedFor: 'ta',
       assignedTo: '',
     },
@@ -421,7 +421,7 @@ export const pompeiiPreset: Scenario = {
       name: 'Rectina',
       title: 'Noblewoman trapped near Vesuvius',
       personality:
-        'Desperate, eloquent, and fiercely determined. Rectina speaks with the authority of a Roman matron of high status — she is not begging, she is demanding what is owed to Roman citizens by their navy. Her messages become increasingly urgent as conditions worsen. She makes the crisis personal and human, cutting through abstract strategic debates with the reality of people trapped and dying.',
+        'Rectina speaks with the authority of a Roman matron of high status — she is not begging, she is demanding what is owed to Roman citizens by their navy. Her messages become increasingly urgent as conditions worsen. She makes the crisis personal, bringing the debate back to the people actually trapped and dying.',
       context:
         'Rectina is mentioned by Pliny the Younger in his letter to Tacitus (Epistulae VI.16) as having sent a message to Pliny the Elder begging for rescue. She was "terrified by the danger threatening her — for her villa lay at the foot of Vesuvius, and there was no escape except by boat." Her message was the catalyst that transformed Pliny\'s expedition from scientific observation to a full rescue mission. Some scholars identify her as the wife of Tascius Pomponianus, though this is debated.',
       stance:
@@ -434,7 +434,7 @@ export const pompeiiPreset: Scenario = {
       name: 'Trierarch Marcus Aelius',
       title: 'Senior Captain of the Fleet',
       personality:
-        'Grizzled, practical, and deeply experienced. Marcus Aelius has commanded warships for twenty years across the Mediterranean. He speaks bluntly, without the rhetorical flourishes of the educated elite. He respects Admiral Pliny but is alarmed by the conditions — falling stones, unpredictable seas, and ash reducing visibility to near zero. He knows what his ships can and cannot do, and he will not sugarcoat the risks to his crews.',
+        'Marcus Aelius has commanded warships for twenty years across the Mediterranean. He speaks bluntly, without the rhetorical flourishes of the educated elite. He respects Admiral Pliny but is alarmed by the conditions — falling stones, unpredictable seas, and ash reducing visibility to near zero. He knows what his ships can and cannot do, and he will not sugarcoat the risks to his crews.',
       context:
         'The Misene fleet (Classis Misenensis) was one of two major imperial fleets based in Italy, consisting of large warships (quadriremes and triremes) as well as lighter Liburnian galleys. A trierarch was the captain of an individual warship. The fleet had roughly 10,000 sailors and marines. While primarily a military force, the fleet also served civilian functions including transport and, in emergencies, evacuation. The ships were oar-powered galleys that could navigate independently of wind but were vulnerable to falling debris and shallow, disrupted waters.',
       stance:
@@ -472,7 +472,7 @@ export const trolleyPreset: Scenario = {
     {
       id: 'opening',
       type: 'freeform',
-      title: 'The Classic Dilemma',
+      title: 'The Dilemma',
       description:
         'Share your initial gut reaction: pull the lever or not? Explain the reasoning behind your snap judgment. The panel will ask probing questions to surface hidden assumptions.',
       durationSeconds: 300,
@@ -480,7 +480,7 @@ export const trolleyPreset: Scenario = {
     {
       id: 'debate',
       type: 'debate',
-      title: 'Consequences vs. Principles',
+      title: 'The Debate',
       description:
         'Structured debate between utilitarian and deontological positions. The scenario escalates: what about the footbridge variant, where you must physically push someone? What changes, and why?',
       durationSeconds: 600,
@@ -488,7 +488,7 @@ export const trolleyPreset: Scenario = {
     {
       id: 'npc-react',
       type: 'npc_response',
-      title: 'The Experts Weigh In',
+      title: 'Expert Testimony',
       description:
         'The moral philosophers and the trauma surgeon respond to the arguments they have heard, introducing complications the students may not have considered.',
       durationSeconds: 180,
@@ -552,7 +552,7 @@ export const trolleyPreset: Scenario = {
       name: 'Professor Foot',
       title: 'Moral Philosopher',
       personality:
-        'Precise, Socratic, and gently relentless. Never gives her own answer — instead asks the question that makes the previous answer collapse. Speaks with quiet British understatement. Takes special interest in why people change their answers between the lever and footbridge cases. Believes the trolley problem reveals something deep about moral psychology, not just moral philosophy.',
+        'Never gives her own answer — instead asks the question that makes the previous answer collapse. Speaks with quiet British understatement. Takes special interest in why people change their answers between the lever and footbridge cases. Believes the trolley problem reveals something important about moral psychology, not just moral philosophy.',
       context:
         'Based on Philippa Foot, who introduced the trolley problem in her 1967 paper "The Problem of Abortion and the Doctrine of the Double Effect." Foot was one of the founders of modern virtue ethics and spent her career at Oxford and UCLA. She was interested in the trolley problem not as a puzzle to be solved but as a tool for revealing the structure of moral reasoning — particularly the distinction between doing and allowing.',
       stance:
@@ -565,11 +565,11 @@ export const trolleyPreset: Scenario = {
       name: 'Dr. Amara Osei',
       title: 'Trauma Surgeon',
       personality:
-        'Direct, practical, and slightly impatient with abstract philosophy. Has made real triage decisions under pressure — who gets the last ventilator, which patient goes to surgery first when there aren\'t enough surgeons. Brings the conversation back to earth whenever it gets too theoretical. Not hostile to philosophy, but insists that real moral decisions happen in seconds, not seminars.',
+        'Has made real triage decisions under pressure — who gets the last ventilator, which patient goes to surgery first when there aren\'t enough surgeons. Brings the conversation back to earth whenever it gets too theoretical. Not hostile to philosophy, but insists that real moral decisions happen in seconds, not seminars.',
       context:
         'Represents the practical dimension of trolley-problem reasoning. Emergency medicine and disaster triage involve genuine utilitarian calculations: when resources are scarce, doctors must decide who to treat first based on who can be saved and at what cost. The military equivalent is battlefield triage. These real-world parallels show that the trolley problem is not purely academic — similar logic shapes medical ethics, organ transplant allocation, and pandemic resource distribution.',
       stance:
-        'Leans utilitarian in practice — "In my ER, I save the most lives I can with what I have" — but acknowledges that the footbridge variant feels deeply wrong. Argues that the emotional revulsion at physically pushing someone matters and shouldn\'t be dismissed as irrational. The discomfort is data about what kind of society we want to live in.',
+        'Leans utilitarian in practice — "In my ER, I save the most lives I can with what I have" — but acknowledges that the footbridge variant feels wrong. Argues that the emotional revulsion at physically pushing someone matters and shouldn\'t be dismissed as irrational. The discomfort is data about what kind of society we want to live in.',
       avatarEmoji: '🩺',
       voice: 'nova',
     },
@@ -653,7 +653,7 @@ export const oppenheimerPreset: Scenario = {
       name: 'J. Robert Oppenheimer',
       title: 'Former Director, Los Alamos Laboratory',
       description:
-        'The subject of the hearing. Brilliant, charismatic, and tormented by the consequences of his own creation. Oppenheimer must navigate between defending his loyalty to the United States and his conviction that the hydrogen bomb represents a moral threshold that should not be crossed. He can be arrogant, elliptical, and self-destructive under questioning — historically, his own testimony damaged his case because he was too honest about his conflicted feelings. Key challenge: how do you defend dissent without appearing disloyal in the McCarthy era?',
+        'The subject of the hearing. Oppenheimer must defend his loyalty to the United States while maintaining his conviction that the hydrogen bomb represents a moral line that should not be crossed. He can be arrogant, elliptical, and self-destructive under questioning — historically, his own testimony damaged his case because he was too honest about his conflicted feelings. Key challenge: how do you defend dissent without appearing disloyal in the McCarthy era?',
       suggestedFor: 'ta',
       assignedTo: '',
     },
@@ -682,11 +682,11 @@ export const oppenheimerPreset: Scenario = {
       name: 'Edward Teller',
       title: 'Physicist, Father of the Hydrogen Bomb',
       personality:
-        'Intense, driven, and deeply resentful of Oppenheimer. Teller feels that Oppenheimer used his influence to delay the H-bomb, costing America years in the arms race with the Soviet Union. He speaks with a heavy Hungarian accent and the conviction of someone who fled fascism and believes American nuclear supremacy is the only thing preventing another Holocaust. He is not lying — he genuinely believes Oppenheimer is dangerous. But his testimony will destroy a former colleague and divide the physics community for a generation.',
+        'Teller feels that Oppenheimer used his influence to delay the H-bomb, costing America years in the arms race with the Soviet Union. He speaks with a heavy Hungarian accent and the conviction of someone who fled fascism and believes American nuclear supremacy is the only thing preventing another Holocaust. He is not lying — he believes Oppenheimer is dangerous. But his testimony will destroy a former colleague and divide the physics community for a generation.',
       context:
         'Edward Teller was a Hungarian-American physicist who championed the development of the hydrogen bomb. He and Oppenheimer clashed repeatedly: Oppenheimer thought the H-bomb was technically uncertain and morally unconscionable; Teller thought it was essential for national survival. At the hearing, Teller delivered the most damaging testimony: "I would like to see the vital interests of this country in hands which I understand better, and therefore trust more." This careful, devastating statement stopped short of calling Oppenheimer disloyal but achieved the same effect. Teller was shunned by much of the physics community afterward — many colleagues refused to shake his hand for decades.',
       stance:
-        'Does not call Oppenheimer a traitor. Instead, expresses doubt about his "judgment" and "wisdom" — a distinction that is technically defensible but practically devastating. Argues that Oppenheimer\'s opposition to the H-bomb was not just wrong but dangerously wrong, and that his influence over other scientists made him an obstacle to national security. Genuinely believes he is doing the right thing, even though it costs him friendships.',
+        'Does not call Oppenheimer a traitor. Instead, expresses doubt about his "judgment" and "wisdom" — a distinction that is technically defensible but practically devastating. Argues that Oppenheimer\'s opposition to the H-bomb was not just wrong but dangerously wrong, and that his influence over other scientists made him an obstacle to national security. Believes he is doing the right thing, even though it costs him friendships.',
       avatarEmoji: '☢️',
       voice: 'echo',
     },
@@ -695,7 +695,7 @@ export const oppenheimerPreset: Scenario = {
       name: 'Isidor Isaac Rabi',
       title: 'Nobel Laureate in Physics',
       personality:
-        'Warm, indignant, and morally outraged by the hearing itself. Rabi is one of the most respected physicists in America and he is furious that the government is putting Oppenheimer on trial for having a conscience. Speaks with blunt New York directness and doesn\'t bother hiding his contempt for the proceedings. His testimony is the most powerful defense of Oppenheimer — not because he agrees with all of Oppenheimer\'s decisions, but because he sees the hearing as an attack on the principle that scientists must be free to advise honestly.',
+        'Rabi is one of the most respected physicists in America and he is furious that the government is putting Oppenheimer on trial for having a conscience. Speaks with blunt New York directness and doesn\'t bother hiding his contempt for the proceedings. His testimony is the strongest defense of Oppenheimer — not because he agrees with all of Oppenheimer\'s decisions, but because he sees the hearing as an attack on the principle that scientists must be free to advise honestly.',
       context:
         'Isidor Rabi won the Nobel Prize in Physics in 1944 for his work on nuclear magnetic resonance. He was a close colleague of Oppenheimer\'s and served on the same advisory committees. At the hearing, Rabi delivered perhaps the most memorable testimony: "In a great number of cases I have seen Dr. Oppenheimer act — Loss is a feeble word for it — in a very, positive way, for the safety of the country... We have an A-bomb and a whole series of it, and what more do you want, mermaids?" His point was that Oppenheimer had already given America its most powerful weapon and deserved gratitude, not persecution.',
       stance:
@@ -711,23 +711,23 @@ export const oppenheimerPreset: Scenario = {
 export const facialRecognitionPreset: Scenario = {
   backgroundImage: '/images/facial-recognition.png',
   introNarrative:
-    'The Santa Cruz City Council chambers are standing room only. At the podium, a researcher projects two photographs: a Black city councilwoman, and the mugshot of a stranger the algorithm insists is the same person. The error rate for dark-skinned women is thirty-five percent. The error rate for white men is less than one.',
+    'It is a Tuesday evening in early 2020, and the Santa Cruz City Council chambers are about half full \u2014 a decent turnout for a weeknight. Most of the faces are familiar: neighborhood association regulars, a few downtown business owners, some UCSC students in the back row, a couple of retirees who come to every meeting. The agenda item sounds technical \u2014 a "Surveillance Technology Ordinance" \u2014 but the room has an unusual energy. The ordinance would ban facial recognition and predictive policing technology citywide. What makes it strange is that almost nobody in the room disagrees with the basic idea. The police chief supports it. The ACLU supports it. The NAACP chapter supports it. And yet there is real tension, because the people in this room want very different things from their city, and this vote is making those differences visible.',
   mode: 'civic',
   category: 'criminal-justice',
   difficulty: 'introductory',
   participantRange: { min: 4, max: 30 },
-  title: 'The Facial Recognition Ban',
+  title: 'The Surveillance Technology Ordinance',
   description:
-    'It is January 2020 in Santa Cruz, California. The city council is considering a groundbreaking ordinance: a complete ban on the use of facial recognition technology by city departments, including the police. Santa Cruz would be the first city in the United States to pass such a ban. Supporters say the technology is racially biased, threatens civil liberties, and chills free speech. Opponents argue it is a vital tool for solving crimes and finding missing persons. The council must decide.',
+    'It is early 2020 in Santa Cruz, California. The city council is considering an ordinance that would ban facial recognition technology and predictive policing software citywide \u2014 the first ban of its kind passed by a city council in the United States. The unusual thing: the police chief supports the ban. The real debate is not about whether to ban it, but what the ordinance reveals about different visions of the city.',
   context:
-    'Facial recognition technology uses algorithms to identify or verify individuals by comparing facial features from images or video against a database. By 2020, the technology had advanced rapidly but remained deeply controversial. Studies by MIT researcher Joy Buolamwini and others demonstrated significant racial and gender bias: commercial facial recognition systems misidentified Black women up to 35% of the time while achieving near-perfect accuracy for white men. The ACLU tested Amazon\'s Rekognition system against photos of members of Congress and found 28 false matches, disproportionately misidentifying people of color. San Francisco had already banned government use of facial recognition in May 2019, and Somerville, Massachusetts followed shortly after. But Santa Cruz was different — it was a smaller city without the tech-industry politics of San Francisco, and its ban was driven by a broader coalition including the ACLU, local civil liberties activists, privacy advocates, and community members concerned about surveillance of homeless populations and immigrants. The Santa Cruz Police Department had not yet deployed facial recognition, making this a preventive ban rather than a reactive one. Supporters framed it as a chance to set policy before the technology became entrenched. The ordinance specifically prohibited any city department from acquiring, retaining, accessing, or using facial recognition technology or information derived from it.',
-  setting: 'January 2020, Santa Cruz, California — City Council Chambers',
-  centralQuestion: 'Should Santa Cruz ban the use of facial recognition technology by all city departments?',
+    'Santa Cruz in 2020 is a small coastal city of about 65,000 people, home to UC Santa Cruz and shaped by decades of progressive politics. It is also a city under real strain. Housing costs have pushed working-class residents toward the margins. Homelessness is visible and contentious \u2014 encampments along the San Lorenzo River and in city parks are a constant source of friction between housed and unhoused residents. Downtown Pacific Avenue businesses deal with persistent property crime, shoplifting, and public disorder. The police department is understaffed and underfunded. Into this context comes the surveillance technology ordinance, introduced by Vice-Mayor Justin Cummings. The ordinance would ban any city department from acquiring or using facial recognition technology, and would also ban predictive policing software \u2014 a pointed move, since PredPol, one of the leading predictive policing companies, was literally founded in Santa Cruz in 2012 with the cooperation of the SCPD. The department quietly dropped the software in 2017 when Andy Mills became police chief, favoring community-oriented policing. Chief Mills supports the ban. San Francisco and Somerville, Massachusetts have already passed similar measures. The ACLU, the Electronic Frontier Foundation, and the Santa Cruz NAACP chapter all back the ordinance. A federal NIST study found facial recognition algorithms misidentified Black and Asian people up to 100 times more often than white people. Clearview AI, a startup, had been scraping billions of social media photos and offering its tool to police departments nationwide \u2014 often without city governments\' knowledge. But the politics are not simple. Santa Cruz is a sanctuary city with a significant undocumented population. It has neighborhoods where residents feel both over-policed and underprotected. And it is a city where the gap between progressive ideals and daily reality \u2014 property crime, homelessness, strained city services \u2014 generates real frustration that does not map neatly onto partisan lines.',
+  setting: 'Early 2020, Santa Cruz, California \u2014 City Council Chambers',
+  centralQuestion: 'Should Santa Cruz pass the surveillance technology ordinance banning facial recognition and predictive policing?',
   votingOptions: [
-    { id: 'full-ban', label: 'Pass the full ban — civil liberties outweigh surveillance benefits', votes: 0 },
-    { id: 'limited-use', label: 'Allow limited use — permit for serious crimes only, with oversight', votes: 0 },
-    { id: 'moratorium', label: 'Temporary moratorium — pause until the technology improves and bias is reduced', votes: 0 },
-    { id: 'no-ban', label: 'No ban — the technology is a valuable public safety tool', votes: 0 },
+    { id: 'full-ban', label: 'Pass the full ordinance as written', votes: 0 },
+    { id: 'limited-use', label: 'Ban predictive policing but allow limited facial recognition with oversight', votes: 0 },
+    { id: 'moratorium', label: 'Temporary moratorium \u2014 revisit in two years as the technology evolves', votes: 0 },
+    { id: 'no-ban', label: 'No ban \u2014 focus city resources on other priorities', votes: 0 },
   ],
   stages: [
     {
@@ -735,23 +735,23 @@ export const facialRecognitionPreset: Scenario = {
       type: 'freeform',
       title: 'Public Comment Opens',
       description:
-        'Introduce your character and state your position. Share what brought you to the council chambers tonight and what you want the council to hear.',
+        'Introduce your character and explain what brought you to the council chambers tonight. What is your stake in this decision? Speak from your own experience in the city.',
       durationSeconds: 300,
     },
     {
       id: 'debate',
       type: 'debate',
-      title: 'The Council Debate',
+      title: 'The Hearing',
       description:
-        'Structured arguments for and against the ban. Proponents present evidence of racial bias and threats to civil liberties. Opponents argue the technology saves lives and solves crimes. Where should the line be drawn between public safety and privacy?',
+        'The council hears arguments. Since most people broadly support the ban, the real tensions emerge: is this ordinance the right priority for a city dealing with a housing crisis and understaffed police? Does it go far enough? Does it address the concerns of the communities most affected by surveillance? What does Santa Cruz owe its most vulnerable residents?',
       durationSeconds: 600,
     },
     {
       id: 'npc-react',
       type: 'npc_response',
-      title: 'Expert Testimony',
+      title: 'Community Voices',
       description:
-        'The AI ethics researcher and the police captain respond to the arguments, bringing technical evidence and law enforcement perspective.',
+        'Residents and officials who have been listening respond to the arguments, bringing the lived reality of different Santa Cruz neighborhoods into the conversation.',
       durationSeconds: 180,
     },
     {
@@ -759,14 +759,14 @@ export const facialRecognitionPreset: Scenario = {
       type: 'speech',
       title: 'Final Statements',
       description:
-        'Last chance for each side to make their case before the council votes. Can anyone find a compromise that addresses both safety and civil liberties?',
+        'Last chance to address the council before the vote. The question is no longer just about facial recognition \u2014 it is about what kind of city Santa Cruz wants to be.',
       durationSeconds: 300,
     },
     {
       id: 'vote',
       type: 'vote',
       title: 'The Council Votes',
-      description: 'The council votes on the proposed facial recognition ban.',
+      description: 'The council votes on the surveillance technology ordinance.',
       durationSeconds: 120,
     },
     {
@@ -784,57 +784,245 @@ export const facialRecognitionPreset: Scenario = {
       name: 'Council Chair',
       title: 'Santa Cruz City Council Chair',
       description:
-        'Moderates the hearing, ensures all sides get equal time, asks probing questions of both advocates and opponents. Must remain publicly neutral until the vote but can shape the discussion by choosing which questions to press. Historically, the Santa Cruz council was sympathetic to the ban but took public testimony seriously. Key challenge: balancing passionate community voices with practical governance concerns.',
+        'Moderates the hearing and manages public comment. You support the ordinance in principle \u2014 most of the council does \u2014 but you want the process to be genuine, not a rubber stamp. You know there are residents in this room who feel unheard by city government on other issues, and you want them to feel like tonight matters. You also know the vote will likely be unanimous, which makes you wonder whether the hearing is really serving its purpose or just performing consensus. Push speakers to be specific. Ask follow-up questions. Do not let anyone \u2014 on any side \u2014 get away with platitudes.',
       suggestedFor: 'facilitator',
       assignedTo: '',
     },
     {
       id: 'aclu-advocate',
-      name: 'Maria Chen',
-      title: 'ACLU Northern California Staff Attorney',
+      name: 'ACLU Organizer',
+      title: 'ACLU of Northern California, Santa Cruz Chapter',
       description:
-        'The lead advocate for the ban. Presents legal arguments about Fourth Amendment protections, cites evidence of racial bias in facial recognition systems, and argues that the technology chills free speech and assembly — people behave differently when they know they\'re being watched. Can reference the MIT study showing 35% error rates for Black women, the ACLU\'s test of Amazon Rekognition against Congress members, and the history of surveillance being disproportionately targeted at communities of color. Argues that a preventive ban is better than trying to regulate after the technology is already deployed.',
+        'You have been working on this ordinance for months with the vice-mayor\'s office and Oakland Privacy. You know the legal landscape cold: San Francisco\'s ban, the NIST bias studies, the Clearview AI scandal. You are here to make sure the ordinance passes in its strongest possible form. But you are also a Santa Cruz resident, and you are aware that some people in this room see the ACLU as outsiders who care more about national headlines than the neighborhood. Your challenge: connect the abstract civil liberties argument to the specific reality of this city. Why does this matter to the person whose car got broken into on the west side? Why does it matter to the family in Beach Flats?',
       suggestedFor: 'student',
       assignedTo: '',
     },
     {
       id: 'business-owner',
-      name: 'David Park',
-      title: 'Downtown Business Association President',
+      name: 'Pacific Avenue Business Owner',
+      title: 'Downtown Santa Cruz shop owner',
       description:
-        'Represents the business community, which has mixed feelings. Sympathizes with privacy concerns but worries about public safety — downtown Santa Cruz has persistent issues with property crime. Argues that technology should be a tool available to law enforcement, with proper oversight, not banned outright. Proposes a middle ground: allow use only for serious violent crimes, with judicial oversight and public reporting. Concerned that a total ban makes Santa Cruz look anti-technology and anti-business.',
+        'You run a store on Pacific Avenue. You have dealt with shoplifting, vandalism, and break-ins for years. You are not opposed to the ban \u2014 you do not particularly want the government scanning faces \u2014 but you are frustrated that the council seems more interested in making a national statement about surveillance technology than in addressing the daily reality of doing business downtown. You want to know: what is the city actually going to do about property crime? If you take tools off the table, what goes on the table instead? You are tired of being told that your concerns about safety are really about criminalizing poverty.',
       suggestedFor: 'student',
       assignedTo: '',
     },
   ],
   npcs: [
     {
-      id: 'ai-researcher',
-      name: 'Dr. Keisha Williams',
-      title: 'AI Ethics Researcher, UC Santa Cruz',
+      id: 'westside-resident',
+      name: 'Westside Resident',
+      title: 'Longtime Santa Cruz homeowner',
       personality:
-        'Measured, data-driven, and quietly passionate. Dr. Williams has spent years studying algorithmic bias and she has the numbers to back up her arguments. She doesn\'t moralize — she presents evidence and lets it speak. But behind the academic calm is genuine anger at how these systems disproportionately harm marginalized communities. She is careful to acknowledge that the technology will improve over time, but argues that "better accuracy" doesn\'t solve the fundamental civil liberties problem.',
+        'Plainspoken, a little impatient, not interested in scoring political points. Has lived in the same house near Natural Bridges for over twenty years. Speaks from accumulated frustration with a city government that feels increasingly disconnected from the people who actually live here year-round. Not hostile, but tired. Voted for every progressive ballot measure and is starting to wonder what any of it has actually changed on their street.',
       context:
-        'Represents the academic research community that has documented extensive bias in facial recognition systems. Key studies include Joy Buolamwini and Timnit Gebru\'s "Gender Shades" project at MIT Media Lab, which found that commercial facial recognition systems from IBM, Microsoft, and Face++ had error rates of up to 34.7% for dark-skinned women compared to 0.8% for light-skinned men. The National Institute of Standards and Technology (NIST) confirmed these findings in a 2019 study of 189 algorithms, finding that most had higher false positive rates for African American and Asian faces compared to Caucasian faces. Beyond accuracy, researchers have raised concerns about the creation of surveillance infrastructure that could be misused regardless of the technology\'s accuracy.',
+        'Represents the longtime Santa Cruz residents who broadly share the city\'s progressive values but feel the gap between those values and their daily experience widening. Their car has been broken into twice in the past year. They have called the police about encampment activity near their property and been told the department does not have the staffing to respond. They see the council spending political energy on a surveillance technology ban \u2014 for technology the city does not even use \u2014 and they want to know why this is the priority.',
       stance:
-        'Supports the ban but on broader grounds than just bias. Even if the technology were perfectly accurate, mass facial recognition enables a surveillance infrastructure that is incompatible with democratic freedoms. Accuracy improvements don\'t address the fundamental question: do we want to live in a society where the government can identify and track anyone walking down the street? Cites China\'s use of facial recognition to monitor Uyghur Muslims as a warning about where the technology leads.',
-      avatarEmoji: '🔬',
+        'Not opposed to the ban. Genuinely does not care much about facial recognition one way or another. But wants the council to hear that passing a symbolic ordinance is not a substitute for the things the city is failing to do: fund the police department, address homelessness, fix the roads. Will support the ban if someone can explain how it connects to making the city work better, not just making it look good in the news. Asks pointed questions like: "How much staff time went into drafting this? What else could that time have been spent on?"',
+      avatarEmoji: '\uD83C\uDFE0',
+      voice: 'echo',
+    },
+    {
+      id: 'beach-flats-resident',
+      name: 'Beach Flats Resident',
+      title: 'Service worker, Beach Flats neighborhood',
+      personality:
+        'Guarded at first \u2014 not used to speaking at city council meetings and a little self-conscious about it. But once they start talking, they are concrete and specific. Does not speak in policy language. Describes things they have seen and experienced: being stopped and asked for ID, a neighbor afraid to call the police because of immigration status, kids who walk past the boardwalk cameras every day on their way to school.',
+      context:
+        'Beach Flats is a small, primarily Latino neighborhood adjacent to the Santa Cruz Beach Boardwalk. It is one of the most diverse and lowest-income neighborhoods in the city. Residents experience both higher rates of property crime and more frequent police contact than wealthier parts of Santa Cruz. The neighborhood sits in a complicated position: residents want police help with real safety problems but also fear that surveillance tools will be used to target undocumented community members. Santa Cruz is a sanctuary city, but that designation feels abstract when you are wondering whether a camera on the boardwalk is feeding data to a federal database.',
+      stance:
+        'Supports the ban, but from a specific and personal place rather than an ideological one. The concern is not abstract civil liberties \u2014 it is that a neighbor might get deported, that their teenager might get flagged by an algorithm trained on arrest data from a system that already over-polices their neighborhood. But also wants to be heard on the other side: they want the police to actually show up when someone breaks into the laundromat. They are navigating a real contradiction and they know it. They do not have a clean policy position. They have a life.',
+      avatarEmoji: '\uD83C\uDFD6\uFE0F',
       voice: 'nova',
     },
     {
-      id: 'police-captain',
-      name: 'Captain Mike Torres',
-      title: 'Santa Cruz Police Department',
+      id: 'city-councillor',
+      name: 'City Council Member',
+      title: 'Santa Cruz City Council',
       personality:
-        'Pragmatic, respectful, and frustrated. Torres is not a surveillance hawk — he genuinely cares about civil liberties and understands the concerns. But he has unsolved cases that facial recognition could help crack, and he\'s tired of being portrayed as the villain. Speaks from experience: missing persons cases where a photo match could save a life, serial theft cases where identification is the bottleneck. He\'s open to regulation and oversight but thinks a total ban throws out a useful tool because of problems that could be managed.',
+        'Pragmatic, detail-oriented, supportive of the ban in principle but preoccupied with implementation and cost. Tends to ask the boring-but-important questions that nobody else wants to deal with: what does this actually require city staff to do? How do we enforce it? What happens when the county sheriff, who is not covered by a city ordinance, uses facial recognition anyway? Not charismatic, but the person in the room who has actually read the ordinance line by line.',
       context:
-        'The Santa Cruz Police Department had not deployed facial recognition technology at the time of the proposed ban, making this a preventive measure. However, law enforcement agencies nationwide were increasingly adopting the technology. The FBI\'s Next Generation Identification system included facial recognition capabilities, and local departments in other cities had used it to identify suspects from surveillance footage. Clearview AI, a controversial startup, had scraped billions of photos from social media and offered its facial recognition tool to police departments across the country — often without the knowledge of city governments. Proponents of police use cited cases where facial recognition helped identify suspects in violent crimes, human trafficking, and child exploitation.',
+        'Santa Cruz city government in 2020 is stretched thin. The city budget is under pressure from rising pension costs, deferred infrastructure maintenance, and the escalating cost of homelessness services. Every hour of staff time spent drafting and implementing a new ordinance is an hour not spent on something else. The council member is also aware that the ordinance only covers city departments \u2014 it does not bind the county sheriff, state agencies, or federal law enforcement, all of which operate in Santa Cruz. There is a practical question about whether a city-level ban actually prevents the surveillance it aims to prevent, or whether it just moves it to a different jurisdiction.',
       stance:
-        'Opposes a total ban but supports strong regulation. Argues for a "limited use" framework: facial recognition only for violent felonies and missing persons, requiring a warrant or court order, with mandatory public reporting of every use, independent auditing for bias, and a sunset clause requiring renewal every two years. Says a total ban is "a sledgehammer when we need a scalpel" and will hamper legitimate investigations. Acknowledges the bias problem but argues the answer is better technology and oversight, not prohibition.',
-      avatarEmoji: '🛡️',
+        'Will vote yes. But wants the discussion to be honest about what the ordinance does and does not do. Pushes back on rhetoric that frames this as a decisive victory for civil liberties \u2014 the county sheriff can still use whatever technology they want. Wants to know: should the ordinance include a requirement that the city advocate for county-level and state-level action? Is there funding attached for community oversight? What is the enforcement mechanism if a department violates the ban? Sees the ordinance as a reasonable first step, not a solution.',
+      avatarEmoji: '\uD83D\uDCCB',
       voice: 'onyx',
     },
   ],
   outcome:
-    'The Santa Cruz City Council voted unanimously to ban facial recognition technology on June 23, 2020, making it the first city in the United States to enact such a ban through a city council vote (San Francisco\'s ban, passed in May 2019, was enacted by the Board of Supervisors through a different legislative mechanism). The ordinance prohibited any city department from "obtaining, retaining, accessing, or using" facial recognition technology or any information derived from it. The ban was championed by Council Member Justin Cummings, who cited both civil liberties concerns and the documented racial bias in the technology. The vote reflected a broader national movement: by 2021, more than a dozen cities had enacted similar bans or moratoriums, including Boston, Minneapolis, and Portland, Oregon. However, the movement faced pushback: in 2020, the state of Virginia initially considered a ban but instead passed a law requiring police to obtain a court order before using facial recognition. Some cities that passed bans later modified or repealed them under pressure from law enforcement — New Orleans, which had banned facial recognition in 2020, quietly began allowing its use again in 2022 after a spike in violent crime. The debate continues to evolve as the technology improves and new applications emerge. The European Union\'s AI Act (2024) banned real-time facial recognition in public spaces with limited exceptions for law enforcement. Meanwhile, the underlying tension remains unresolved: as facial recognition accuracy improves and racial bias diminishes, the civil liberties arguments — about surveillance infrastructure, chilling effects on free assembly, and the power of the state to identify and track its citizens — become more, not less, important.',
+    'The Santa Cruz City Council voted unanimously to pass the surveillance technology ordinance on June 23, 2020 \u2014 the first city in the United States to ban both facial recognition and predictive policing through a city council vote. The ban was championed by Vice-Mayor Justin Cummings with support from Police Chief Andy Mills, who stated that predictive policing "has been shown over time to put officers in conflict with communities rather than working with the communities." The irony was not lost on observers: PredPol, the predictive policing company whose software the ordinance banned, had been founded in Santa Cruz in 2012 with the SCPD\'s cooperation. The company\'s CEO did not speak at the hearing. The vote was part of a broader national movement \u2014 San Francisco, Somerville, Boston, Minneapolis, and Portland passed similar measures. But the aftermath was more complicated than the vote suggested. New Orleans, which passed its own ban in 2020, quietly reversed course in 2022 after a homicide spike, allowing facial recognition for violent crime investigations. Virginia passed a law permitting police use with a court order. The broader questions the Santa Cruz hearing surfaced \u2014 about city priorities, about the gap between symbolic action and material change, about who gets to feel safe \u2014 were not resolved by the vote. They persist in Santa Cruz and in every city grappling with how to govern technology that is evolving faster than the democratic process can follow.',
+};
+
+export const socratesPreset: Scenario = {
+  backgroundImage: '/images/socrates.png',
+  introBannerImage: '/images/socrates-intro.png',
+  introNarrative:
+    'Five hundred citizens sit on wooden benches in the open air, chosen by lot to judge the most famous philosopher in Athens. Socrates is seventy years old. He has no lawyer. He has refused to flee, refused to beg, refused to stop asking questions. For decades he has stood in the agora \u2014 the marketplace, the heart of the city \u2014 and asked passing statesmen, poets, and craftsmen to explain what they know. Invariably they cannot. The powerful men of Athens have grown tired of being made to look foolish. But the charges are not about embarrassment. They are about the soul of the democracy itself: does a free society owe loyalty to its gods and traditions, or does it owe its citizens the right to question everything?',
+  mode: 'education',
+  category: 'philosophy',
+  difficulty: 'introductory',
+  participantRange: { min: 4, max: 30 },
+  title: 'The Trial of Socrates',
+  description:
+    'It is 399 BCE in Athens. Five hundred citizens chosen by lot must judge Socrates, the city\'s most famous philosopher, on charges of impiety and corrupting the youth. But the real question runs deeper: can a democracy tolerate a man who teaches people to question its foundational beliefs?',
+  context:
+    'Athens in 399 BCE is a wounded democracy. Just five years earlier, the Thirty Tyrants \u2014 an oligarchic junta backed by Sparta \u2014 overthrew the democratic government, executed fifteen hundred citizens, and ruled through terror for eight months. Democracy has been restored, but the scars are deep. Several of the Thirty\'s most notorious members \u2014 including Critias and Charmides \u2014 were former students of Socrates. Although Socrates himself defied the Tyrants (refusing to arrest an innocent man when ordered), many Athenians see his philosophical method as the seed of the oligarchic coup. His relentless questioning of democratic assumptions, they argue, taught the young elites to despise democracy. The formal charges are impiety (not believing in the city\'s gods, introducing new divinities) and corruption of the youth. But the trial is really about whether democratic Athens can tolerate a man who teaches people to question its foundational beliefs.',
+  setting: 'Athens, 399 BCE \u2014 The People\'s Court (Heliaia)',
+  centralQuestion: 'Should Athens condemn Socrates to death for corrupting the youth and impiety toward the gods?',
+  votingOptions: [
+    { id: 'acquit', label: 'Acquit \u2014 Socrates is guilty of nothing more than free inquiry', votes: 0 },
+    { id: 'exile', label: 'Convict but exile \u2014 banish him from Athens rather than execute', votes: 0 },
+    { id: 'condemn', label: 'Convict and condemn \u2014 the law must be upheld and Athens protected', votes: 0 },
+  ],
+  stages: [
+    {
+      id: 'opening',
+      type: 'freeform',
+      title: 'Opening Statements',
+      description:
+        'Introduce your character and state your initial position. Accusers: explain why Socrates threatens Athens. Defenders: explain why his philosophy strengthens it. Jurors: describe your experience of the post-tyranny city.',
+      durationSeconds: 300,
+    },
+    {
+      id: 'debate',
+      type: 'debate',
+      title: 'The Prosecution and Defense',
+      description:
+        'Present your arguments. Was Socrates\' questioning a form of civic virtue or civic sabotage? Did his former students\' crimes implicate his teachings?',
+      durationSeconds: 600,
+      events: [
+        {
+          id: 'witness-testimony',
+          text: 'A Witness Steps Forward',
+          description:
+            'A former student of Socrates describes how his teaching changed their understanding of justice and morality \u2014 but is it for better or worse?',
+          minDelay: 60,
+          maxDelay: 180,
+          probability: 0.85,
+        },
+        {
+          id: 'tyrants-invoked',
+          text: 'The Shadow of the Thirty',
+          description:
+            'Someone raises the names of Critias and Charmides \u2014 members of the Thirty Tyrants who studied with Socrates. The courtroom stirs.',
+          minDelay: 120,
+          maxDelay: 300,
+          probability: 0.9,
+        },
+      ],
+    },
+    {
+      id: 'npc-react',
+      type: 'npc_response',
+      title: 'Testimony',
+      description:
+        'The court hears from key witnesses and interested parties.',
+      durationSeconds: 180,
+    },
+    {
+      id: 'final-speeches',
+      type: 'speech',
+      title: 'Final Speeches',
+      description:
+        'Make your final appeals to the jury. Socrates historically refused to beg for mercy \u2014 will the defense follow his example?',
+      durationSeconds: 300,
+      events: [
+        {
+          id: 'socrates-daimonion',
+          text: 'Socrates Speaks of His Inner Voice',
+          description:
+            'Socrates mentions his daimonion \u2014 the divine inner voice that warns him when he is about to do wrong. It has not warned him against this trial. The crowd murmurs \u2014 is this the \'new divinity\' he\'s accused of introducing?',
+          minDelay: 30,
+          maxDelay: 120,
+          probability: 0.8,
+        },
+      ],
+    },
+    {
+      id: 'vote',
+      type: 'vote',
+      title: 'The Jury Votes',
+      description: 'Cast your ballot. In Athenian law, there is no deliberation \u2014 each juror votes their conscience.',
+      durationSeconds: 120,
+    },
+    {
+      id: 'verdict',
+      type: 'verdict',
+      title: 'The Verdict',
+      description:
+        'The verdict is read and the historical outcome revealed.',
+      durationSeconds: 300,
+    },
+  ],
+  roles: [
+    {
+      id: 'socrates',
+      name: 'Socrates',
+      title: 'The Accused',
+      description:
+        'The accused. Seventy years old, a stonemason\'s son who became Athens\' most famous philosopher. You believe the unexamined life is not worth living. You will not beg, flatter, or weep before the jury. You may defend yourself \u2014 but on your own terms.',
+      suggestedFor: 'ta',
+      assignedTo: '',
+    },
+    {
+      id: 'meletus',
+      name: 'Meletus',
+      title: 'Lead Prosecutor',
+      description:
+        'The lead prosecutor, a young poet. You brought the formal charges of impiety and corruption of the youth. Some say you are a puppet of more powerful men. Prove them wrong \u2014 make the case that Socrates is genuinely dangerous to Athens\' religious and civic foundations.',
+      suggestedFor: 'student',
+      assignedTo: '',
+    },
+    {
+      id: 'anytus',
+      name: 'Anytus',
+      title: 'Democratic Politician and Co-Prosecutor',
+      description:
+        'A wealthy tanner and democratic politician. You fought against the Thirty Tyrants and helped restore the democracy. You see Socrates as the intellectual father of the oligarchic coup. Your son studied with Socrates and abandoned the family trade to pursue philosophy \u2014 you take this personally.',
+      suggestedFor: 'student',
+      assignedTo: '',
+    },
+  ],
+  npcs: [
+    {
+      id: 'chaerecrates',
+      name: 'Chaerecrates',
+      title: 'Brother of Chaerephon, Friend of Socrates',
+      personality:
+        'Earnest and a little overwhelmed by the gravity of the moment. Speaks plainly, without rhetorical flourish. Loyal to his dead brother\'s memory.',
+      context:
+        'Chaerephon \u2014 now dead \u2014 once asked the Oracle at Delphi if anyone was wiser than Socrates. The Oracle said no. Socrates claimed this is what started his philosophical mission: trying to find someone wiser than himself, and failing.',
+      stance:
+        'Defends Socrates. Argues that Socrates\' mission was divinely ordained \u2014 the opposite of impiety.',
+      avatarEmoji: '\uD83C\uDFDB\uFE0F',
+      voice: 'echo',
+    },
+    {
+      id: 'thais',
+      name: 'Thais',
+      title: 'Mother of a Student of Socrates',
+      personality:
+        'Passionate, protective, torn. Her son came home asking questions that frightened her \u2014 questioning the gods, questioning duty to parents, questioning everything. But she also saw him become more thoughtful, more just.',
+      context:
+        'Represents the ordinary Athenians caught between admiration and fear of Socrates\' influence on the young.',
+      stance:
+        'Conflicted. Sees both the danger and the value. Asks the court whether wisdom that disturbs is worse than comfortable ignorance.',
+      avatarEmoji: '\uD83D\uDC69',
+      voice: 'nova',
+    },
+    {
+      id: 'thrasymachus',
+      name: 'Thrasymachus',
+      title: 'Sophist and Rhetorician',
+      personality:
+        'Aggressive, theatrical, brilliant. Despises Socrates for undermining the art of rhetoric and for his false humility. Believes justice is simply the advantage of the stronger.',
+      context:
+        'A professional teacher of rhetoric who charges fees \u2014 everything Socrates is not. Socrates has publicly humiliated sophists like him in philosophical arguments.',
+      stance:
+        'Against Socrates \u2014 but for cynical reasons. Argues that Socrates is the most dangerous kind of corruptor: one who genuinely believes he\'s helping.',
+      avatarEmoji: '\uD83C\uDFAD',
+      voice: 'onyx',
+    },
+  ],
+  outcome:
+    'Socrates was convicted by a vote of 280 to 221 \u2014 a narrow margin, meaning just 30 votes would have acquitted him. Athenian law allowed the convicted to propose an alternative penalty to the prosecution\'s demand for death. Socrates initially suggested the city should reward him with free meals at the Prytaneum (the honor given to Olympic victors), arguing that what he did for Athens was far more valuable than any athletic victory. This provocative counter-proposal infuriated the jury. He eventually proposed a small fine. The jury voted for death by a larger margin than the conviction itself \u2014 some who voted to acquit switched to vote for death, angered by his apparent arrogance. Socrates spent thirty days in prison while Athens celebrated a religious festival. His friends offered to bribe the guards and arrange his escape to Thessaly, but he refused, arguing in what Plato recorded as the "Crito" that breaking the law \u2014 even an unjust verdict \u2014 would undermine the social contract that made civilized life possible. He drank the hemlock surrounded by his students. Plato, who was present, recorded that Socrates\' last words were: "Crito, we owe a rooster to Asclepius. Pay it and do not neglect it." The meaning of this final statement has been debated for twenty-four centuries.',
 };
