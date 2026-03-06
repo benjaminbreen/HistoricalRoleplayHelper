@@ -50,12 +50,25 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 18px;
+  font-size: 16px;
 }
 
+/* Tablet+ */
+@media (min-width: 640px) {
+  body { font-size: 18px; }
+}
 /* Projection-optimized sizes */
 @media (min-width: 1280px) {
   body { font-size: 20px; }
+}
+
+/* Touch-reveal utility: visible on touch devices, hover-only on pointer devices */
+@media (hover: hover) {
+  .touch-reveal { opacity: 0; transition: opacity 0.15s; }
+  .group:hover .touch-reveal { opacity: 1; }
+}
+@media (hover: none) {
+  .touch-reveal { opacity: 1; }
 }
 
 /* Glass panels */

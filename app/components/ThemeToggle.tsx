@@ -23,7 +23,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="group relative flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 hover:scale-110"
+      className="group relative flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl transition-all duration-300 hover:scale-110"
       style={{
         background: 'var(--subtle-bg)',
         border: '1px solid var(--subtle-border)',

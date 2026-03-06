@@ -79,7 +79,7 @@ export default function ScenarioIntroModal({ scenario, onDismiss, onBack }: Scen
       )}
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center px-8 py-16 max-w-3xl mx-auto text-center">
+      <div className="relative z-10 flex flex-col items-center px-4 sm:px-8 py-10 sm:py-16 max-w-3xl mx-auto text-center">
         {/* Category badge */}
         {scenario.category && (
           <span
@@ -97,7 +97,7 @@ export default function ScenarioIntroModal({ scenario, onDismiss, onBack }: Scen
 
         {/* Title */}
         <h1
-          className="heading-display animate-cinematic text-5xl md:text-6xl font-bold mb-3"
+          className="heading-display animate-cinematic text-3xl sm:text-5xl md:text-6xl font-bold mb-3"
           style={{
             color: '#d4a03c',
             textShadow: '0 2px 20px rgba(212,160,60,0.25)',
@@ -160,7 +160,7 @@ export default function ScenarioIntroModal({ scenario, onDismiss, onBack }: Scen
         {/* Begin button */}
         <button
           onClick={onDismiss}
-          className="animate-narrative heading-display rounded-2xl px-12 py-5 text-3xl font-bold transition-all hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--background)]"
+          className="animate-narrative heading-display rounded-2xl px-8 sm:px-12 py-4 sm:py-5 text-xl sm:text-3xl font-bold transition-all hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--background)]"
           style={{
             background: 'linear-gradient(135deg, rgba(212,160,60,0.3), rgba(180,120,40,0.15))',
             color: '#d4a03c',

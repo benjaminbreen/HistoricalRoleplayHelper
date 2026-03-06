@@ -30,11 +30,11 @@ export default function CastLobbyScreen({ scenario, cast, onStart, onBack }: Cas
   }, [cast]);
 
   return (
-    <div className="noise flex min-h-screen flex-col items-center justify-center p-8">
+    <div className="noise flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8">
       {/* Header */}
-      <div className="text-center mb-8 max-w-3xl">
+      <div className="text-center mb-6 sm:mb-8 max-w-3xl">
         <h1
-          className="heading-display text-5xl font-bold mb-3"
+          className="heading-display text-3xl md:text-5xl font-bold mb-3"
           style={{ color: 'var(--accent)', textShadow: '0 2px 12px rgba(212,160,60,0.2)' }}
         >
           {scenario.title}
@@ -94,7 +94,7 @@ export default function CastLobbyScreen({ scenario, cast, onStart, onBack }: Cas
         </button>
         <button
           onClick={onStart}
-          className="heading-display rounded-2xl px-12 py-5 text-3xl font-bold transition-all hover:scale-[1.03]"
+          className="heading-display rounded-2xl px-8 sm:px-12 py-4 sm:py-5 text-xl sm:text-3xl font-bold transition-all hover:scale-[1.03]"
           style={{
             background: 'linear-gradient(135deg, rgba(212,160,60,0.3), rgba(180,120,40,0.15))',
             color: 'var(--accent)',

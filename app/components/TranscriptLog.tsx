@@ -126,7 +126,7 @@ export default function TranscriptLog({ entries, stages, cast, onRemove, onVote,
                 <div className="flex flex-col items-center gap-0.5 pt-0.5">
                   <button
                     onClick={() => onVote(entry.id, 1)}
-                    className="flex h-6 w-6 items-center justify-center rounded-md transition-all hover:scale-110"
+                    className="flex h-8 w-8 sm:h-6 sm:w-6 items-center justify-center rounded-md transition-all hover:scale-110"
                     style={{ background: 'var(--subtle-bg)', color: 'var(--text-muted)' }}
                     title="Upvote"
                   >
@@ -146,7 +146,7 @@ export default function TranscriptLog({ entries, stages, cast, onRemove, onVote,
                   </span>
                   <button
                     onClick={() => onVote(entry.id, -1)}
-                    className="flex h-6 w-6 items-center justify-center rounded-md transition-all hover:scale-110"
+                    className="flex h-8 w-8 sm:h-6 sm:w-6 items-center justify-center rounded-md transition-all hover:scale-110"
                     style={{ background: 'var(--subtle-bg)', color: 'var(--text-muted)' }}
                     title="Downvote"
                   >
@@ -240,7 +240,7 @@ export default function TranscriptLog({ entries, stages, cast, onRemove, onVote,
                     {onRemove && (
                       <button
                         onClick={() => onRemove(entry.id)}
-                        className="opacity-0 transition-opacity group-hover:opacity-100"
+                        className="touch-reveal transition-opacity"
                         style={{ color: 'rgba(239,68,68,0.5)' }}
                         title="Remove entry"
                       >
@@ -269,7 +269,7 @@ export default function TranscriptLog({ entries, stages, cast, onRemove, onVote,
 
                 {/* Tag buttons — shown on hover, hidden for events */}
                 {onTag && !isEvent && (
-                  <div className="mt-2 flex flex-wrap items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5 touch-reveal transition-opacity">
                     {stanceTags.map((t) => (
                       <button
                         key={t.value}

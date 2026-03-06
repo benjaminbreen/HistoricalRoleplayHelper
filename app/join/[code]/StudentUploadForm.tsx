@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { CharacterSheet } from '../../lib/types';
 import { normalizeImage, cropPortrait } from '../../lib/imageUtils';
 
@@ -16,7 +16,37 @@ export default function StudentUploadForm({ code, scenarioTitle }: Props) {
   const [studentName, setStudentName] = useState('');
   const [error, setError] = useState('');
   const [sheet, setSheet] = useState<CharacterSheet | null>(null);
+  const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Animated progress bar during processing
+  useEffect(() => {
+    if (phase === 'processing') {
+      setProgress(0);
+      let current = 0;
+      progressIntervalRef.current = setInterval(() => {
+        // Simulate progress: fast to 60%, slow to 90%
+        const remaining = 90 - current;
+        const increment = remaining > 30 ? 3 : remaining > 10 ? 1 : 0.3;
+        current = Math.min(90, current + increment);
+        setProgress(current);
+      }, 200);
+    } else if (phase === 'confirming' || phase === 'done') {
+      // Jump to 100% briefly
+      setProgress(100);
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    } else {
+      setProgress(0);
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    return () => {
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+    };
+  }, [phase]);
 
   const processPhoto = useCallback(async (file: File) => {
     setError('');
@@ -106,16 +136,32 @@ export default function StudentUploadForm({ code, scenarioTitle }: Props) {
     setPhase('idle');
   }, []);
 
+  /** Update an editable field on the confirmation screen */
+  const updateField = useCallback((field: keyof CharacterSheet, value: string) => {
+    setSheet((prev) => {
+      if (!prev) return prev;
+      // characterName is required — never set to undefined
+      if (field === 'characterName') return { ...prev, [field]: value };
+      return { ...prev, [field]: value || undefined };
+    });
+  }, []);
+
   // Shared styles
   const cardStyle = {
     background: 'var(--panel)',
     border: '1px solid var(--panel-border)',
   };
 
+  const inputStyle = {
+    background: 'var(--subtle-bg)',
+    border: '1px solid var(--subtle-border)',
+    color: 'var(--text-primary)',
+  };
+
   // --- DONE ---
   if (phase === 'done') {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'var(--background)' }}>
+      <div className="min-h-screen flex items-center justify-center p-4 sm:p-6" style={{ background: 'var(--background)' }}>
         <div className="text-center max-w-sm">
           <div className="text-6xl mb-4">✓</div>
           <h1 className="heading-display text-2xl font-bold mb-2" style={{ color: 'var(--accent)' }}>
@@ -135,13 +181,16 @@ export default function StudentUploadForm({ code, scenarioTitle }: Props) {
   // --- CONFIRMING / SUBMITTING ---
   if ((phase === 'confirming' || phase === 'submitting') && sheet) {
     return (
-      <div className="min-h-screen flex flex-col items-center p-6" style={{ background: 'var(--background)' }}>
-        <div className="w-full max-w-sm space-y-5 mt-8">
+      <div className="min-h-screen flex flex-col items-center p-4 sm:p-6" style={{ background: 'var(--background)' }}>
+        <div className="w-full max-w-sm space-y-4 sm:space-y-5 mt-6 sm:mt-8">
           <h1 className="heading-display text-xl font-bold text-center" style={{ color: 'var(--accent)' }}>
-            Does this look right?
+            Review &amp; Edit
           </h1>
+          <p className="text-sm text-center" style={{ color: 'var(--text-muted)' }}>
+            Correct any mistakes before submitting.
+          </p>
 
-          <div className="rounded-2xl p-5 space-y-4" style={cardStyle}>
+          <div className="rounded-2xl p-4 sm:p-5 space-y-4" style={cardStyle}>
             {/* Portrait */}
             <div className="flex justify-center">
               <img
@@ -152,43 +201,62 @@ export default function StudentUploadForm({ code, scenarioTitle }: Props) {
               />
             </div>
 
-            {/* Fields */}
-            <div className="text-center">
-              <div className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
-                {sheet.characterName}
+            {/* Editable fields */}
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Character Name</label>
+                <input
+                  type="text"
+                  value={sheet.characterName}
+                  onChange={(e) => updateField('characterName', e.target.value)}
+                  className="w-full rounded-lg px-3 py-2.5 text-base font-semibold outline-none"
+                  style={inputStyle}
+                />
               </div>
-              {sheet.profession && (
-                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                  {sheet.profession}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Profession</label>
+                  <input
+                    type="text"
+                    value={sheet.profession || ''}
+                    onChange={(e) => updateField('profession', e.target.value)}
+                    className="w-full rounded-lg px-3 py-2 text-sm outline-none"
+                    style={inputStyle}
+                  />
                 </div>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              {sheet.age && (
-                <div className="rounded-lg px-3 py-2" style={{ background: 'var(--subtle-bg)' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Age: </span>
-                  <span style={{ color: 'var(--text-primary)' }}>{sheet.age}</span>
+                <div>
+                  <label className="block text-xs font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Age</label>
+                  <input
+                    type="text"
+                    value={sheet.age || ''}
+                    onChange={(e) => updateField('age', e.target.value)}
+                    className="w-full rounded-lg px-3 py-2 text-sm outline-none"
+                    style={inputStyle}
+                  />
                 </div>
-              )}
-              {sheet.gender && (
-                <div className="rounded-lg px-3 py-2" style={{ background: 'var(--subtle-bg)' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Gender: </span>
-                  <span style={{ color: 'var(--text-primary)' }}>{sheet.gender}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Gender</label>
+                  <input
+                    type="text"
+                    value={sheet.gender || ''}
+                    onChange={(e) => updateField('gender', e.target.value)}
+                    className="w-full rounded-lg px-3 py-2 text-sm outline-none"
+                    style={inputStyle}
+                  />
                 </div>
-              )}
-              {sheet.socialClass && (
-                <div className="rounded-lg px-3 py-2" style={{ background: 'var(--subtle-bg)' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Class: </span>
-                  <span style={{ color: 'var(--text-primary)' }}>{sheet.socialClass}</span>
+                <div>
+                  <label className="block text-xs font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Social Class</label>
+                  <input
+                    type="text"
+                    value={sheet.socialClass || ''}
+                    onChange={(e) => updateField('socialClass', e.target.value)}
+                    className="w-full rounded-lg px-3 py-2 text-sm outline-none"
+                    style={inputStyle}
+                  />
                 </div>
-              )}
-              {sheet.family && (
-                <div className="rounded-lg px-3 py-2" style={{ background: 'var(--subtle-bg)' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Family: </span>
-                  <span style={{ color: 'var(--text-primary)' }}>{sheet.family}</span>
-                </div>
-              )}
+              </div>
             </div>
           </div>
 
@@ -213,7 +281,7 @@ export default function StudentUploadForm({ code, scenarioTitle }: Props) {
               className="flex-1 rounded-xl px-4 py-4 text-base font-semibold transition-all active:scale-[0.97] disabled:opacity-50"
               style={{ background: 'var(--accent)', color: '#000' }}
             >
-              {phase === 'submitting' ? 'Sending...' : "Looks Good!"}
+              {phase === 'submitting' ? 'Sending...' : "Submit"}
             </button>
           </div>
         </div>
@@ -223,8 +291,8 @@ export default function StudentUploadForm({ code, scenarioTitle }: Props) {
 
   // --- IDLE / PROCESSING ---
   return (
-    <div className="min-h-screen flex flex-col items-center p-6" style={{ background: 'var(--background)' }}>
-      <div className="w-full max-w-sm space-y-5 mt-8">
+    <div className="min-h-screen flex flex-col items-center p-4 sm:p-6" style={{ background: 'var(--background)' }}>
+      <div className="w-full max-w-sm space-y-5 mt-6 sm:mt-8">
         <div className="text-center">
           <h1 className="heading-display text-2xl font-bold mb-1" style={{ color: 'var(--accent)' }}>
             Join Session
@@ -245,41 +313,64 @@ export default function StudentUploadForm({ code, scenarioTitle }: Props) {
             onChange={(e) => setStudentName(e.target.value)}
             placeholder="First and last name"
             className="w-full rounded-xl px-4 py-3.5 text-base outline-none"
-            style={{
-              background: 'var(--subtle-bg)',
-              border: '1px solid var(--subtle-border)',
-              color: 'var(--text-primary)',
-            }}
+            style={inputStyle}
             disabled={phase === 'processing'}
           />
         </div>
 
-        {/* Camera button */}
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          disabled={phase === 'processing'}
-          className="w-full rounded-xl px-4 py-5 text-lg font-semibold transition-all active:scale-[0.97] disabled:opacity-50"
-          style={{
-            background: phase === 'processing' ? 'var(--subtle-bg)' : 'var(--accent)',
-            color: phase === 'processing' ? 'var(--text-secondary)' : '#000',
-            border: phase === 'processing' ? '1px solid var(--subtle-border)' : 'none',
-          }}
-        >
-          {phase === 'processing' ? (
-            <span className="flex items-center justify-center gap-3">
-              <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              Processing...
-            </span>
-          ) : (
-            '📷  Photograph Your Sheet'
-          )}
-        </button>
+        {phase === 'processing' ? (
+          /* Progress indicator */
+          <div className="space-y-3">
+            <div className="w-full rounded-full h-2 overflow-hidden" style={{ background: 'var(--subtle-bg)' }}>
+              <div
+                className="h-full rounded-full transition-all duration-300 ease-out"
+                style={{
+                  width: `${progress}%`,
+                  background: 'var(--accent)',
+                }}
+              />
+            </div>
+            <div className="flex items-center justify-center gap-3 py-3">
+              <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" style={{ color: 'var(--accent)' }} />
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                Reading your character sheet...
+              </span>
+            </div>
+          </div>
+        ) : (
+          /* Camera + Gallery buttons */
+          <div className="space-y-2.5">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full rounded-xl px-4 py-5 text-lg font-semibold transition-all active:scale-[0.97]"
+              style={{ background: 'var(--accent)', color: '#000' }}
+            >
+              📷  Photograph Your Sheet
+            </button>
+            <button
+              onClick={() => galleryInputRef.current?.click()}
+              className="w-full rounded-xl px-4 py-4 text-base font-medium transition-all active:scale-[0.97]"
+              style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)', border: '1px solid var(--subtle-border)' }}
+            >
+              🖼️  Upload from Gallery
+            </button>
+          </div>
+        )}
 
+        {/* Camera input (with capture for mobile camera) */}
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
           capture="environment"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+        {/* Gallery input (no capture — opens photo picker) */}
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/*"
           onChange={handleFileChange}
           className="hidden"
         />

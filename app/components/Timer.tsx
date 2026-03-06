@@ -88,7 +88,7 @@ export default function Timer({
         role="timer"
         aria-live={isWarning || isExpired ? 'assertive' : 'off'}
         aria-label={`${mins} minutes ${secs} seconds remaining`}
-        className={`font-mono text-4xl font-bold tabular-nums tracking-wider transition-colors ${
+        className={`font-mono text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums tracking-wider transition-colors ${
           isExpired
             ? 'text-red-400'
             : isWarning
@@ -102,7 +102,7 @@ export default function Timer({
       <div className="flex gap-1">
         <button
           onClick={onToggle}
-          className="rounded-lg px-3 py-2 text-lg transition-all hover:scale-105"
+          className="rounded-lg p-2.5 sm:px-3 sm:py-2 text-lg transition-all hover:scale-105 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center"
           style={{ background: 'rgba(212,160,60,0.12)', color: 'var(--accent)' }}
           title={running ? 'Pause' : 'Start'}
         >
@@ -110,7 +110,7 @@ export default function Timer({
         </button>
         <button
           onClick={() => onReset(defaultDuration)}
-          className="rounded-lg px-3 py-2 text-lg transition-all hover:scale-105"
+          className="rounded-lg p-2.5 sm:px-3 sm:py-2 text-lg transition-all hover:scale-105 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center"
           style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
           title="Reset timer"
         >
@@ -118,7 +118,7 @@ export default function Timer({
         </button>
         <button
           onClick={() => onTick(seconds + 60)}
-          className="rounded-lg px-3 py-2 text-sm transition-all hover:scale-105"
+          className="rounded-lg p-2.5 sm:px-3 sm:py-2 text-sm transition-all hover:scale-105 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center"
           style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)' }}
           title="Add 1 minute"
         >

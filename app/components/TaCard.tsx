@@ -202,7 +202,7 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
           >
             {/* Modal Header */}
             <div
-              className="relative flex items-center gap-5 px-8 py-6"
+              className="relative flex items-center gap-4 sm:gap-5 px-4 sm:px-8 py-5 sm:py-6"
               style={{
                 background: 'linear-gradient(135deg, rgba(99,182,255,0.06), rgba(15,17,23,0.5))',
                 borderBottom: '1px solid rgba(99,182,255,0.1)',
@@ -242,9 +242,9 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
             </div>
 
             {/* Modal Body — response text */}
-            <div className="overflow-y-auto px-8 py-6" style={{ maxHeight: 'calc(85vh - 200px)' }}>
+            <div className="overflow-y-auto px-4 sm:px-8 py-5 sm:py-6" style={{ maxHeight: 'calc(85vh - 200px)' }}>
               <p
-                className="heading-display text-xl leading-relaxed"
+                className="heading-display text-lg sm:text-xl leading-relaxed"
                 style={{ color: '#f0e6d3', lineHeight: '1.7' }}
               >
                 {latestResponse.text}
@@ -253,7 +253,7 @@ export default function TaCard({ role, responses, onSubmit, currentStageId }: Ta
 
             {/* Modal Footer */}
             <div
-              className="flex items-center justify-end px-8 py-4"
+              className="flex items-center justify-end px-4 sm:px-8 py-3 sm:py-4"
               style={{ borderTop: '1px solid rgba(99,182,255,0.08)' }}
             >
               {responses.length > 1 && (

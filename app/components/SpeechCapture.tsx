@@ -326,9 +326,9 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
           onOpenPanel={() => onOpenCastPanel?.()}
         />
       )}
-      {/* Speaker info row — wraps on small screens */}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative w-40">
+      {/* Speaker info row — stacks on mobile, flows on desktop */}
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2">
+        <div className="relative w-full sm:w-40">
           <input
             type="text"
             value={speakerName}
@@ -406,12 +406,13 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
             </div>
           )}
         </div>
+        <div className="flex gap-2 w-full sm:w-auto sm:contents">
         <input
           type="text"
           value={profession}
           onChange={(e) => setProfession(e.target.value)}
           placeholder="Profession..."
-          className="w-44 rounded-xl px-3 py-2.5 text-sm placeholder-white/20 focus:outline-none"
+          className="flex-1 sm:flex-none w-full sm:w-44 rounded-xl px-3 py-2.5 text-sm placeholder-white/20 focus:outline-none"
           style={inputStyle}
           aria-label="Profession"
         />
@@ -420,7 +421,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
           value={age}
           onChange={(e) => setAge(e.target.value)}
           placeholder="Age"
-          className="w-14 rounded-xl px-3 py-2.5 text-sm placeholder-white/20 focus:outline-none"
+          className="w-16 sm:w-14 rounded-xl px-3 py-2.5 text-sm placeholder-white/20 focus:outline-none"
           style={inputStyle}
           aria-label="Age"
         />
@@ -436,12 +437,13 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
           <option value="F">F</option>
           <option value="Other">Other</option>
         </select>
+        </div>
       </div>
       {/* Action buttons row */}
       <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={isRecording ? stopRecording : startRecording}
-          className={`btn-bar flex items-center gap-2 rounded-xl px-5 py-2.5 text-lg font-semibold ${
+          className={`btn-bar flex items-center gap-2 rounded-xl px-5 py-3 sm:py-2.5 text-base sm:text-lg font-semibold min-h-[44px] ${
             isRecording ? 'animate-pulse' : ''
           }`}
           style={{
@@ -454,7 +456,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
         </button>
         <button
           onClick={() => setShowManual(!showManual)}
-          className="btn-bar rounded-xl px-4 py-2.5 text-base"
+          className="btn-bar rounded-xl px-4 py-3 sm:py-2.5 text-base min-h-[44px]"
           style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)', border: '1px solid transparent' }}
           title="Manual text entry"
         >

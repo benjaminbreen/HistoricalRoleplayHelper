@@ -203,7 +203,7 @@ export default function Home() {
         <div ref={menuRef} className="relative">
           <button
             onClick={() => setShowMenu((v) => !v)}
-            className="group flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 hover:scale-110"
+            className="group flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl transition-all duration-300 hover:scale-110"
             style={{
               background: showMenu ? 'rgba(212,160,60,0.12)' : 'var(--subtle-bg)',
               border: showMenu ? '1px solid rgba(212,160,60,0.25)' : '1px solid var(--subtle-border)',

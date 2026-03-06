@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Scenario, TranscriptEntry, NpcResponse, VotingOption, SavedSession, ArgumentStance, RhetoricMode, StageEvent, CharacterSheet, isVerdictStage, isLeaderRole } from '../lib/types';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, MoreHorizontal } from 'lucide-react';
 import Timer from './Timer';
 import StageManager from './StageManager';
 import SpeechCapture, { SpeechCaptureHandle } from './SpeechCapture';
@@ -74,6 +74,8 @@ export default function SessionView({ scenario, sessionId, onEnd, initialState, 
   const [showIntro, setShowIntro] = useState(
     () => !!scenario.introNarrative && !initialState
   );
+  const [showOverflowMenu, setShowOverflowMenu] = useState(false);
+  const overflowMenuRef = useRef<HTMLDivElement>(null);
 
   // Event system state
   const [scheduledEvents, setScheduledEvents] = useState<ScheduledEventItem[]>([]);
@@ -378,6 +380,18 @@ export default function SessionView({ scenario, sessionId, onEnd, initialState, 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [nextStage, prevStage, showShortcuts, showEndConfirm, showIntro]);
 
+  // Close overflow menu on outside click
+  useEffect(() => {
+    if (!showOverflowMenu) return;
+    function handleClick(e: MouseEvent) {
+      if (overflowMenuRef.current && !overflowMenuRef.current.contains(e.target as Node)) {
+        setShowOverflowMenu(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [showOverflowMenu]);
+
   const handleUpdateEntry = useCallback((id: string, newText: string) => {
     setTranscript((prev) =>
       prev.map((e) => (e.id === id ? { ...e, text: newText } : e))
@@ -446,22 +460,22 @@ export default function SessionView({ scenario, sessionId, onEnd, initialState, 
       {/* Content layer */}
       <div className="relative z-10 flex min-h-screen flex-col">
         {/* Top Bar */}
-        <header className="glass-strong flex items-center justify-between px-8 py-4">
-          <div className="flex flex-1 items-center gap-4">
+        <header className="glass-strong flex items-center justify-between px-4 sm:px-6 md:px-8 py-3 sm:py-4">
+          <div className="flex flex-1 items-center gap-3 sm:gap-4 min-w-0">
             {scenario.backgroundImage && (
               <div
-                className="h-12 w-12 flex-shrink-0 rounded-xl bg-cover bg-center"
+                className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 rounded-xl bg-cover bg-center"
                 style={{
                   backgroundImage: `url(${scenario.backgroundImage})`,
                   border: '1px solid rgba(212,160,60,0.2)',
                 }}
               />
             )}
-            <div>
-              <h1 className="heading-display text-3xl font-bold" style={{ color: 'var(--accent)' }}>
+            <div className="min-w-0">
+              <h1 className="heading-display text-xl sm:text-2xl md:text-3xl font-bold truncate" style={{ color: 'var(--accent)' }}>
                 {scenario.title}
               </h1>
-              <p className="mt-0.5 text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <p className="mt-0.5 text-xs sm:text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
                 {scenario.setting}
               </p>
             </div>
@@ -496,7 +510,7 @@ export default function SessionView({ scenario, sessionId, onEnd, initialState, 
         </header>
 
         {/* Stage Progress */}
-        <div className="glass border-t-0 px-8 py-2">
+        <div className="glass border-t-0 px-4 sm:px-6 md:px-8 py-2">
           <StageManager
             stages={scenario.stages}
             currentIndex={currentStageIndex}
@@ -505,17 +519,17 @@ export default function SessionView({ scenario, sessionId, onEnd, initialState, 
         </div>
 
         {/* Stage Header */}
-        <div className="px-8 py-5">
-          <h2 className="heading-display text-3xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+        <div className="px-4 sm:px-6 md:px-8 py-3 sm:py-5">
+          <h2 className="heading-display text-xl sm:text-2xl md:text-3xl font-semibold" style={{ color: 'var(--text-primary)' }}>
             {currentStage?.title || 'Session'}
           </h2>
-          <p className="mt-1 text-lg" style={{ color: 'var(--text-secondary)' }}>
+          <p className="mt-1 text-sm sm:text-base md:text-lg" style={{ color: 'var(--text-secondary)' }}>
             {currentStage?.description || ''}
           </p>
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col overflow-hidden px-8 pb-6">
+        <main className="flex-1 flex flex-col overflow-hidden px-4 sm:px-6 md:px-8 pb-4 sm:pb-6">
           {currentStage &&
             ['freeform', 'debate', 'speech'].includes(currentStage.type) && (
               <div className="flex flex-1 flex-col min-h-0">
@@ -608,33 +622,36 @@ export default function SessionView({ scenario, sessionId, onEnd, initialState, 
         )}
 
         {/* Bottom Controls */}
-        <footer className="glass-strong flex items-center justify-between px-8 py-3">
-          <div className="flex gap-2">
+        <footer className="glass-strong flex items-center justify-between px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 gap-2">
+          {/* Primary nav — always visible */}
+          <div className="flex gap-1.5 sm:gap-2">
             <button
               onClick={prevStage}
               disabled={currentStageIndex === 0}
-              className="btn-bar rounded-xl px-5 py-2.5 text-base font-medium disabled:opacity-20"
+              className="btn-bar rounded-xl px-3 sm:px-5 py-2 sm:py-2.5 text-sm sm:text-base font-medium disabled:opacity-20"
               style={{ background: 'var(--subtle-bg)', color: 'var(--text-primary)', border: '1px solid transparent' }}
             >
-              Previous
+              Prev
             </button>
             <button
               onClick={nextStage}
               disabled={currentStageIndex >= scenario.stages.length - 1}
-              className="btn-bar rounded-xl px-5 py-2.5 text-base font-semibold disabled:opacity-20"
+              className="btn-bar rounded-xl px-3 sm:px-5 py-2 sm:py-2.5 text-sm sm:text-base font-semibold disabled:opacity-20"
               style={{ background: 'rgba(212, 160, 60, 0.2)', color: 'var(--accent)', border: '1px solid rgba(212,160,60,0.15)' }}
             >
-              Next Stage
+              Next
             </button>
           </div>
 
-          <div className="flex items-center gap-4 text-sm" style={{ color: 'var(--text-muted)' }}>
+          {/* Stage info */}
+          <div className="hidden sm:flex items-center gap-4 text-sm" style={{ color: 'var(--text-muted)' }}>
             <span>Stage {currentStageIndex + 1}/{scenario.stages.length}</span>
             <span className="opacity-40">|</span>
             <span>{transcript.length} arguments</span>
           </div>
 
-          <div className="flex gap-2">
+          {/* Desktop: show all buttons; Mobile: overflow menu */}
+          <div className="hidden md:flex gap-2">
             {cast.length > 0 && (
               <button
                 onClick={() => setShowCast((s) => !s)}
@@ -710,7 +727,7 @@ export default function SessionView({ scenario, sessionId, onEnd, initialState, 
               style={{ background: 'var(--subtle-bg)', color: 'var(--text-secondary)', border: '1px solid transparent' }}
               title="Toggle fullscreen"
             >
-              {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+              {isFullscreen ? 'Exit FS' : 'Fullscreen'}
             </button>
             <button
               onClick={() => setShowShortcuts((s) => !s)}
@@ -727,6 +744,52 @@ export default function SessionView({ scenario, sessionId, onEnd, initialState, 
             >
               End
             </button>
+          </div>
+
+          {/* Mobile overflow menu (< md) */}
+          <div ref={overflowMenuRef} className="relative md:hidden">
+            <button
+              onClick={() => setShowOverflowMenu((s) => !s)}
+              className="btn-bar flex h-11 w-11 items-center justify-center rounded-xl"
+              style={{
+                background: showOverflowMenu ? 'rgba(212,160,60,0.12)' : 'var(--subtle-bg)',
+                color: showOverflowMenu ? 'var(--accent)' : 'var(--text-secondary)',
+                border: '1px solid ' + (showOverflowMenu ? 'rgba(212,160,60,0.2)' : 'var(--subtle-border)'),
+              }}
+              aria-label="More actions"
+            >
+              <MoreHorizontal size={20} />
+            </button>
+            {showOverflowMenu && (
+              <div
+                className="absolute right-0 bottom-full mb-2 min-w-[180px] rounded-xl overflow-hidden shadow-xl z-50 divide-y"
+                style={{ background: 'var(--background)', border: '1px solid var(--panel-border)', backdropFilter: 'blur(12px)', '--tw-divide-color': 'var(--subtle-border)' } as React.CSSProperties}
+              >
+                {[
+                  ...(cast.length > 0 ? [{ label: 'Cast', action: () => setShowCast((s) => !s), active: showCast }] : []),
+                  ...(currentStage?.events?.length ? [{ label: 'Events', action: () => setShowEventPanel((s) => !s), active: showEventPanel }] : []),
+                  { label: 'Stats', action: () => setShowStats((s) => !s), active: showStats },
+                  ...(scenario.roles.length > 0 ? [{ label: 'Roles', action: () => setShowRoles((s) => !s), active: showRoles }] : []),
+                  { label: 'Export', action: exportTranscript, disabled: transcript.length === 0 },
+                  { label: 'JSON', action: exportSessionJSON, disabled: transcript.length === 0 },
+                  { label: isFullscreen ? 'Exit Fullscreen' : 'Fullscreen', action: toggleFullscreen },
+                  { label: 'Shortcuts (?)', action: () => setShowShortcuts((s) => !s) },
+                  { label: 'End Session', action: () => setShowEndConfirm(true), danger: true },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={() => { item.action(); setShowOverflowMenu(false); }}
+                    disabled={'disabled' in item ? item.disabled : false}
+                    className="flex w-full items-center px-4 py-3 text-sm font-medium text-left transition-colors disabled:opacity-30"
+                    style={{
+                      color: 'danger' in item && item.danger ? 'rgba(239,68,68,0.7)' : 'active' in item && item.active ? 'var(--accent)' : 'var(--text-primary)',
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </footer>
       </div>

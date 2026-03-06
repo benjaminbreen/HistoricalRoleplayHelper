@@ -18,6 +18,7 @@ export default function JoinSessionModal({ scenarioTitle, onClose }: Props) {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const removedIdsRef = useRef<Set<string>>(new Set());
 
   // Create session on mount
   useEffect(() => {
@@ -48,7 +49,10 @@ export default function JoinSessionModal({ scenarioTitle, onClose }: Props) {
         const res = await fetch(`/api/join?code=${code}`);
         if (res.ok) {
           const data = await res.json();
-          setStudents(data.students || []);
+          const filtered = (data.students || []).filter(
+            (s: CharacterSheet) => !removedIdsRef.current.has(s.id)
+          );
+          setStudents(filtered);
         }
       } catch {
         // Silently swallow — retry next interval
@@ -69,6 +73,11 @@ export default function JoinSessionModal({ scenarioTitle, onClose }: Props) {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, [joinUrl]);
+
+  const handleRemoveStudent = useCallback((studentId: string) => {
+    removedIdsRef.current.add(studentId);
+    setStudents((prev) => prev.filter((s) => s.id !== studentId));
+  }, []);
 
   const handleDone = useCallback(() => {
     if (pollRef.current) clearInterval(pollRef.current);
@@ -171,9 +180,19 @@ export default function JoinSessionModal({ scenarioTitle, onClose }: Props) {
                           className="w-9 h-9 rounded-full object-cover flex-shrink-0"
                           style={{ border: '2px solid var(--panel-border)' }}
                         />
-                        <div className="min-w-0">
-                          <div className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
-                            {s.characterName}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                              {s.characterName}
+                            </span>
+                            {s.needsReview && (
+                              <span
+                                className="flex-shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase"
+                                style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.25)' }}
+                              >
+                                Review
+                              </span>
+                            )}
                           </div>
                           {s.studentRealName && (
                             <div className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
@@ -182,6 +201,14 @@ export default function JoinSessionModal({ scenarioTitle, onClose }: Props) {
                             </div>
                           )}
                         </div>
+                        <button
+                          onClick={() => handleRemoveStudent(s.id)}
+                          className="flex-shrink-0 rounded-lg p-1.5 transition-colors"
+                          style={{ color: 'var(--text-muted)' }}
+                          title="Remove student"
+                        >
+                          <X size={14} />
+                        </button>
                       </div>
                     ))}
                   </div>
