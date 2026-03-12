@@ -1,6 +1,7 @@
 import { Scenario } from './types';
 
 export const teotihuacanPreset: Scenario = {
+  slug: 'fire-on-the-avenue-of-the-dead',
   backgroundImage: '/images/teotihuacan.png',
   introBannerImage: '/images/teotihuacan-intro.png',
   introNarrative:
@@ -130,6 +131,7 @@ export const teotihuacanPreset: Scenario = {
 };
 
 export const axumPreset: Scenario = {
+  slug: 'conversion-of-axum',
   backgroundImage: '/images/axum.png',
   introBannerImage: '/images/axum-intro.png',
   introNarrative:
@@ -261,6 +263,7 @@ export const axumPreset: Scenario = {
 };
 
 export const pompeiiPreset: Scenario = {
+  slug: 'plinys-decision-at-misenum',
   backgroundImage: '/images/pompeii.png',
   introNarrative:
     'It begins as a curiosity. A column of smoke rises from Vesuvius, shaped like an umbrella pine. But within the hour, the sky goes dark and the first hot stones begin to fall. Then a message arrives from a woman trapped at the foot of the volcano, begging the fleet for rescue.',
@@ -447,7 +450,257 @@ export const pompeiiPreset: Scenario = {
     'Pliny the Elder did sail. He ordered the full fleet to launch, reportedly declaring "Fortes fortuna iuvat" — Fortune favors the brave. He initially headed for Rectina\'s villa but found landing impossible due to falling debris and the altered shoreline. He diverted south to Stabiae, where his friend Pomponianus had a villa. There, Pliny tried to calm the terrified household, bathing and dining as if nothing were wrong. He fell asleep (or lost consciousness) and had to be woken when the courtyard began filling with pumice, threatening to block the doors. The group fled to the beach with pillows tied to their heads against the falling stones. But the sea was too rough to launch, and toxic volcanic gases — likely sulfur dioxide and carbon dioxide — rolled across the shore. Pliny, who suffered from respiratory problems, collapsed and died on the beach on the morning of August 25. His body was found two days later, intact, "looking more like a man asleep than dead," according to his nephew. Pliny the Younger, who had stayed behind at Misenum, survived the eruption and later wrote two extraordinary letters to the historian Tacitus describing both his uncle\'s death and his own harrowing experience as the eruption reached Misenum itself. These letters (Epistulae VI.16 and VI.20) became the only surviving ancient eyewitness account of a major volcanic eruption and are so detailed that volcanologists named the eruption type "Plinian" in his honor. The eruption killed an estimated 16,000 people and buried Pompeii, Herculaneum, Stabiae, and Oplontis under meters of volcanic material.',
 };
 
+export const plagueCambridgePreset: Scenario = {
+  slug: 'pestilence-at-cambridge',
+  backgroundImage: '/images/plague-cambridge.png',
+  introBannerImage: '/images/plague-cambridge-intro.png',
+  introNarrative:
+    'At first the bells tolled one by one. Now they ring almost without pause. Carts creak toward churchyards with shrouded bodies; near Bene\'t Street, people whisper that pits are being opened for the dead. At St John\'s, even the masters have begun to die. Some scholars flee by horse or boat. The poor cannot. In the market, men speak of corrupted air, divine punishment, and the end of the world. The mayor has called an emergency council. Cambridge must choose what kind of order it will keep as half the town seems to be vanishing.',
+  mode: 'education',
+  category: 'history',
+  difficulty: 'intermediate',
+  participantRange: { min: 5, max: 30 },
+  title: 'The Pestilence at Cambridge',
+  description:
+    'It is late May 1349, and the Black Death is near its peak in Cambridge. Priests are dying, St John\'s Hospital is overwhelmed, scholars are slipping away, and ordinary burial customs are starting to break under the strain. Town and university leaders must decide what Cambridge will protect first when there are not enough healthy hands to do everything.',
+  context:
+    'Fourteenth-century Cambridge was a small but unusually complex town of perhaps 4,000-6,000 people, divided between ordinary townsfolk and the growing university community. The Black Death appears to have reached Cambridge around Easter 1349, and the worst mortality likely fell between mid-April and late June. Modern historians working from episcopal records, wills, college evidence, and burial archaeology suggest that perhaps half the town died. Priests perished in large numbers, creating a crisis of confession, last rites, and burial. St John\'s Hospital, which cared for the poor and sick, lost multiple masters in quick succession. Many victims were buried in ordinary parish churchyards, but emergency burial also occurred, including the plague pit later excavated near Bene\'t Street. The parish of All Saints by the Castle was so devastated that it was eventually abandoned and merged with another parish. People did not understand germs; they explained plague through corrupted air, divine punishment, unlucky conjunctions of the heavens, and the moral condition of the community. Cambridge\'s leaders now face a brutal problem: scarce priests, carts, laborers, grain, and civic officers cannot cover every need at once.',
+  setting: 'Late May 1349, Cambridge',
+  centralQuestion:
+    'As plague peaks in Cambridge, which priority should govern the next two weeks: proper rites, emergency relief, or institutional survival?',
+  votingOptions: [
+    {
+      id: 'rites',
+      label: 'Prioritize parish rites and ordinary burial',
+      description:
+        'Keep surviving clergy, carts, and labor focused on confession, last rites, and burial in consecrated ground, even if food relief and civic routines suffer.',
+      votes: 0,
+    },
+    {
+      id: 'relief',
+      label: 'Prioritize relief and emergency measures',
+      description:
+        'Redirect labor toward food, nursing, and rapid burial, accepting disrupted ritual, suspended routines, and looser spiritual procedures when clergy cannot cope.',
+      votes: 0,
+    },
+    {
+      id: 'continuity',
+      label: 'Prioritize continuity and protect essential institutions',
+      description:
+        'Protect officers, records, and the healthiest clergy and scholars so Cambridge can still govern, teach, and recover afterward, even if many households receive less help now.',
+      votes: 0,
+    },
+  ],
+  stages: [
+    {
+      id: 'opening',
+      type: 'freeform',
+      title: 'The Bells Do Not Stop',
+      description:
+        'Introduce your character, describe what you have seen in Cambridge during the last week, and declare what the town must protect first as mortality climbs.',
+      durationSeconds: 300,
+    },
+    {
+      id: 'debate',
+      type: 'debate',
+      title: 'The Emergency Council',
+      description:
+        'Cambridge cannot fully maintain proper rites and burial, feed and tend the stricken, and preserve its town and university institutions all at once. Argue which good must come first, and what painful sacrifices the other two priorities will require.',
+      durationSeconds: 600,
+      events: [
+        {
+          id: 'parish-priest-dies',
+          text: 'Another Parish Priest Dies',
+          description:
+            'Word arrives that a nearby parish priest has died overnight. Dozens of households are now begging for confession, last rites, and burial from clergy who are already exhausted and frightened.',
+          minDelay: 30,
+          maxDelay: 120,
+          probability: 0.9,
+        },
+        {
+          id: 'benet-street-burials',
+          text: 'Burials Expand Near Bene\'t Street',
+          description:
+            'Gravediggers report that ordinary churchyard space is running short, and extra ground near Bene\'t Street is being opened for clustered burials. Some call this practical necessity; others call it a scandal against Christian order.',
+          minDelay: 120,
+          maxDelay: 240,
+          probability: 0.85,
+        },
+        {
+          id: 'st-johns-crisis',
+          text: 'St John\'s Hospital Falters',
+          description:
+            'A messenger from St John\'s reports that another master is sick and the hospital cannot feed, wash, and house everyone now gathering at its gates. The poor are beginning to sleep outside.',
+          minDelay: 210,
+          maxDelay: 330,
+          probability: 0.8,
+        },
+        {
+          id: 'scholars-flee',
+          text: 'Scholars and Officers Begin to Flee',
+          description:
+            'Hostels are emptying. Some scholars, clerks, and better-off townspeople are leaving Cambridge by road and river. If too many officers vanish, who will keep seals, accounts, wills, and court business from collapsing?',
+          minDelay: 300,
+          maxDelay: 450,
+          probability: 0.75,
+        },
+      ],
+    },
+    {
+      id: 'npc-react',
+      type: 'npc_response',
+      title: 'Voices from the Edge',
+      description:
+        'A dying townsman, a hospital servant, and a bishop\'s clerk respond to the debate, forcing the council to face the human, spiritual, and administrative cost of its choice.',
+      durationSeconds: 180,
+    },
+    {
+      id: 'final-speeches',
+      type: 'speech',
+      title: 'Final Appeals',
+      description:
+        'Make your last appeal to the council. What duty comes first now: salvation, bodily survival, or preserving enough order for Cambridge to endure after the mortality?',
+      durationSeconds: 300,
+      events: [
+        {
+          id: 'extraordinary-confession',
+          text: 'Extraordinary Spiritual Measures Are Allowed',
+          description:
+            'Word comes from church authorities that extraordinary measures may be permitted when priests cannot reach every dying person in time. Some see mercy in this; others hear a confession that the old order is failing.',
+          minDelay: 45,
+          maxDelay: 160,
+          probability: 0.8,
+        },
+        {
+          id: 'town-clerk-ill',
+          text: 'The Town Clerk Falls Ill',
+          description:
+            'The town clerk is reported feverish. Without clerks, seals, and sworn officers, wills, inheritances, grain contracts, and guardianship disputes may become chaos even if the plague soon ebbs.',
+          minDelay: 120,
+          maxDelay: 220,
+          probability: 0.7,
+        },
+      ],
+    },
+    {
+      id: 'vote',
+      type: 'vote',
+      title: 'The Council Chooses',
+      description: 'The council decides which priority will govern Cambridge for the next two weeks.',
+      durationSeconds: 120,
+    },
+    {
+      id: 'verdict',
+      type: 'verdict',
+      title: 'The Historical Outcome',
+      description:
+        'NPCs react to the decision, and the historical fate of Cambridge in the plague year is revealed.',
+      durationSeconds: 300,
+    },
+  ],
+  roles: [
+    {
+      id: 'mayor',
+      name: 'The Mayor',
+      title: 'Mayor of Cambridge',
+      description:
+        'Presides over the emergency council. Responsible for civic order, markets, labor, and the increasingly strained peace between town and university. The mayor is not choosing between good and evil, but between three goods that can no longer all be protected at once. Press every speaker to explain exactly whose suffering their policy accepts.',
+      suggestedFor: 'ta',
+      assignedTo: '',
+    },
+    {
+      id: 'hospital-master',
+      name: 'Master of St John\'s',
+      title: 'Master of St John\'s Hospital',
+      description:
+        'Oversees the hospital serving poor and sick residents on the edge of town. Knows from direct experience that there are not enough beds, servants, candles, or broth for everyone now seeking help. Argues that Cambridge must redirect labor and carts toward food, nursing, and rapid burial, even if ordinary routines and cherished customs are disrupted.',
+      suggestedFor: 'student',
+      assignedTo: '',
+    },
+    {
+      id: 'parish-priest',
+      name: 'Parish Priest',
+      title: 'Rector of All Saints by the Castle',
+      description:
+        'Represents one of the most heavily stricken parishes in Cambridge. Insists that confession, last rites, and burial in consecrated ground are not luxuries but essential duties owed to the dying. Fears that if Cambridge relaxes sacred obligations in the name of efficiency, it will wound souls, scandalize the town, and invite even worse divine judgment.',
+      suggestedFor: 'student',
+      assignedTo: '',
+    },
+    {
+      id: 'regent-master',
+      name: 'Regent Master',
+      title: 'University Master from King\'s Hall',
+      description:
+        'Speaks for the university community, where scholars and clerks are dying or fleeing. Argues that Cambridge must preserve enough educated clergy, officers, and records to govern, teach, administer property, and rebuild after the mortality. Knows this position sounds cold, but warns that a town that lets its institutions collapse will punish survivors for years.',
+      suggestedFor: 'student',
+      assignedTo: '',
+    },
+    {
+      id: 'guild-alderman',
+      name: 'Guild Alderman',
+      title: 'Merchant and Grain Factor',
+      description:
+        'Connected to the market, river traffic, and the town\'s supply of bread and ale. Believes panic itself can become a killer if carts stop moving and prices spike. Can support relief or continuity depending on the flow of debate, but always presses a hard practical question: who will still deliver food if the town tells healthy people to risk death for no clear plan?',
+      suggestedFor: 'student',
+      assignedTo: '',
+    },
+    {
+      id: 'townswoman',
+      name: 'Townswoman',
+      title: 'Widowed Householder from All Saints Parish',
+      description:
+        'Represents ordinary residents who cannot escape to country manors or distant relatives. Her household needs food, help with the sick, and assurance that the dead will not simply disappear into a ditch. She is suspicious of elite talk about preserving institutions if that means abandoning common families, but she also knows terrifying disorder when she sees it.',
+      suggestedFor: 'student',
+      assignedTo: '',
+    },
+  ],
+  npcs: [
+    {
+      id: 'dickon',
+      name: 'Dickon',
+      title: 'A sick townsman from All Saints by the Castle',
+      personality:
+        'Feverish, frightened, and plainspoken. Dickon does not speak in policy language. He speaks about pain, about his wife not knowing how to feed the children, and about the terror of dying without confession or a known grave.',
+      context:
+        'Dickon is based on a real individual reconstructed by the After the Plague project from Cambridge evidence. He appears to have lived in the parish of All Saints by the Castle and likely died in the plague year of 1349. His presence grounds the debate in the experience of ordinary townspeople rather than institutions alone.',
+      stance:
+        'Demands that the council remember what plague feels like from the bed of the sick. He wants food and care for his household, but he is equally terrified of dying without confession or a known Christian burial. He resists any policy that treats the dying poor as expendable in order to preserve comfort for the healthy.',
+      avatarEmoji: '🕯️',
+      voice: 'fable',
+    },
+    {
+      id: 'marion',
+      name: 'Marion',
+      title: 'Lay servant at St John\'s Hospital',
+      personality:
+        'Exhausted, blunt, and unsentimental. Marion has washed bodies, carried broth, and watched respectable men debate while servants do the worst work. She has no patience for rhetoric that ignores the number of hands actually available.',
+      context:
+        'Marion is a historically plausible composite based on the staff and lay servants who would have kept St John\'s Hospital functioning as long as it could during the plague. Hospitals in medieval towns depended on a fragile mix of clergy, servants, charity, and food supply; when even a few key people died, the whole system staggered.',
+      stance:
+        'Strongly favors relief and emergency measures. If clergy, carts, candles, and food are all short, then Cambridge must stop pretending normal customs can be preserved intact and instead direct resources where they will do the most immediate good.',
+      avatarEmoji: '🍞',
+      voice: 'nova',
+    },
+    {
+      id: 'alan-of-ely',
+      name: 'Alan of Ely',
+      title: 'Clerk carrying instructions from the bishop\'s officials',
+      personality:
+        'Careful, educated, and uneasy. Alan tries to sound composed, but he has seen how quickly legal and spiritual routines are breaking down across the diocese. He weighs words because he knows any concession can sound like surrender.',
+      context:
+        'Alan is a composite ecclesiastical official modeled on the clerks who transmitted episcopal instructions during the Black Death. As plague killed priests in large numbers, bishops and archbishops issued extraordinary guidance on confession, ordination, cemeteries, and pastoral care in an effort to keep the church functioning under impossible conditions.',
+      stance:
+        'Insists that Cambridge cannot simply set aside confession and burial because they have become difficult. Extraordinary measures may be necessary, but only as a last resort; the first duty is still to give the dying some recognizable form of spiritual care and Christian burial. He can be persuaded that some institutional preservation is necessary, but only if it clearly serves that sacramental duty rather than replacing it.',
+      avatarEmoji: '📜',
+      voice: 'onyx',
+    },
+  ],
+  outcome:
+    'No emergency policy could have spared Cambridge from the Black Death. The town was hit hard in 1349, with the worst mortality concentrated in a matter of weeks after Easter. Modern historians working from local and diocesan evidence argue that perhaps half the town died. Priests, hospital personnel, scholars, and ordinary laborers all perished in alarming numbers. St John\'s Hospital lost masters in rapid succession; the parish of All Saints by the Castle was so devastated that it was later abandoned and merged with another parish. Most victims still seem to have been buried in churchyards, but emergency burial also occurred, including the plague pit near Bene\'t Street. Cambridge survived, and the university survived, but both emerged diminished, altered, and more conscious than ever that ordinary institutions depend on fragile human labor. The plague did not simply kill individuals. It forced medieval communities to decide, under impossible pressure, what they owed the dying, the living, and the future.',
+};
+
 export const trolleyPreset: Scenario = {
+  slug: 'trolley-problem-tribunal',
   backgroundImage: '/images/trolley.png',
   introBannerImage: '/images/trolley-intro.png',
   introNarrative:
@@ -579,6 +832,7 @@ export const trolleyPreset: Scenario = {
 };
 
 export const oppenheimerPreset: Scenario = {
+  slug: 'oppenheimer-hearing',
   backgroundImage: '/images/oppenheimer.png',
   introNarrative:
     'Room 2022 of the Atomic Energy Commission building is small, windowless, and deliberately uncomfortable. The fluorescent lights hum. Three men sit behind a table with the power to end the career of the most famous scientist in America. Across from them sits J. Robert Oppenheimer, thin, chain-smoking, the man who built the bomb that ended the war. The charges are read: associations with Communists, opposition to the hydrogen bomb. But everyone knows the real question \u2014 when a man helps create the most destructive weapon in history, then tells his government not to build a bigger one, is he a patriot or a threat?',
@@ -709,6 +963,7 @@ export const oppenheimerPreset: Scenario = {
 };
 
 export const facialRecognitionPreset: Scenario = {
+  slug: 'surveillance-technology-ordinance',
   backgroundImage: '/images/facial-recognition.png',
   introNarrative:
     'It is a Tuesday evening in early 2020, and the Santa Cruz City Council chambers are about half full \u2014 a decent turnout for a weeknight. Most of the faces are familiar: neighborhood association regulars, a few downtown business owners, some UCSC students in the back row, a couple of retirees who come to every meeting. The agenda item sounds technical \u2014 a "Surveillance Technology Ordinance" \u2014 but the room has an unusual energy. The ordinance would ban facial recognition and predictive policing technology citywide. What makes it strange is that almost nobody in the room disagrees with the basic idea. The police chief supports it. The ACLU supports it. The NAACP chapter supports it. And yet there is real tension, because the people in this room want very different things from their city, and this vote is making those differences visible.',
@@ -853,6 +1108,7 @@ export const facialRecognitionPreset: Scenario = {
 };
 
 export const socratesPreset: Scenario = {
+  slug: 'trial-of-socrates',
   backgroundImage: '/images/socrates.png',
   introBannerImage: '/images/socrates-intro.png',
   introNarrative:
@@ -1026,3 +1282,18 @@ export const socratesPreset: Scenario = {
   outcome:
     'Socrates was convicted by a vote of 280 to 221 \u2014 a narrow margin, meaning just 30 votes would have acquitted him. Athenian law allowed the convicted to propose an alternative penalty to the prosecution\'s demand for death. Socrates initially suggested the city should reward him with free meals at the Prytaneum (the honor given to Olympic victors), arguing that what he did for Athens was far more valuable than any athletic victory. This provocative counter-proposal infuriated the jury. He eventually proposed a small fine. The jury voted for death by a larger margin than the conviction itself \u2014 some who voted to acquit switched to vote for death, angered by his apparent arrogance. Socrates spent thirty days in prison while Athens celebrated a religious festival. His friends offered to bribe the guards and arrange his escape to Thessaly, but he refused, arguing in what Plato recorded as the "Crito" that breaking the law \u2014 even an unjust verdict \u2014 would undermine the social contract that made civilized life possible. He drank the hemlock surrounded by his students. Plato, who was present, recorded that Socrates\' last words were: "Crito, we owe a rooster to Asclepius. Pay it and do not neglect it." The meaning of this final statement has been debated for twenty-four centuries.',
 };
+
+export const presetScenarios = [
+  teotihuacanPreset,
+  axumPreset,
+  pompeiiPreset,
+  plagueCambridgePreset,
+  trolleyPreset,
+  oppenheimerPreset,
+  facialRecognitionPreset,
+  socratesPreset,
+] as const;
+
+export function getPresetBySlug(slug: string): Scenario | null {
+  return presetScenarios.find((preset) => preset.slug === slug) ?? null;
+}

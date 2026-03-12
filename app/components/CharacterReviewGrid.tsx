@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { CharacterSheet, TranscriptEntry } from '../lib/types';
+import { createId } from '../lib/createId';
 import { CastGroup } from '../lib/groupCast';
 import { X } from 'lucide-react';
 
@@ -32,7 +33,7 @@ export default function CharacterReviewGrid({
 
   const addManual = useCallback(() => {
     const newSheet: CharacterSheet = {
-      id: crypto.randomUUID(),
+      id: createId(),
       studentRealName: '',
       characterName: '',
       portraitDataUrl: '',

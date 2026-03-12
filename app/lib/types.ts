@@ -103,10 +103,12 @@ export interface TranscriptEntry {
 export interface VotingOption {
   id: string;
   label: string;
+  description?: string;
   votes: number;
 }
 
 export interface Scenario {
+  slug?: string;
   title: string;
   description: string;
   context: string;

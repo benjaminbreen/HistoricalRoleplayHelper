@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { CharacterSheet } from '../../lib/types';
+import { createId } from '../../lib/createId';
 import { normalizeImage, cropPortrait } from '../../lib/imageUtils';
 
 type Phase = 'idle' | 'processing' | 'confirming' | 'submitting' | 'done';
@@ -70,7 +71,7 @@ export default function StudentUploadForm({ code, scenarioTitle }: Props) {
       const portrait = await cropPortrait(dataUrl, bounds);
 
       const built: CharacterSheet = {
-        id: crypto.randomUUID(),
+        id: createId(),
         studentRealName: studentName || ext.studentRealName || '',
         characterName: ext.characterName || 'Unknown Character',
         profession: ext.profession || undefined,

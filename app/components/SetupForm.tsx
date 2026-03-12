@@ -1,28 +1,30 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { Scenario, Stage, NpcCharacter, StudentRole, VotingOption, StageType, TtsVoice, CharacterSheet, isLeaderRole } from '../lib/types';
-import { axumPreset, teotihuacanPreset, pompeiiPreset, trolleyPreset, oppenheimerPreset, facialRecognitionPreset, socratesPreset } from '../lib/presets';
+import { Scenario, Stage, NpcCharacter, StudentRole, StageType, TtsVoice, CharacterSheet, isLeaderRole } from '../lib/types';
+import { createId } from '../lib/createId';
+import { axumPreset, teotihuacanPreset, pompeiiPreset, plagueCambridgePreset, trolleyPreset, oppenheimerPreset, facialRecognitionPreset, socratesPreset, getPresetBySlug } from '../lib/presets';
 import type { RejoinSessionData } from './RejoinView';
 import CharacterUploader from './CharacterUploader';
 import CharacterReviewGrid from './CharacterReviewGrid';
 import JoinSessionModal from './JoinSessionModal';
-import { MessageCircle, Swords, Mic, Landmark, Vote, Scroll, RotateCcw, Scale, Atom, ScrollText, ArrowLeft, X, GraduationCap, Smartphone, type LucideIcon } from 'lucide-react';
+import { MessageCircle, Swords, Mic, Landmark, Vote, Scroll, RotateCcw, Scale, Atom, ScrollText, ArrowLeft, X, Smartphone, type LucideIcon } from 'lucide-react';
 import type { SetupView } from '../lib/routing';
 
 export interface NavRequest {
   view: SetupView;
   mode: 'education' | 'civic' | null;
   category: string | null;
+  scenarioSlug: string | null;
   _ts: number; // timestamp to force re-trigger on identical routes
 }
 
 interface SetupFormProps {
   onStart: (scenario: Scenario, cast: CharacterSheet[]) => void;
   onRejoin?: (data: RejoinSessionData) => void;
-  initialRoute?: { view: SetupView; mode: 'education' | 'civic' | null; category: string | null };
+  initialRoute?: { view: SetupView; mode: 'education' | 'civic' | null; category: string | null; scenarioSlug: string | null };
   navRequest?: NavRequest | null;
-  onNavigate?: (view: SetupView, mode: 'education' | 'civic' | null, category: string | null) => void;
+  onNavigate?: (view: SetupView, mode: 'education' | 'civic' | null, category: string | null, scenarioSlug: string | null) => void;
 }
 
 const stageTypes: { value: StageType; label: string; Icon: LucideIcon }[] = [
@@ -57,14 +59,18 @@ export default function SetupForm({ onStart, onRejoin, initialRoute, navRequest,
       setView(navRequest.view);
       setSelectedMode(navRequest.mode);
       setSelectedCategory(navRequest.category);
+      if (navRequest.scenarioSlug) {
+        const preset = getPresetBySlug(navRequest.scenarioSlug);
+        if (preset) setScenario(preset);
+      }
     }
   }, [navRequest]);
 
-  const navigateTo = useCallback((nextView: SetupView, nextMode: 'education' | 'civic' | null, nextCategory: string | null) => {
+  const navigateTo = useCallback((nextView: SetupView, nextMode: 'education' | 'civic' | null, nextCategory: string | null, nextScenarioSlug: string | null = null) => {
     setView(nextView);
     setSelectedMode(nextMode);
     setSelectedCategory(nextCategory);
-    onNavigate?.(nextView, nextMode, nextCategory);
+    onNavigate?.(nextView, nextMode, nextCategory, nextScenarioSlug);
   }, [onNavigate]);
   const [collapsed, setCollapsed] = useState<Set<SectionId>>(new Set());
   const [cast, setCast] = useState<CharacterSheet[]>([]);
@@ -106,6 +112,7 @@ export default function SetupForm({ onStart, onRejoin, initialRoute, navRequest,
     { preset: axumPreset, image: '/images/axum.png', tagline: 'Should King Ezana convert to Christianity?' },
     { preset: teotihuacanPreset, image: '/images/teotihuacan.png', tagline: 'What is the future of Teotihuacan after the great fire?' },
     { preset: pompeiiPreset, image: '/images/pompeii.png', tagline: 'Should the fleet sail toward Vesuvius to attempt a rescue?' },
+    { preset: plagueCambridgePreset, image: '/images/plague-cambridge.png', tagline: 'As plague peaks in Cambridge, what should the town protect first?' },
     { preset: trolleyPreset, image: '/images/trolley.png', tagline: 'Is it morally permissible to sacrifice one to save five?' },
     { preset: oppenheimerPreset, image: '/images/oppenheimer.png', tagline: 'Should the father of the atomic bomb keep his security clearance?' },
     { preset: facialRecognitionPreset, image: '/images/facial-recognition.png', tagline: 'Should Santa Cruz ban facial recognition technology?' },
@@ -200,7 +207,7 @@ export default function SetupForm({ onStart, onRejoin, initialRoute, navRequest,
       ...prev,
       votingOptions: [
         ...prev.votingOptions,
-        { id: crypto.randomUUID(), label: '', votes: 0 },
+        { id: createId(), label: '', votes: 0 },
       ],
     }));
   }, []);
@@ -227,7 +234,7 @@ export default function SetupForm({ onStart, onRejoin, initialRoute, navRequest,
       stages: [
         ...prev.stages,
         {
-          id: crypto.randomUUID(),
+          id: createId(),
           type: 'freeform',
           title: '',
           description: '',
@@ -257,7 +264,7 @@ export default function SetupForm({ onStart, onRejoin, initialRoute, navRequest,
       npcs: [
         ...prev.npcs,
         {
-          id: crypto.randomUUID(),
+          id: createId(),
           name: '',
           title: '',
           personality: '',
@@ -290,7 +297,7 @@ export default function SetupForm({ onStart, onRejoin, initialRoute, navRequest,
       roles: [
         ...prev.roles,
         {
-          id: crypto.randomUUID(),
+          id: createId(),
           name: '',
           title: '',
           description: '',
@@ -355,7 +362,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
             npcs: parsed.map((n: Partial<NpcCharacter>, i: number) => {
               const voices: TtsVoice[] = ['onyx', 'fable', 'echo', 'nova', 'alloy', 'shimmer'];
               return {
-                id: crypto.randomUUID(),
+                id: createId(),
                 name: n.name || '',
                 title: n.title || '',
                 personality: n.personality || '',
@@ -711,7 +718,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
                 style={{ borderColor: 'var(--panel-border)' }}
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = cardBorderHover)}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--panel-border)')}
-                onClick={() => { setScenario(preset); navigateTo('editor', selectedMode, selectedCategory); }}
+                onClick={() => { setScenario(preset); navigateTo('editor', preset.mode ?? selectedMode, preset.category ?? selectedCategory, preset.slug ?? null); }}
               >
                 <div className="flex gap-5">
                   {/* Image or mode icon */}
@@ -793,7 +800,7 @@ Return ONLY valid JSON array, no markdown formatting or code blocks.`,
                       Start &rarr;
                     </button>
                     <button
-                      onClick={(e) => { e.stopPropagation(); setScenario(preset); navigateTo('editor', selectedMode, selectedCategory); }}
+                      onClick={(e) => { e.stopPropagation(); setScenario(preset); navigateTo('editor', preset.mode ?? selectedMode, preset.category ?? selectedCategory, preset.slug ?? null); }}
                       className="rounded-lg px-4 py-1.5 text-sm font-medium transition-all hover:scale-[1.03]"
                       style={{
                         background: 'var(--subtle-bg)',

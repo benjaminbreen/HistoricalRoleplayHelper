@@ -12,6 +12,15 @@ interface Props {
 
 const POLL_INTERVAL = 2500;
 
+function isPhoneUnreachableOrigin(origin: string): boolean {
+  try {
+    const { hostname } = new URL(origin);
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || hostname === '::1' || hostname === '[::1]';
+  } catch {
+    return true;
+  }
+}
+
 export default function JoinSessionModal({ scenarioTitle, onClose }: Props) {
   const [code, setCode] = useState<string | null>(null);
   const [students, setStudents] = useState<CharacterSheet[]>([]);
@@ -66,7 +75,10 @@ export default function JoinSessionModal({ scenarioTitle, onClose }: Props) {
     };
   }, [code]);
 
-  const joinUrl = code ? `${window.location.origin}/join/${code}` : '';
+  const configuredOrigin = process.env.NEXT_PUBLIC_APP_ORIGIN?.replace(/\/+$/, '') || '';
+  const publicOrigin = configuredOrigin || window.location.origin;
+  const joinUrl = code ? `${publicOrigin}/join/${code}` : '';
+  const showOriginWarning = !!code && isPhoneUnreachableOrigin(publicOrigin);
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(joinUrl);
@@ -96,7 +108,7 @@ export default function JoinSessionModal({ scenarioTitle, onClose }: Props) {
             Student Upload Link
           </h2>
           <button
-            onClick={() => { if (pollRef.current) clearInterval(pollRef.current); onClose([]); }}
+            onClick={() => { if (pollRef.current) clearInterval(pollRef.current); onClose(students); }}
             className="rounded-lg p-1.5 transition-colors"
             style={{ color: 'var(--text-muted)' }}
           >
@@ -147,6 +159,15 @@ export default function JoinSessionModal({ scenarioTitle, onClose }: Props) {
                   <span className="truncate max-w-[280px]">{joinUrl}</span>
                 </button>
               </div>
+
+              {showOriginWarning && (
+                <div
+                  className="rounded-xl px-4 py-3 text-sm"
+                  style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.22)', color: '#fbbf24' }}
+                >
+                  This link points to <strong>{publicOrigin}</strong>, which phones usually cannot reach. Run the app on a LAN URL or set <code>NEXT_PUBLIC_APP_ORIGIN</code> to something like <code>http://192.168.1.42:3000</code>.
+                </div>
+              )}
 
               {/* Student list */}
               <div>

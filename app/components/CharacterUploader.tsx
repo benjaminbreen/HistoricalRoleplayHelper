@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { CharacterSheet } from '../lib/types';
+import { createId } from '../lib/createId';
 import { normalizeImage, cropPortrait } from '../lib/imageUtils';
 
 interface CharacterUploaderProps {
@@ -40,7 +41,7 @@ export default function CharacterUploader({ onExtracted, existingCount }: Charac
       const portrait = await cropPortrait(dataUrl, bounds);
 
       return {
-        id: crypto.randomUUID(),
+        id: createId(),
         studentRealName: ext.studentRealName || '',
         characterName: ext.characterName || file.name.replace(/\.[^.]+$/, ''),
         profession: ext.profession || undefined,

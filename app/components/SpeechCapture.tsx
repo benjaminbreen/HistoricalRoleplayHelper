@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { TranscriptEntry, CharacterSheet } from '../lib/types';
+import { createId } from '../lib/createId';
 import CharacterQuickBar from './CharacterQuickBar';
 import { Mic, Square, Keyboard } from 'lucide-react';
 
@@ -145,7 +146,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
 
           if (!currentEntryIdRef.current) {
             // First chunk — create a new entry
-            const entryId = crypto.randomUUID();
+            const entryId = createId();
             currentEntryIdRef.current = entryId;
             accumulatedTextRef.current = chunkText;
             onCapture({
@@ -289,7 +290,7 @@ const SpeechCapture = forwardRef<SpeechCaptureHandle, SpeechCaptureProps>(functi
   const submitManual = useCallback(() => {
     if (!manualText.trim()) return;
     onCapture({
-      id: crypto.randomUUID(),
+      id: createId(),
       speaker: speakerName || 'Student',
       text: manualText.trim(),
       timestamp: Date.now(),

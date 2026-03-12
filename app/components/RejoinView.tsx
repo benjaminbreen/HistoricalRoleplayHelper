@@ -9,6 +9,7 @@ import {
   NpcCharacter,
   CharacterSheet,
 } from '../lib/types';
+import { createId } from '../lib/createId';
 import { buildNpcSystemPrompt, buildRejoinPrompt } from '../lib/prompts';
 import TranscriptLog from './TranscriptLog';
 import NpcCard from './NpcCard';
@@ -90,7 +91,7 @@ export default function RejoinView({ sessionData, onBack }: RejoinViewProps) {
     setNewArguments((prev) => [
       ...prev,
       {
-        id: crypto.randomUUID(),
+        id: createId(),
         speaker: studentName.trim(),
         text: argumentText.trim(),
         timestamp: Date.now(),

@@ -1,6 +1,8 @@
 import { getSession } from '../../lib/joinStore';
 import StudentUploadForm from './StudentUploadForm';
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: Promise<{ code: string }>;
 }

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">The Pestilence at Cambridge</title>
+  <desc id="desc">A stylized medieval Cambridge under the Black Death, with church towers, bells, a hospital, and burial carts beneath a darkened sky.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2f3138" />
+      <stop offset="55%" stop-color="#4a4337" />
+      <stop offset="100%" stop-color="#8f7450" />
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3f3326" />
+      <stop offset="100%" stop-color="#6b5638" />
+    </linearGradient>
+    <linearGradient id="mist" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d9c9a3" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#70522f" stop-opacity="0.05" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)" />
+  <path d="M0 600C210 560 320 650 505 628C665 608 758 498 947 519C1122 539 1229 640 1600 572V900H0Z" fill="url(#ground)" />
+  <path d="M0 625C205 580 356 733 575 673C760 622 882 540 1084 575C1276 609 1417 696 1600 650V900H0Z" fill="#241d17" fill-opacity="0.38" />
+
+  <g fill="#171717" fill-opacity="0.82">
+    <path d="M164 630V452H222V630Z" />
+    <path d="M152 452L193 384L234 452Z" />
+    <rect x="186" y="472" width="14" height="96" fill="#c7ae76" fill-opacity="0.55" />
+
+    <path d="M1192 620V424H1272V620Z" />
+    <path d="M1176 424L1232 332L1288 424Z" />
+    <rect x="1225" y="448" width="14" height="102" fill="#c7ae76" fill-opacity="0.55" />
+
+    <path d="M906 632V484H1018V632Z" />
+    <path d="M888 484L962 418L1036 484Z" />
+    <rect x="944" y="522" width="36" height="110" fill="#cdb685" fill-opacity="0.45" />
+  </g>
+
+  <g fill="#4f4130">
+    <rect x="318" y="560" width="224" height="86" rx="6" />
+    <path d="M302 560L430 500L558 560Z" />
+    <rect x="580" y="586" width="130" height="60" rx="5" />
+    <path d="M566 586L646 538L726 586Z" />
+    <rect x="1058" y="564" width="186" height="78" rx="6" />
+    <path d="M1042 564L1151 512L1260 564Z" />
+  </g>
+
+  <g fill="#221b15">
+    <circle cx="194" cy="378" r="20" fill="#cdb685" fill-opacity="0.78" />
+    <path d="M180 378h28" stroke="#66533a" stroke-width="4" stroke-linecap="round" />
+    <path d="M194 364v28" stroke="#66533a" stroke-width="4" stroke-linecap="round" />
+
+    <circle cx="1232" cy="326" r="24" fill="#cdb685" fill-opacity="0.78" />
+    <path d="M1216 326h32" stroke="#66533a" stroke-width="4" stroke-linecap="round" />
+    <path d="M1232 310v32" stroke="#66533a" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <g opacity="0.55">
+    <path d="M404 476C385 421 411 362 470 327C435 382 434 426 454 472Z" fill="#1f1f1f" />
+    <path d="M471 472C455 420 478 372 534 340C501 390 499 430 518 470Z" fill="#1f1f1f" />
+    <path d="M1130 472C1110 416 1136 358 1196 320C1160 375 1159 420 1181 469Z" fill="#1f1f1f" />
+  </g>
+
+  <g fill="#181310" fill-opacity="0.88">
+    <rect x="694" y="646" width="118" height="22" rx="4" />
+    <rect x="710" y="632" width="14" height="54" rx="4" />
+    <rect x="780" y="632" width="14" height="54" rx="4" />
+    <circle cx="717" cy="626" r="15" />
+    <circle cx="787" cy="626" r="15" />
+    <path d="M746 646h14" stroke="#8f7450" stroke-width="4" stroke-linecap="round" />
+    <path d="M726 642l12-19M773 642l-12-19" stroke="#8f7450" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <g fill="#111111" fill-opacity="0.82">
+    <ellipse cx="618" cy="690" rx="48" ry="18" />
+    <path d="M596 688c0-35 12-60 22-60s22 25 22 60Z" />
+    <ellipse cx="1012" cy="700" rx="54" ry="18" />
+    <path d="M988 696c0-39 14-68 25-68s25 29 25 68Z" />
+    <ellipse cx="1118" cy="708" rx="44" ry="16" />
+    <path d="M1100 704c0-31 10-54 18-54s18 23 18 54Z" />
+  </g>
+
+  <path d="M0 0H1600V900H0Z" fill="url(#mist)" />
+
+  <g fill="#d2b77f" fill-opacity="0.9">
+    <rect x="0" y="748" width="1600" height="152" />
+  </g>
+
+  <g fill="#2d241b" fill-opacity="0.58">
+    <rect x="0" y="764" width="1600" height="136" />
+  </g>
+
+  <g fill="#171310" fill-opacity="0.88">
+    <path d="M138 804c28-11 68-12 106 2c-29 20-77 22-106-2Z" />
+    <path d="M270 796c48-18 118-15 157 6c-57 25-119 20-157-6Z" />
+    <path d="M1215 804c40-18 106-17 146 4c-49 23-112 21-146-4Z" />
+  </g>
+</svg>

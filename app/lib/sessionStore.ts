@@ -1,3 +1,4 @@
+import { createId } from './createId';
 import { SavedSession } from './types';
 
 const STORAGE_KEY = 'hrh-sessions';
@@ -108,7 +109,7 @@ export function migrateFromLegacy(): void {
     if (!raw) return;
     const parsed: SavedSession = JSON.parse(raw);
     if (parsed.scenario && parsed.transcript) {
-      saveSession(crypto.randomUUID(), parsed);
+      saveSession(createId(), parsed);
     }
     localStorage.removeItem(OLD_KEY);
   } catch {

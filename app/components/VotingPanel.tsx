@@ -37,11 +37,18 @@ export default function VotingPanel({
           const pct = totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
           return (
             <div key={option.id} className="glass rounded-2xl p-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="heading-display text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>
-                  {option.label}
-                </span>
-                <div className="flex items-center gap-2">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                  <span className="heading-display text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    {option.label}
+                  </span>
+                  {option.description && (
+                    <p className="mt-1 max-w-2xl text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                      {option.description}
+                    </p>
+                  )}
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
                   <button
                     onClick={() => onUpdateVotes(option.id, Math.max(0, option.votes - 1))}
                     className="flex h-10 w-10 items-center justify-center rounded-lg text-lg font-bold transition-all hover:scale-105"

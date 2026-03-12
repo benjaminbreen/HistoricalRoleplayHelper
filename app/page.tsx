@@ -9,6 +9,7 @@ import RejoinView, { RejoinSessionData } from './components/RejoinView';
 import CastLobbyScreen from './components/CastLobbyScreen';
 import ThemeToggle from './components/ThemeToggle';
 import EnrichSessionView from './components/EnrichSessionView';
+import { createId } from './lib/createId';
 import { pathToRoute, stateToPath, type SetupView } from './lib/routing';
 
 export default function Home() {
@@ -25,7 +26,7 @@ export default function Home() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   // ── URL routing state ──
-  const [initialRoute, setInitialRoute] = useState<{ view: SetupView; mode: 'education' | 'civic' | null; category: string | null } | undefined>();
+  const [initialRoute, setInitialRoute] = useState<{ view: SetupView; mode: 'education' | 'civic' | null; category: string | null; scenarioSlug: string | null } | undefined>();
   const [navRequest, setNavRequest] = useState<NavRequest | null>(null);
   const currentPathRef = useRef('/');
   const routeInitRef = useRef(false);
@@ -50,11 +51,11 @@ export default function Home() {
     } else if (route.page === 'enrich') {
       setShowEnrich(true);
       currentPathRef.current = '/enrich';
-    } else if (route.setupView !== 'landing' || route.mode || route.category) {
+    } else if (route.setupView !== 'landing' || route.mode || route.category || route.scenarioSlug) {
       // Only set initialRoute if it differs from default (landing)
-      setInitialRoute({ view: route.setupView, mode: route.mode, category: route.category });
+      setInitialRoute({ view: route.setupView, mode: route.mode, category: route.category, scenarioSlug: route.scenarioSlug });
       // Also send a navRequest so SetupForm picks it up even after initial render
-      setNavRequest({ view: route.setupView, mode: route.mode, category: route.category, _ts: Date.now() });
+      setNavRequest({ view: route.setupView, mode: route.mode, category: route.category, scenarioSlug: route.scenarioSlug, _ts: Date.now() });
       currentPathRef.current = window.location.pathname;
     }
   }, []);
@@ -81,7 +82,7 @@ export default function Home() {
       setCast([]);
 
       if (route.page === 'setup') {
-        setNavRequest({ view: route.setupView, mode: route.mode, category: route.category, _ts: Date.now() });
+        setNavRequest({ view: route.setupView, mode: route.mode, category: route.category, scenarioSlug: route.scenarioSlug, _ts: Date.now() });
       }
     };
     window.addEventListener('popstate', handlePopState);
@@ -145,7 +146,7 @@ export default function Home() {
 
   const handleStart = (s: Scenario, newCast: CharacterSheet[]) => {
     setCast(newCast);
-    setSessionId(crypto.randomUUID());
+    setSessionId(createId());
     setScenario(s);
     if (newCast.length > 0) {
       setShowLobby(true);
@@ -156,8 +157,8 @@ export default function Home() {
   };
 
   /** Callback from SetupForm when user navigates within setup views. */
-  const handleSetupNavigate = useCallback((view: SetupView, mode: 'education' | 'civic' | null, category: string | null) => {
-    pushUrl(stateToPath({ page: 'setup', setupView: view, mode, category }));
+  const handleSetupNavigate = useCallback((view: SetupView, mode: 'education' | 'civic' | null, category: string | null, scenarioSlug: string | null) => {
+    pushUrl(stateToPath({ page: 'setup', setupView: view, mode, category, scenarioSlug }));
   }, [pushUrl]);
 
   if (showEnrich) {
